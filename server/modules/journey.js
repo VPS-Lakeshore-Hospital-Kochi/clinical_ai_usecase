@@ -36,6 +36,8 @@ Mr. Thomas Varghese, a 58-year-old retired bank manager from Kakkanad, messaged 
 - **18 Aug · Surgery / Anaesthesia (pre-op readiness):** cross-checked the admission against every earlier plan and caught a consent that did not mention the possible ileostomy, no stoma-site marking, an unadjusted night-before insulin dose and missing oral antibiotic bowel prep, all closed before theatre.
 - **20 Aug · Nursing (NEWS2 watch):** scored the night observations (0 → 1 → 4 → 6), flagged that a score of 6 with oliguria needed a doctor within the hour rather than at handover, and listed the unescalated 4 at 04:00 as a documentation gap.
 - **24 Aug · Discharge:** caught the missing empagliflozin restart date and confirmed that no NSAIDs or sulfonamides were prescribed.
+- **25 Aug · Medical Records (coding audit):** added the missed nodal-metastasis code and documented complications, removed a duplicate stress-echo charge, moved pre-admission items to the pre-hospitalisation claim, and added ₹10,500 of unbilled services, keeping the claim within the approval.
+- **31 Aug · Surgical OPD (lab explainer):** after the surgeon's discussion, turned the pathology report and labs into a take-home explanation, including the CEA returning to normal (6.8 → 2.1).
 - **3 Sep · Nephrology (kidney co-pilot):** showed the July eGFR dip was NSAID-related and has recovered (68 → 85), confirming full-dose CAPOX. It also flagged that the CKD diagnosis needs a repeat UACR after 6 Oct, and wrote sick-day rules for chemotherapy diarrhoea.
 - **20 Sep · Critical Care (ICU co-pilot):** recognised euglycaemic DKA despite a near-normal glucose, put potassium replacement before insulin, flagged the overdue antibiotics, and linked the early severe toxicity to the **missing DPYD result**, chasing it within the 96-hour uridine triacetate window.
 - **22 Sep · Clinical Pharmacy (med reconciliation):** blocked the draft restarts of empagliflozin, metformin and telmisartan, stopped domperidone with QTc 478 and a PPI with no indication, and recommended stopping piperacillin-tazobactam at day 3 with negative cultures. **The antibiotic was continued to 24 Sep.** The C. difficile alert five days later shows why that recommendation mattered.
@@ -104,6 +106,7 @@ Mr. Thomas Varghese, a 58-year-old retired bank manager from Kakkanad, messaged 
 | Surgical Gastroenterology | Laparoscopic resection, inpatient care, discharge |
 | Critical Care | ICU management of DKA, sepsis, AKI and chemotherapy toxicity |
 | Nephrology | Kidney staging, chemo dosing, sick-day rules, albuminuria plan |
+| Medical Records / Billing | Coding audit, claim reconciliation |
 | Physiotherapy | Home rehab plan and daily check-ins |
 | Remote care | Home monitoring, alert triage, nurse calls |
 | Nursing | Triage call-back, education, phone follow-up |

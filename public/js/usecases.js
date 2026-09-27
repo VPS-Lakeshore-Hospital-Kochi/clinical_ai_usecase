@@ -18,7 +18,7 @@ export const STAGES = [
     items: [
       { title: "Ambient clinical scribe", specialty: "Endocrinology OPD", text: "Conversation to SOAP note, ICD-10 codes, orders and a patient summary.", href: "module.html?id=scribe" },
       { title: "Decision-support sidebar", specialty: "Internal Medicine", text: "Differential diagnosis, guideline-cited next steps and drug-interaction checks." },
-      { title: "Lab & report explainer", specialty: "Laboratory", text: "Trend-aware interpretation with separate clinician and patient versions." },
+      { title: "Lab & report explainer", specialty: "Laboratory / OPD", text: "Trend-aware clinician summary and a plain-language take-home explanation of pathology and labs.", href: "module.html?id=labs" },
     ],
   },
   {
@@ -48,7 +48,7 @@ export const STAGES = [
       { title: "Nursing handover & NEWS2 watch", specialty: "Nursing", text: "Scores each set of observations, reads the trend, escalates before handover and writes the SBAR.", href: "module.html?id=nursing" },
       { title: "Med reconciliation & antibiotic stewardship", specialty: "Clinical Pharmacy", text: "Line-by-line reconciliation at transfer, interaction and QTc checks, day-3 antibiotic review, C. difficile risk.", href: "module.html?id=medrec" },
       { title: "Pre-auth & TPA packet builder", specialty: "Insurance desk", text: "Policy-clause check, deduction arithmetic, medical-necessity letter and TPA query responses.", href: "module.html?id=preauth" },
-      { title: "Coding & billing audit", specialty: "Revenue cycle", text: "Discharge-to-bill code reconciliation to catch revenue leakage." },
+      { title: "Coding & billing audit", specialty: "Medical Records / Revenue cycle", text: "Documentation-supported code fixes, duplicate and wrong-claim charges, unbilled services, claim reconciliation.", href: "module.html?id=coding" },
     ],
   },
   {

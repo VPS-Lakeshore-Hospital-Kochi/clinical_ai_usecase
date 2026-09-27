@@ -347,6 +347,29 @@
       "unit": "g/dL",
       "ref": "13.0-17.0",
       "flag": "L"
+    },
+    {
+      "date": "2026-08-14",
+      "test": "HbA1c",
+      "value": 8.3,
+      "unit": "%",
+      "ref": "<5.7",
+      "flag": "H"
+    },
+    {
+      "date": "2026-08-31",
+      "test": "CEA",
+      "value": 2.1,
+      "unit": "ng/mL",
+      "ref": "<5.0"
+    },
+    {
+      "date": "2026-08-31",
+      "test": "Haemoglobin",
+      "value": 11.2,
+      "unit": "g/dL",
+      "ref": "13.0-17.0",
+      "flag": "L"
     }
   ],
   "cgm": {
@@ -627,6 +650,22 @@
       "module": "discharge",
       "title": "Discharge, post-operative day 5",
       "detail": "Discharge summary, patient instructions and follow-up plan generated."
+    },
+    {
+      "date": "2026-08-25",
+      "stage": "inpatient",
+      "specialty": "Medical Records / Revenue Cycle",
+      "module": "coding",
+      "title": "Pre-submission coding and billing audit",
+      "detail": "Added nodal metastases and documented complications to the codes; removed a duplicate stress echo; moved pre-admission items to the pre-hospitalisation claim; added unbilled services. Claim within the approval."
+    },
+    {
+      "date": "2026-08-31",
+      "stage": "consultation",
+      "specialty": "Surgical OPD",
+      "module": "labs",
+      "title": "Pathology and lab results explained",
+      "detail": "CEA back to normal (6.8 → 2.1), haemoglobin recovering. Clinician summary and a take-home explanation after the surgeon's discussion."
     },
     {
       "date": "2026-09-03",
