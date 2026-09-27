@@ -64,8 +64,8 @@ export const STAGES = [
     title: "Recovery & continuous care",
     blurb: "Care continues at home.",
     items: [
-      { title: "Remote-monitoring agent", specialty: "Chronic care", text: "Wearable and glucose streams, message triage and escalation rules." },
-      { title: "Post-op rehab coach", specialty: "Physiotherapy", text: "Ortho and cardiac rehab check-ins with a symptom diary." },
+      { title: "Remote-monitoring agent", specialty: "Remote care", text: "Reads home readings and WhatsApp messages together, grades alerts, escalates, replies and scripts the nurse call.", href: "module.html?id=monitoring" },
+      { title: "Rehab coach", specialty: "Physiotherapy", text: "Six-week home plan with traffic-light safety rules, daily check-ins and weekly physiotherapist summaries.", href: "module.html?id=rehab" },
     ],
   },
   {

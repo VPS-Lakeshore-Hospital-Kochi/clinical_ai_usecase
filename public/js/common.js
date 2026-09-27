@@ -17,7 +17,9 @@ export const JOURNEY_STEPS = [
   { id: "discharge", label: "Discharge", href: "module.html?id=discharge" },
   { id: "nephrology", label: "Kidney", href: "module.html?id=nephrology" },
   { id: "icu", label: "ICU", href: "module.html?id=icu" },
-  { id: "journey", label: "Journey story", href: "dashboard.html" },
+  { id: "rehab", label: "Rehab", href: "module.html?id=rehab" },
+  { id: "monitoring", label: "Home monitor", href: "module.html?id=monitoring" },
+  { id: "journey", label: "Story", href: "dashboard.html" },
 ];
 
 // Anitha Joseph's liver transplant journey.

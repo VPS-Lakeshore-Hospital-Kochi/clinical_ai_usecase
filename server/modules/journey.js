@@ -1,10 +1,10 @@
 export default {
   id: "journey",
-  order: 12,
+  order: 14,
   title: "Patient Journey Story",
   specialty: "Cross-specialty",
   stage: "journey",
-  date: "2026-09-22",
+  date: "2026-09-27",
   summary:
     "Reads the whole timeline across specialties and writes one coherent story: what happened, where AI changed the course, open loops and the next 90 days.",
   claudeRole: "Links the specialties into one narrative and spots dropped hand-offs.",
@@ -22,7 +22,7 @@ Produce in order:
   buildPrompt: (input) => `Patient journey timeline:\n\n${input}`,
   defaultInput: "",
   demoOutput: `## The story so far
-Mr. Thomas Varghese, a 58-year-old retired bank manager from Kakkanad, messaged the Lakeshore WhatsApp line on 2 July 2026 about rising sugars, night sweats and a painful knee. Triage routed him to Endocrinology within the week and flagged his weight loss for the doctor. The consultation note captured the weight loss, fatigue and bowel change, and a 14-day sensor showed dangerous overnight lows from glimepiride, so his regimen was changed. When Orthopaedics planned a knee replacement, the pre-operative check stopped the process: iron-deficiency anaemia with weight loss needed investigating first. Colonoscopy found a sigmoid cancer. The staging CT report was corrected before the tumour board (it had understated the lymph nodes), and the board recommended keyhole surgery followed by chemotherapy. Cardiology evaluated new exertional chest heaviness without delaying surgery; a stress echo was negative. The insurance desk secured cashless approval and explained the room-rent deduction to the family. He had an R0 resection on 19 August (stage IIIB) and went home on day 5 with a reconciled medicine list and follow-up across several specialties. Before chemotherapy, Nephrology confirmed his kidney function had recovered after stopping the painkiller, so he started full-dose chemotherapy on 10 September. Ten days later he was in intensive care with severe diarrhoea, a low white count, kidney injury and ketoacidosis from a diabetes tablet he kept taking while dehydrated. His DPYD gene test, sent in August, had never come back; when chased, it showed a variant that slows the breakdown of capecitabine. He is recovering, his chemotherapy will be re-planned at a lower dose, and his knee replacement stays on hold.
+Mr. Thomas Varghese, a 58-year-old retired bank manager from Kakkanad, messaged the Lakeshore WhatsApp line on 2 July 2026 about rising sugars, night sweats and a painful knee. Triage routed him to Endocrinology within the week and flagged his weight loss for the doctor. The consultation note captured the weight loss, fatigue and bowel change, and a 14-day sensor showed dangerous overnight lows from glimepiride, so his regimen was changed. When Orthopaedics planned a knee replacement, the pre-operative check stopped the process: iron-deficiency anaemia with weight loss needed investigating first. Colonoscopy found a sigmoid cancer. The staging CT report was corrected before the tumour board (it had understated the lymph nodes), and the board recommended keyhole surgery followed by chemotherapy. Cardiology evaluated new exertional chest heaviness without delaying surgery; a stress echo was negative. The insurance desk secured cashless approval and explained the room-rent deduction to the family. He had an R0 resection on 19 August (stage IIIB) and went home on day 5 with a reconciled medicine list and follow-up across several specialties. Before chemotherapy, Nephrology confirmed his kidney function had recovered after stopping the painkiller, so he started full-dose chemotherapy on 10 September. Ten days later he was in intensive care with severe diarrhoea, a low white count, kidney injury and ketoacidosis from a diabetes tablet he kept taking while dehydrated. His DPYD gene test, sent in August, had never come back; when chased, it showed a variant that slows the breakdown of capecitabine. He went home on 25 September with a rehab coach and home monitoring. Two days later the monitoring flagged recurrent diarrhoea after his ICU antibiotics, with a rising heart rate and falling blood pressure, and he was brought in the same day for C. difficile testing instead of taking loperamide at home. His chemotherapy will be re-planned at a lower dose, and his knee replacement stays on hold.
 
 ## Where AI assistance changed the course
 - **2 Jul · Digital front door (triage):** routed him to Endocrinology, not Orthopaedics, and passed recurrent hypoglycaemia and weight loss to the clinician as flags.
@@ -36,10 +36,14 @@ Mr. Thomas Varghese, a 58-year-old retired bank manager from Kakkanad, messaged 
 - **24 Aug · Discharge:** caught the missing empagliflozin restart date and confirmed that no NSAIDs or sulfonamides were prescribed.
 - **3 Sep · Nephrology (kidney co-pilot):** showed the July eGFR dip was NSAID-related and has recovered (68 → 85), confirming full-dose CAPOX. It also flagged that the CKD diagnosis needs a repeat UACR after 6 Oct, and wrote sick-day rules for chemotherapy diarrhoea.
 - **20 Sep · Critical Care (ICU co-pilot):** recognised euglycaemic DKA despite a near-normal glucose, put potassium replacement before insulin, flagged the overdue antibiotics, and linked the early severe toxicity to the **missing DPYD result**, chasing it within the 96-hour uridine triacetate window.
+- **25 Sep · Physiotherapy (rehab coach):** built a six-week plan with safety rules tied to blood counts, glucose and diarrhoea, so exercise pauses automatically on a 🔴 day. It doubles as pre-habilitation for the knee replacement.
+- **27 Sep · Remote monitoring:** read the stool count, heart rate, BP, temperature and weight together rather than as single alarms, recognised likely C. difficile after piperacillin-tazobactam, told him **not** to take loperamide, and arranged same-day review.
 
 *All decisions were made and signed by the treating clinicians and staff.*
 
 ## Open loops & hand-off risks
+- [ ] Stool C. difficile result and treatment plan (Oncology day-care / ID)
+- [ ] Remove "loperamide if diarrhoea recurs" from discharge templates after broad-spectrum antibiotics unless C. difficile has been excluded (Pharmacy / Quality)
 - [ ] **System gap: a send-out DPYD result was not a hard stop before cycle 1.** Make "DPYD resulted" a required field in the chemotherapy order set (Oncology / Pharmacy / Quality)
 - [ ] Re-plan adjuvant therapy per DPYD*2A genotype (CPIC: 50% fluoropyrimidine dose, titrate) once recovered (Medical Oncology)
 - [ ] Do not restart empagliflozin during chemotherapy; revise the diabetes plan (Endocrinology)
@@ -72,6 +76,8 @@ Mr. Thomas Varghese, a 58-year-old retired bank manager from Kakkanad, messaged 
 | 16 Sep 2026 | Stop enoxaparin | Patient / nurse |
 | Early Oct 2026 | Cardiology review, lipid profile | Cardiology |
 | From 6 Oct 2026 | Repeat UACR | Nephrology |
+| 27 Sep 2026 | Same-day review: stool C. difficile, bloods | Oncology day-care |
+| Weekly × 6 | Rehab coach check-ins; physio review each Sunday | Physiotherapy |
 | After recovery (~Oct 2026) | Revised adjuvant plan at genotype-guided dose | Medical Oncology |
 | ~Early Dec 2026 | End of adjuvant chemo; CEA | Oncology |
 | Late Dec 2026 | HbA1c, TKA re-planning visit | Endo + Ortho |
@@ -90,6 +96,8 @@ Mr. Thomas Varghese, a 58-year-old retired bank manager from Kakkanad, messaged 
 | Surgical Gastroenterology | Laparoscopic resection, inpatient care, discharge |
 | Critical Care | ICU management of DKA, sepsis, AKI and chemotherapy toxicity |
 | Nephrology | Kidney staging, chemo dosing, sick-day rules, albuminuria plan |
+| Physiotherapy | Home rehab plan and daily check-ins |
+| Remote care | Home monitoring, alert triage, nurse calls |
 | Nursing | Triage call-back, education, phone follow-up |
 `,
 };

@@ -10,10 +10,12 @@ import preauth from "./preauth.js";
 import discharge from "./discharge.js";
 import nephrology from "./nephrology.js";
 import icu from "./icu.js";
+import rehab from "./rehab.js";
+import monitoring from "./monitoring.js";
 import transplant from "./transplant.js";
 import journey from "./journey.js";
 
-export const modules = [triage, scribe, diabetes, ortho, radiology, oncology, cardiology, preauth, discharge, nephrology, icu, journey, transplant].sort(
+export const modules = [triage, scribe, diabetes, ortho, radiology, oncology, cardiology, preauth, discharge, nephrology, icu, rehab, monitoring, journey, transplant].sort(
   (a, b) => a.order - b.order,
 );
 

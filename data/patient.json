@@ -105,6 +105,14 @@
       "weightKg": 84,
       "heightCm": 168,
       "bmi": 29.8
+    },
+    {
+      "date": "2026-09-25",
+      "bp": "118/72 mmHg",
+      "hr": "86/min",
+      "weightKg": 81.4,
+      "heightCm": 168,
+      "bmi": 28.8
     }
   ],
   "labs": [
@@ -300,6 +308,44 @@
       "value": 0.6,
       "unit": "x10^9/L",
       "ref": "2.0-7.5",
+      "flag": "L"
+    },
+    {
+      "date": "2026-09-24",
+      "test": "Creatinine",
+      "value": 1.3,
+      "unit": "mg/dL",
+      "ref": "0.7-1.3"
+    },
+    {
+      "date": "2026-09-24",
+      "test": "Potassium",
+      "value": 4.0,
+      "unit": "mmol/L",
+      "ref": "3.5-5.1"
+    },
+    {
+      "date": "2026-09-24",
+      "test": "Absolute neutrophil count",
+      "value": 1.9,
+      "unit": "x10^9/L",
+      "ref": "2.0-7.5",
+      "flag": "L"
+    },
+    {
+      "date": "2026-09-24",
+      "test": "Platelets",
+      "value": 142,
+      "unit": "x10^9/L",
+      "ref": "150-400",
+      "flag": "L"
+    },
+    {
+      "date": "2026-09-24",
+      "test": "Haemoglobin",
+      "value": 10.1,
+      "unit": "g/dL",
+      "ref": "13.0-17.0",
       "flag": "L"
     }
   ],
@@ -595,6 +641,22 @@
       "specialty": "Medical Oncology",
       "title": "DPYD result: heterozygous c.1905+1G>A (DPYD*2A)",
       "detail": "Intermediate metaboliser (activity score 1). CPIC: 50% fluoropyrimidine starting dose if rechallenged."
+    },
+    {
+      "date": "2026-09-25",
+      "stage": "recovery",
+      "specialty": "Physiotherapy",
+      "module": "rehab",
+      "title": "Home after ICU: rehab coach plan",
+      "detail": "Deconditioned after the ICU stay, with knee OA and neuropathy. Six-week home plan with daily check-ins and safety rules tied to blood counts, glucose and chemotherapy."
+    },
+    {
+      "date": "2026-09-27",
+      "stage": "recovery",
+      "specialty": "Remote monitoring",
+      "module": "monitoring",
+      "title": "Home monitoring alert: recurrent diarrhoea after antibiotics",
+      "detail": "Rising stool count, heart rate and temperature with falling BP and weight two days after discharge. Same-day review for possible C. difficile infection."
     }
   ],
   "documents": {
@@ -605,5 +667,91 @@
     "operativeNote": "2026-08-19 Laparoscopic anterior resection with high ligation of inferior mesenteric artery, stapled colorectal anastomosis, leak test negative. No diverting stoma. EBL 150 mL. Duration 210 min.",
     "pathologyResection": "2026-08-22 Resection histopathology: Adenocarcinoma, moderately differentiated, 4.2 cm, invades through muscularis propria into pericolorectal tissue (pT3). No lymphovascular or perineural invasion. 2 of 18 lymph nodes positive (pN1b). Proximal, distal and radial margins clear (R0). No tumour deposits. pMMR (confirmed)."
   },
-  "medicationsNote": "before the July 2026 changes"
+  "medicationsNote": "before the July 2026 changes",
+  "homeMonitoring": {
+    "period": "25 Sep 18:00 to 27 Sep 18:00",
+    "devices": "Fingerstick glucometer, home BP cuff, digital thermometer, scale; stool count reported by WhatsApp",
+    "readings": [
+      {
+        "time": "2026-09-25T18:00",
+        "label": "25 Sep 18:00",
+        "glucose": 212,
+        "sbp": 118,
+        "dbp": 72,
+        "hr": 86,
+        "temp": 37.0,
+        "weightKg": 81.4
+      },
+      {
+        "time": "2026-09-26T08:00",
+        "label": "26 Sep 08:00",
+        "glucose": 164,
+        "sbp": 116,
+        "dbp": 72,
+        "hr": 88,
+        "temp": 36.9,
+        "weightKg": 81.2
+      },
+      {
+        "time": "2026-09-26T13:00",
+        "label": "26 Sep 13:00",
+        "glucose": 238,
+        "sbp": 114,
+        "dbp": 70,
+        "hr": 90,
+        "temp": 37.1
+      },
+      {
+        "time": "2026-09-26T20:00",
+        "label": "26 Sep 20:00",
+        "glucose": 256,
+        "sbp": 112,
+        "dbp": 70,
+        "hr": 92,
+        "temp": 37.2
+      },
+      {
+        "time": "2026-09-27T08:00",
+        "label": "27 Sep 08:00",
+        "glucose": 172,
+        "sbp": 108,
+        "dbp": 68,
+        "hr": 96,
+        "temp": 37.4,
+        "weightKg": 80.2
+      },
+      {
+        "time": "2026-09-27T13:00",
+        "label": "27 Sep 13:00",
+        "glucose": 268,
+        "sbp": 106,
+        "dbp": 66,
+        "hr": 100,
+        "temp": 37.6
+      },
+      {
+        "time": "2026-09-27T18:00",
+        "label": "27 Sep 18:00",
+        "glucose": 281,
+        "sbp": 102,
+        "dbp": 64,
+        "hr": 104,
+        "temp": 37.9
+      }
+    ],
+    "stoolsPerDay": [
+      {
+        "date": "25 Sep (from 18:00)",
+        "count": 1
+      },
+      {
+        "date": "26 Sep",
+        "count": 3
+      },
+      {
+        "date": "27 Sep (to 18:00)",
+        "count": 5
+      }
+    ]
+  }
 }

@@ -3,7 +3,7 @@ import {
   stepsFor, getFiled, fileOutput,
 } from "./common.js";
 import { attachRunner } from "./runner.js";
-import { renderCgmWidget } from "./charts.js";
+import { renderCgmWidget, renderVitalsWidget } from "./charts.js";
 
 const id = new URLSearchParams(location.search).get("id") || "scribe";
 if (id === "journey") location.replace("dashboard.html");
@@ -34,6 +34,7 @@ input.value = mod.defaultInput;
 $("reset").addEventListener("click", () => (input.value = mod.defaultInput));
 
 if (mod.widgets.includes("cgm")) renderCgmWidget($("widgets"), patient.cgm);
+if (mod.widgets.includes("vitals")) renderVitalsWidget($("widgets"), patient.homeMonitoring);
 
 let latest = "";
 const approve = $("approve");

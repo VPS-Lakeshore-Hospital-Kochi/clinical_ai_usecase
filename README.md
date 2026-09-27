@@ -6,7 +6,7 @@ Working prototypes of Claude across the patient journey at VPS Lakeshore Hospita
 
 ## The journey
 
-**Thomas Varghese (synthetic), 58, Kakkanad.** He messages the hospital about diabetes and a painful knee. At each step an AI-assisted check surfaces something, and together these lead to an early colon cancer diagnosis. Along the way his staging CT report is corrected, he is cleared by Cardiology, gets cashless insurance approval, has his kidneys checked before chemotherapy, and is admitted to the ICU with chemotherapy toxicity.
+**Thomas Varghese (synthetic), 58, Kakkanad.** He messages the hospital about diabetes and a painful knee. At each step an AI-assisted check surfaces something, and together these lead to an early colon cancer diagnosis. Along the way his staging CT report is corrected, he is cleared by Cardiology, gets cashless insurance approval, has his kidneys checked before chemotherapy, is admitted to the ICU with chemotherapy toxicity, and is followed at home by a rehab coach and remote monitoring.
 
 | # | Prototype | Specialty | What Claude does |
 |---|---|---|---|
@@ -21,7 +21,9 @@ Working prototypes of Claude across the patient journey at VPS Lakeshore Hospita
 | 9 | Intelligent Discharge | Surgical Gastroenterology | Medication reconciliation, clinician summary, cross-specialty follow-up, plain-English home instructions, medication calendar |
 | 10 | Kidney Co-pilot | Nephrology | eGFR trend and CKD staging, Cockcroft-Gault dosing check for CAPOX, sick-day rules, contrast guidance, albuminuria plan |
 | 11 | ICU Round Co-pilot | Critical Care | Euglycaemic DKA, neutropenic sepsis and AKI during chemotherapy: problem-based plan, bundle tracking, drug review, SBAR handover; links early toxicity to a missing DPYD result |
-| 12 | Patient Journey Story | Cross-specialty | One narrative across specialties: where AI changed the course, open loops, the next 90 days |
+| 12 | Rehab Coach | Physiotherapy | Six-week home plan after the ICU stay, with traffic-light safety rules tied to blood counts, glucose and diarrhoea, daily check-ins and weekly physio summaries |
+| 13 | Remote Monitoring Agent | Remote care | Reads home readings (with trend charts) and WhatsApp messages together; flags likely C. difficile after ICU antibiotics, tells the patient not to take loperamide, scripts the nurse call |
+| 14 | Patient Journey Story | Cross-specialty | One narrative across specialties: where AI changed the course, open loops, the next 90 days |
 
 **Second journey: Anitha Joseph (synthetic), 49, Aluva.** Decompensated MASH cirrhosis with a small liver cancer; her son is the living-donor candidate.
 
@@ -29,7 +31,7 @@ Working prototypes of Claude across the patient journey at VPS Lakeshore Hospita
 |---|---|---|---|
 | 1 | Liver Transplant Work-up | Hepatology / Liver Transplant | MELD 3.0 and Child-Pugh with arithmetic, Milan criteria, recipient and donor readiness tracker, GRWR and remnant volume, THOTA legal steps, family explanation |
 
-The home page also maps all 26 use cases from the roadmap (heart failure, pre-op readiness, nursing handover, remote monitoring and more). The thirteen above are live; the rest are marked "Roadmap".
+The home page also maps all 26 use cases from the roadmap (heart failure, pre-op readiness, nursing handover, pharmacy and more). The fifteen above are live; the rest are marked "Roadmap".
 
 On each module page the clinician can edit the input, run Claude, then **Approve & file** the draft. Filed outputs appear on the patient timeline (stored in the browser only) and feed into the journey story.
 

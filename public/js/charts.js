@@ -109,3 +109,90 @@ function renderAgp(root, profile) {
   hit.addEventListener("pointerdown", show);
   hit.addEventListener("pointerleave", hide);
 }
+
+// Home-monitoring trends: one small single-series panel per vital sign, each
+// with its alert threshold. Points beyond the threshold are marked and named
+// in the tooltip, so colour is never the only cue.
+const VITAL_PANELS = [
+  { key: "glucose", title: "Glucose", unit: "mg/dL", min: 60, max: 320, threshold: 250, above: true, band: [70, 180] },
+  { key: "sbp", title: "Systolic BP", unit: "mmHg", min: 90, max: 130, threshold: 105, above: false },
+  { key: "hr", title: "Heart rate", unit: "/min", min: 70, max: 115, threshold: 100, above: true },
+  { key: "temp", title: "Temperature", unit: "°C", min: 36.5, max: 38.5, threshold: 37.8, above: true, decimals: 1 },
+];
+
+export function renderVitalsWidget(el, hm) {
+  const weights = hm.readings.filter((r) => r.weightKg);
+  el.innerHTML = `
+    <div class="widget">
+      <p class="widget__title">Home readings, ${esc(hm.period)}</p>
+      <p class="widget__sub">Dashed line = alert threshold · ⚠ points are beyond it</p>
+      <div class="vitals-grid">
+        ${VITAL_PANELS.map((p) => `<div class="vital-panel viz-root" data-key="${p.key}"></div>`).join("")}
+      </div>
+      <table class="mini-table">
+        <thead><tr><th>Day</th><th>Loose stools</th></tr></thead>
+        <tbody>${hm.stoolsPerDay.map((s) => `<tr><td>${esc(s.date)}</td><td>${s.count}</td></tr>`).join("")}</tbody>
+      </table>
+      <p class="widget__sub" style="margin-top:6px">Weight: ${weights.map((r) => `${esc(r.label)} <b>${r.weightKg} kg</b>`).join(" → ")}</p>
+      <details class="table-toggle">
+        <summary>Show all readings as a table</summary>
+        <table>
+          <thead><tr><th>Time</th><th>Glucose</th><th>BP</th><th>HR</th><th>Temp</th></tr></thead>
+          <tbody>${hm.readings.map((r) => `<tr><td>${esc(r.label)}</td><td>${r.glucose}</td><td>${r.sbp}/${r.dbp}</td><td>${r.hr}</td><td>${r.temp.toFixed(1)}</td></tr>`).join("")}</tbody>
+        </table>
+      </details>
+    </div>`;
+  for (const panel of VITAL_PANELS) {
+    renderVitalPanel(el.querySelector(`[data-key="${panel.key}"]`), hm.readings, panel);
+  }
+}
+
+function renderVitalPanel(root, readings, p) {
+  const W = 240, H = 124;
+  const m = { top: 22, right: 10, bottom: 18, left: 32 };
+  const n = readings.length;
+  const x = (i) => m.left + (i / (n - 1)) * (W - m.left - m.right);
+  const y = (v) => m.top + (1 - (v - p.min) / (p.max - p.min)) * (H - m.top - m.bottom);
+  const fmt = (v) => (p.decimals ? v.toFixed(p.decimals) : String(v));
+  const beyond = (v) => (p.above ? v >= p.threshold : v < p.threshold);
+  const values = readings.map((r) => r[p.key]);
+  const last = values.at(-1);
+  const line = values.map((v, i) => `${i ? "L" : "M"}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join("");
+
+  root.innerHTML = `
+    <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${p.title}: ${values.map(fmt).join(", ")} ${p.unit}. Latest ${fmt(last)}${beyond(last) ? ", beyond the alert threshold" : ""}.">
+      <text x="${m.left}" y="12" style="font-weight:700;fill:var(--ink)">${p.title}</text>
+      <text x="${W - m.right}" y="12" text-anchor="end" style="font-weight:700;fill:${beyond(last) ? "var(--critical)" : "var(--ink)"}">${beyond(last) ? "⚠ " : ""}${fmt(last)} ${p.unit}</text>
+      ${p.band ? `<rect x="${m.left}" y="${y(p.band[1])}" width="${W - m.left - m.right}" height="${y(p.band[0]) - y(p.band[1])}" fill="var(--viz-target)"/>` : ""}
+      <line x1="${m.left}" x2="${W - m.right}" y1="${y(p.threshold)}" y2="${y(p.threshold)}" stroke="var(--viz-axis)" stroke-dasharray="4 3"/>
+      <text x="${m.left - 5}" y="${y(p.threshold) + 4}" text-anchor="end">${fmt(p.threshold)}</text>
+      <line x1="${m.left}" x2="${W - m.right}" y1="${H - m.bottom}" y2="${H - m.bottom}" stroke="var(--viz-grid)"/>
+      <text x="${x(0)}" y="${H - 4}" text-anchor="start">25 Sep</text>
+      <text x="${x(n - 1)}" y="${H - 4}" text-anchor="end">27 Sep</text>
+      <path d="${line}" fill="none" stroke="var(--viz-series)" stroke-width="2" stroke-linejoin="round"/>
+      ${values.map((v, i) => `<circle cx="${x(i)}" cy="${y(v)}" r="${beyond(v) ? 4.5 : 3}" fill="${beyond(v) ? "var(--critical)" : "var(--viz-series)"}" stroke="var(--surface)" stroke-width="1.5"/>`).join("")}
+      <rect class="vp-hit" x="${m.left}" y="${m.top}" width="${W - m.left - m.right}" height="${H - m.top - m.bottom}" fill="transparent"/>
+    </svg>
+    <div class="viz-tooltip" role="status"></div>`;
+
+  const svg = root.querySelector("svg");
+  const tip = root.querySelector(".viz-tooltip");
+  const hit = root.querySelector(".vp-hit");
+  function show(evt) {
+    const pt = svg.createSVGPoint();
+    pt.x = evt.clientX;
+    pt.y = evt.clientY;
+    const local = pt.matrixTransform(svg.getScreenCTM().inverse());
+    const i = Math.max(0, Math.min(n - 1, Math.round(((local.x - m.left) / (W - m.left - m.right)) * (n - 1))));
+    const v = values[i];
+    tip.innerHTML = `<b>${esc(readings[i].label)}</b> · ${fmt(v)} ${p.unit}${beyond(v) ? " · ⚠ beyond threshold" : ""}`;
+    const scale = root.clientWidth / W;
+    const half = tip.offsetWidth / 2;
+    tip.style.left = `${Math.min(Math.max(x(i) * scale, half), root.clientWidth - half)}px`;
+    tip.style.top = `${y(v) * scale}px`;
+    tip.style.opacity = 1;
+  }
+  hit.addEventListener("pointermove", show);
+  hit.addEventListener("pointerdown", show);
+  hit.addEventListener("pointerleave", () => (tip.style.opacity = 0));
+}

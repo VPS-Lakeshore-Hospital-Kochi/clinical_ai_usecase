@@ -167,7 +167,7 @@ main { max-width: 1280px; margin: 0 auto; padding: 24px; }
 /* ---------- Journey stepper ---------- */
 .stepper { display: flex; flex-wrap: wrap; gap: 4px; padding-bottom: 4px; margin-bottom: 20px; }
 .stepper a {
-  flex: 1 0 auto;
+  flex: 0 1 auto;
   white-space: nowrap;
   text-decoration: none;
   color: var(--ink-2);
@@ -317,6 +317,10 @@ textarea.input {
   transition: opacity 0.1s;
 }
 .viz-tooltip b { font-weight: 700; }
+.vitals-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-bottom: 10px; }
+.vital-panel { border: 1px solid var(--line); border-radius: 8px; padding: 6px 4px 2px; background: var(--surface); }
+.mini-table { border-collapse: collapse; font-size: 12px; font-variant-numeric: tabular-nums; }
+.mini-table td, .mini-table th { border: 1px solid var(--line); padding: 2px 10px; text-align: left; }
 .tir-bar { display: flex; height: 18px; border-radius: 4px; overflow: hidden; gap: 2px; background: var(--surface); }
 .tir-bar span { display: block; height: 100%; }
 .tir-legend { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 4px 12px; margin: 8px 0 0; padding: 0; list-style: none; font-size: 12px; color: var(--ink-2); }
@@ -365,6 +369,7 @@ textarea.input {
 }
 @media (max-width: 640px) {
   main { padding: 16px; }
+  .vitals-grid { grid-template-columns: 1fr; }
   .site-header__inner { padding: 10px 16px; gap: 12px; flex-wrap: wrap; }
   .site-nav { order: 3; width: 100%; margin-left: 0; }
   .hero h1 { font-size: 26px; }
