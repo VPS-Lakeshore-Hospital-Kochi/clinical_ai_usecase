@@ -1,11 +1,14 @@
+import triage from "./triage.js";
 import scribe from "./scribe.js";
 import diabetes from "./diabetes.js";
 import ortho from "./ortho.js";
 import oncology from "./oncology.js";
+import cardiology from "./cardiology.js";
+import preauth from "./preauth.js";
 import discharge from "./discharge.js";
 import journey from "./journey.js";
 
-export const modules = [scribe, diabetes, ortho, oncology, discharge, journey].sort(
+export const modules = [triage, scribe, diabetes, ortho, oncology, cardiology, preauth, discharge, journey].sort(
   (a, b) => a.order - b.order,
 );
 

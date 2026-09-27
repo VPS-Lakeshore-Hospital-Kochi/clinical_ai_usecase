@@ -1,6 +1,6 @@
 export default {
   id: "scribe",
-  order: 1,
+  order: 2,
   title: "Ambient Clinical Scribe",
   specialty: "Endocrinology OPD",
   stage: "consultation",

@@ -7,7 +7,7 @@ const profileTable = c.profile
 
 export default {
   id: "diabetes",
-  order: 2,
+  order: 3,
   title: "Diabetes Co-pilot",
   specialty: "Endocrinology",
   stage: "specialty",

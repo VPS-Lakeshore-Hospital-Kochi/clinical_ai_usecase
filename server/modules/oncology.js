@@ -4,7 +4,7 @@ const d = patient.documents;
 
 export default {
   id: "oncology",
-  order: 4,
+  order: 5,
   title: "Tumour Board Assistant",
   specialty: "Oncology",
   stage: "specialty",

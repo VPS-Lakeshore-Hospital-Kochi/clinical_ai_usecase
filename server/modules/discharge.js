@@ -4,7 +4,7 @@ const d = patient.documents;
 
 export default {
   id: "discharge",
-  order: 5,
+  order: 8,
   title: "Intelligent Discharge",
   specialty: "Surgical Gastroenterology",
   stage: "discharge",
@@ -27,9 +27,10 @@ Produce in order:
     `${input}\n\nOperative note:\n${d.operativeNote}\n\nFinal pathology:\n${d.pathologyResection}`,
   defaultInput: `Admission: 18 Aug 2026 (elective). Planned discharge: 24 Aug 2026 (post-operative day 5).
 Procedure: Laparoscopic anterior resection, 19 Aug 2026 (ERAS pathway).
-Pre-op: Hb 11.6 after IV iron (6 Aug). Empagliflozin held from 15 Aug. Metformin held on the day of surgery.
+Pre-op: Hb 11.6 after IV iron (6 Aug). Cardiology clearance 11 Aug (stress echo negative); post-op troponin at 24/48 h requested. Empagliflozin held from 15 Aug. Metformin held on the day of surgery.
 Course:
 - POD 0–1: Epidural-free, multimodal analgesia. Glucose 220–280 mg/dL; started basal-bolus insulin (glargine 14 U + lispro 4 U with meals + correction).
+- POD 1–2: hs-troponin I 8 and 7 ng/L (baseline 6); ECG unchanged.
 - POD 2: Mild ileus, nausea; NG tube not required; ondansetron. Chewing gum, early mobilisation.
 - POD 3: Passing flatus, tolerating soft diet. Metformin restarted.
 - POD 4: Bowels opened. Glucose 140–190 mg/dL. Lispro stopped (eating less than usual). Wound clean, port sites healing.
@@ -45,7 +46,7 @@ Pending: none. Oncology clinic referral made.`,
 | Insulin glargine | 12 U HS | **14 U HS** | ↑ 2 U | Post-operative hyperglycaemia; titrate at Endo review |
 | Empagliflozin | 10 mg OD (held 15 Aug) | **On hold** | Restart date needed | Restart when eating/drinking normally. **Suggest a named restart date (e.g. 27 Aug) after a phone check** |
 | Telmisartan | 40 mg OD | 40 mg OD | — | BP stable |
-| Atorvastatin | 20 mg HS | **40 mg HS** | ↑ | LDL above target (Endo recommendation) |
+| Atorvastatin | 20 mg HS | **40 mg HS** | ↑ | LDL above target (Endocrinology and Cardiology, 8 Aug) |
 | Aceclofenac | PRN (stopped 6 Jul) | — | Stopped | **Avoid NSAIDs**: new anastomosis, renal function, GI bleed risk |
 | Enoxaparin | — | 40 mg SC OD | New | Extended VTE prophylaxis after abdominal cancer surgery, **until 16 Sep (28 days)** |
 | Paracetamol | 650 mg PRN | 1 g QID PRN | ↑ | Max 4 g/day |
@@ -61,7 +62,7 @@ Pending: none. Oncology clinic referral made.`,
 - **Admitted:** 18 Aug 2026 | **Discharged:** 24 Aug 2026 (POD 5) | **Consultant team:** Surgical Gastroenterology
 - **Diagnoses:** (1) Sigmoid adenocarcinoma, **pT3 pN1b (2/18) M0, stage IIIB**, R0, pMMR, KRAS G12D, BRAF wt. (2) T2DM with post-operative hyperglycaemia. (3) Iron-deficiency anaemia, treated. (4) Right knee OA (TKA deferred). (5) Hypertension. (6) Diabetic peripheral neuropathy.
 - **Procedure:** Laparoscopic anterior resection with high IMA ligation, stapled anastomosis, no stoma (19 Aug 2026). EBL 150 mL.
-- **Course:** ERAS pathway. POD 0–1 hyperglycaemia 220–280 mg/dL managed with basal-bolus insulin. Mild ileus on POD 2 resolved conservatively. Diet advanced POD 3; bowels opened POD 4. No fever, no signs of anastomotic leak.
+- **Course:** ERAS pathway. POD 0–1 hyperglycaemia 220–280 mg/dL managed with basal-bolus insulin. Post-op hs-troponin 6 → 8 → 7 ng/L with unchanged ECG: no myocardial injury. Mild ileus on POD 2 resolved conservatively. Diet advanced POD 3; bowels opened POD 4. No fever, no signs of anastomotic leak.
 - **At discharge:** afebrile, mobilising with a stick, wounds clean. Hb 10.9, creatinine 1.0, WBC 9.2, CRP falling.
 - **Pending results:** none.
 - **Plan:** adjuvant CAPOX, **3 months per MDT criteria for low-risk stage III (pT3 N1)**, to confirm at Oncology. TKA deferred until after chemotherapy.
@@ -73,6 +74,7 @@ Pending: none. Oncology clinic referral made.`,
 | 2 Sep | Endocrinology (tele-consult) | Insulin titration, empagliflozin restart confirmed, **chemo-period glucose plan** |
 | 7–14 Sep | Medical Oncology | Start CAPOX within 6–8 weeks of surgery; baseline neuropathy score; antiemetic plan (steroid-sparing) |
 | Weekly × 4 | Nurse phone call | Glucose log, enoxaparin adherence, warning signs |
+| 6–8 weeks | Cardiology | Post-op review, lipid profile; earlier if chest symptoms recur |
 | After chemotherapy | Orthopaedics | Re-plan right TKA |
 | 4 weeks | Lab | Hb, ferritin |
 

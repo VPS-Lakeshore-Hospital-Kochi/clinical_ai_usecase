@@ -2,7 +2,7 @@ import { patient } from "../patient.js";
 
 export default {
   id: "ortho",
-  order: 3,
+  order: 4,
   title: "Ortho Surgery Planner",
   specialty: "Orthopaedics",
   stage: "specialty",
