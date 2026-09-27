@@ -8,6 +8,8 @@ import oncology from "./oncology.js";
 import cardiology from "./cardiology.js";
 import preauth from "./preauth.js";
 import preop from "./preop.js";
+import nursing from "./nursing.js";
+import medrec from "./medrec.js";
 import discharge from "./discharge.js";
 import nephrology from "./nephrology.js";
 import icu from "./icu.js";
@@ -17,7 +19,7 @@ import transplant from "./transplant.js";
 import heartfailure from "./heartfailure.js";
 import journey from "./journey.js";
 
-export const modules = [triage, scribe, diabetes, ortho, radiology, oncology, cardiology, preauth, preop, discharge, nephrology, icu, rehab, monitoring, journey, transplant, heartfailure].sort(
+export const modules = [triage, scribe, diabetes, ortho, radiology, oncology, cardiology, preauth, preop, nursing, discharge, nephrology, icu, medrec, rehab, monitoring, journey, transplant, heartfailure].sort(
   (a, b) => a.order - b.order,
 );
 

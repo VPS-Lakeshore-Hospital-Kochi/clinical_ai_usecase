@@ -34,9 +34,11 @@ Mr. Thomas Varghese, a 58-year-old retired bank manager from Kakkanad, messaged 
 - **8 Aug · Cardiology (pre-op co-pilot):** recognised typical exertional symptoms (RCRI 2) and recommended expedited stress imaging within the cancer-surgery window, plus post-op troponin surveillance.
 - **12 Aug · Insurance desk (pre-auth):** caught a ₹44,700 avoidable room-rent deduction before admission, and stated "laparoscopic, not robotic" to avoid a sub-limit query.
 - **18 Aug · Surgery / Anaesthesia (pre-op readiness):** cross-checked the admission against every earlier plan and caught a consent that did not mention the possible ileostomy, no stoma-site marking, an unadjusted night-before insulin dose and missing oral antibiotic bowel prep, all closed before theatre.
+- **20 Aug · Nursing (NEWS2 watch):** scored the night observations (0 → 1 → 4 → 6), flagged that a score of 6 with oliguria needed a doctor within the hour rather than at handover, and listed the unescalated 4 at 04:00 as a documentation gap.
 - **24 Aug · Discharge:** caught the missing empagliflozin restart date and confirmed that no NSAIDs or sulfonamides were prescribed.
 - **3 Sep · Nephrology (kidney co-pilot):** showed the July eGFR dip was NSAID-related and has recovered (68 → 85), confirming full-dose CAPOX. It also flagged that the CKD diagnosis needs a repeat UACR after 6 Oct, and wrote sick-day rules for chemotherapy diarrhoea.
 - **20 Sep · Critical Care (ICU co-pilot):** recognised euglycaemic DKA despite a near-normal glucose, put potassium replacement before insulin, flagged the overdue antibiotics, and linked the early severe toxicity to the **missing DPYD result**, chasing it within the 96-hour uridine triacetate window.
+- **22 Sep · Clinical Pharmacy (med reconciliation):** blocked the draft restarts of empagliflozin, metformin and telmisartan, stopped domperidone with QTc 478 and a PPI with no indication, and recommended stopping piperacillin-tazobactam at day 3 with negative cultures. **The antibiotic was continued to 24 Sep.** The C. difficile alert five days later shows why that recommendation mattered.
 - **25 Sep · Physiotherapy (rehab coach):** built a six-week plan with safety rules tied to blood counts, glucose and diarrhoea, so exercise pauses automatically on a 🔴 day. It doubles as pre-habilitation for the knee replacement.
 - **27 Sep · Remote monitoring:** read the stool count, heart rate, BP, temperature and weight together rather than as single alarms, recognised likely C. difficile after piperacillin-tazobactam, told him **not** to take loperamide, and arranged same-day review.
 
@@ -44,6 +46,8 @@ Mr. Thomas Varghese, a 58-year-old retired bank manager from Kakkanad, messaged 
 
 ## Open loops & hand-off risks
 - [ ] Stool C. difficile result and treatment plan (Oncology day-care / ID)
+- [ ] **Stewardship gap:** a day-3 recommendation to stop piperacillin-tazobactam was not acted on for 2 days. Review how pharmacist recommendations are acknowledged (Pharmacy / Oncology / Quality)
+- [ ] Nursing audit of NEWS2 escalation (04:00 score of 4 not escalated on 20 Aug) (Nursing)
 - [ ] Remove "loperamide if diarrhoea recurs" from discharge templates after broad-spectrum antibiotics unless C. difficile has been excluded (Pharmacy / Quality)
 - [ ] **System gap: a send-out DPYD result was not a hard stop before cycle 1.** Make "DPYD resulted" a required field in the chemotherapy order set (Oncology / Pharmacy / Quality)
 - [ ] Re-plan adjuvant therapy per DPYD*2A genotype (CPIC: 50% fluoropyrimidine dose, titrate) once recovered (Medical Oncology)
@@ -94,6 +98,8 @@ Mr. Thomas Varghese, a 58-year-old retired bank manager from Kakkanad, messaged 
 | Oncology / MDT | Staging, treatment sequence, adjuvant chemotherapy |
 | Cardiology | Pre-operative risk assessment, stress echo, peri-operative drug plan |
 | Insurance desk | Cashless pre-authorisation, cost counselling |
+| Nursing (ward) | NEWS2 watch and escalation on post-op night |
+| Clinical Pharmacy | Reconciliation at ICU transfer, antibiotic stewardship |
 | Surgery / Anaesthesia | Pre-op readiness gate and WHO Surgical Safety Checklist |
 | Surgical Gastroenterology | Laparoscopic resection, inpatient care, discharge |
 | Critical Care | ICU management of DKA, sepsis, AKI and chemotherapy toxicity |

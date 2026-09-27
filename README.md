@@ -19,12 +19,14 @@ Working prototypes of Claude across the patient journey at VPS Lakeshore Hospita
 | 7 | Cardiac Pre-op Co-pilot | Cardiology | RCRI and biomarker risk, whether stress testing is needed within the cancer-surgery window, peri-operative drug plan, troponin surveillance, clearance note |
 | 8 | Pre-auth & TPA Packet Builder | Insurance desk | Checks policy clauses, calculates room-rent proportionate deductions, drafts the medical-necessity letter, document checklist and TPA query responses |
 | 9 | Pre-op Readiness & WHO Checklist | Surgery / Anaesthesia | Admission-day readiness gate across every earlier plan; catches consent without the possible ileostomy, no stoma marking, unadjusted insulin, missing oral antibiotic prep; pre-fills the WHO checklist |
-| 10 | Intelligent Discharge | Surgical Gastroenterology | Medication reconciliation, clinician summary, cross-specialty follow-up, plain-English home instructions, medication calendar |
-| 11 | Kidney Co-pilot | Nephrology | eGFR trend and CKD staging, Cockcroft-Gault dosing check for CAPOX, sick-day rules, contrast guidance, albuminuria plan |
-| 12 | ICU Round Co-pilot | Critical Care | Euglycaemic DKA, neutropenic sepsis and AKI during chemotherapy: problem-based plan, bundle tracking, drug review, SBAR handover; links early toxicity to a missing DPYD result |
-| 13 | Rehab Coach | Physiotherapy | Six-week home plan after the ICU stay, with traffic-light safety rules tied to blood counts, glucose and diarrhoea, daily check-ins and weekly physio summaries |
-| 14 | Remote Monitoring Agent | Remote care | Reads home readings (with trend charts) and WhatsApp messages together; flags likely C. difficile after ICU antibiotics, tells the patient not to take loperamide, scripts the nurse call |
-| 15 | Patient Journey Story | Cross-specialty | One narrative across specialties: where AI changed the course, open loops, the next 90 days |
+| 10 | Nursing Handover & NEWS2 Watch | Nursing | Scores the post-op night observations (0 → 6), escalates before handover, SBAR, day-shift tasks, documentation gaps |
+| 11 | Intelligent Discharge | Surgical Gastroenterology | Medication reconciliation, clinician summary, cross-specialty follow-up, plain-English home instructions, medication calendar |
+| 12 | Kidney Co-pilot | Nephrology | eGFR trend and CKD staging, Cockcroft-Gault dosing check for CAPOX, sick-day rules, contrast guidance, albuminuria plan |
+| 13 | ICU Round Co-pilot | Critical Care | Euglycaemic DKA, neutropenic sepsis and AKI during chemotherapy: problem-based plan, bundle tracking, drug review, SBAR handover; links early toxicity to a missing DPYD result |
+| 14 | Med Reconciliation & Antibiotic Stewardship | Clinical Pharmacy | ICU-to-ward reconciliation; blocks unsafe restarts, QTc and PPI flags, day-3 antibiotic stop recommendation with renal-dose check |
+| 15 | Rehab Coach | Physiotherapy | Six-week home plan after the ICU stay, with traffic-light safety rules tied to blood counts, glucose and diarrhoea, daily check-ins and weekly physio summaries |
+| 16 | Remote Monitoring Agent | Remote care | Reads home readings (with trend charts) and WhatsApp messages together; flags likely C. difficile after ICU antibiotics, tells the patient not to take loperamide, scripts the nurse call |
+| 17 | Patient Journey Story | Cross-specialty | One narrative across specialties: where AI changed the course, open loops, the next 90 days |
 
 **Second journey: Anitha Joseph (synthetic), 49, Aluva.** Decompensated MASH cirrhosis with a small liver cancer; her son is the living-donor candidate.
 
@@ -38,7 +40,7 @@ Working prototypes of Claude across the patient journey at VPS Lakeshore Hospita
 |---|---|---|---|
 | 1 | Heart Failure Co-pilot | Cardiology / HF clinic | Congestion status, four-pillar medicine gaps, dated titration plan with BP/K/creatinine checks, ARNI washout, iron, CRT-D eligibility, Kerala-diet salt and fluid advice |
 
-The home page also maps all 26 use cases from the roadmap (nursing handover, pharmacy, coding audit, lab explainer and more). The seventeen above are live; the rest are marked "Roadmap".
+The home page also maps all 26 use cases from the roadmap (coding audit, lab explainer, antenatal and paediatric safety, front-door routing and more). The nineteen above are live; the rest are marked "Roadmap".
 
 On each module page the clinician can edit the input, run Claude, then **Approve & file** the draft. Filed outputs appear on the patient timeline (stored in the browser only) and feed into the journey story.
 

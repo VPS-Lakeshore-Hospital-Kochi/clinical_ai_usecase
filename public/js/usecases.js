@@ -45,8 +45,8 @@ export const STAGES = [
     blurb: "AI for the institution, beyond the individual clinician.",
     items: [
       { title: "Pre-op readiness & WHO checklist", specialty: "Surgery / Anaesthesia", text: "Admission-day readiness gate across all prior plans, gaps with owners, pre-filled WHO Surgical Safety Checklist.", href: "module.html?id=preop" },
-      { title: "Nursing handover & NEWS2 watch", specialty: "Nursing", text: "Shift handovers and early-warning escalation." },
-      { title: "Med reconciliation & antibiotic stewardship", specialty: "Pharmacy", text: "Admission reconciliation and antimicrobial review." },
+      { title: "Nursing handover & NEWS2 watch", specialty: "Nursing", text: "Scores each set of observations, reads the trend, escalates before handover and writes the SBAR.", href: "module.html?id=nursing" },
+      { title: "Med reconciliation & antibiotic stewardship", specialty: "Clinical Pharmacy", text: "Line-by-line reconciliation at transfer, interaction and QTc checks, day-3 antibiotic review, C. difficile risk.", href: "module.html?id=medrec" },
       { title: "Pre-auth & TPA packet builder", specialty: "Insurance desk", text: "Policy-clause check, deduction arithmetic, medical-necessity letter and TPA query responses.", href: "module.html?id=preauth" },
       { title: "Coding & billing audit", specialty: "Revenue cycle", text: "Discharge-to-bill code reconciliation to catch revenue leakage." },
     ],

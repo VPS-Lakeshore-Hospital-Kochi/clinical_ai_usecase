@@ -53,9 +53,9 @@ async function readEvents(res) {
     .map((f) => JSON.parse(f.slice(6)));
 }
 
-test("lists all seventeen modules in journey order without leaking prompts", async () => {
+test("lists all nineteen modules in journey order without leaking prompts", async () => {
   const mods = await (await fetch(`${base}/api/modules`)).json();
-  assert.deepEqual(mods.map((m) => m.id), ["triage", "scribe", "diabetes", "ortho", "radiology", "oncology", "cardiology", "preauth", "preop", "discharge", "nephrology", "icu", "rehab", "monitoring", "journey", "transplant", "heartfailure"]);
+  assert.deepEqual(mods.map((m) => m.id), ["triage", "scribe", "diabetes", "ortho", "radiology", "oncology", "cardiology", "preauth", "preop", "nursing", "discharge", "nephrology", "icu", "medrec", "rehab", "monitoring", "journey", "transplant", "heartfailure"]);
   for (const m of mods) {
     assert.equal(m.system, undefined);
     assert.equal(m.demoOutput, undefined);

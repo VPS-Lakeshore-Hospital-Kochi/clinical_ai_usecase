@@ -613,6 +613,14 @@
       "detail": "R0 resection. Pathology pT3 pN1b (2/18 nodes) M0, stage IIIB."
     },
     {
+      "date": "2026-08-20",
+      "stage": "inpatient",
+      "specialty": "Nursing",
+      "module": "nursing",
+      "title": "Night shift: NEWS2 rising to 6 on post-op day 1",
+      "detail": "Observations drifted 0 → 1 → 4 → 6 with low urine output. Escalated before handover; fluids, analgesia and chest physiotherapy. Troponin 8 ng/L, no myocardial injury."
+    },
+    {
       "date": "2026-08-24",
       "stage": "discharge",
       "specialty": "Surgical Gastroenterology",
@@ -649,6 +657,14 @@
       "specialty": "Medical Oncology",
       "title": "DPYD result: heterozygous c.1905+1G>A (DPYD*2A)",
       "detail": "Intermediate metaboliser (activity score 1). CPIC: 50% fluoropyrimidine starting dose if rechallenged."
+    },
+    {
+      "date": "2026-09-22",
+      "stage": "inpatient",
+      "specialty": "Clinical Pharmacy",
+      "module": "medrec",
+      "title": "ICU-to-ward transfer: reconciliation and antibiotic review",
+      "detail": "Blocked restarts of empagliflozin, metformin and telmisartan; stopped domperidone (QTc 478) and pantoprazole; recommended stopping piperacillin-tazobactam at day 3. The antibiotic was continued to 24 Sep."
     },
     {
       "date": "2026-09-25",
