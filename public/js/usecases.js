@@ -8,7 +8,7 @@ export const STAGES = [
     items: [
       { title: "Symptom intake & triage", specialty: "Digital front door", text: "Emergency screen, urgency, routing and a patient reply from a WhatsApp message.", href: "module.html?id=triage" },
       { title: "Right specialist, right slot", specialty: "Contact centre", text: "Routes a morning queue against the live roster, escalates hidden emergencies, merges duplicates, drafts replies.", href: "module.html?id=routing" },
-      { title: "Referral & old-records digest", specialty: "All specialties", text: "Summarises GP letters and photographed prescriptions into a structured history before the visit." },
+      { title: "Referral & old-records digest", specialty: "All specialties", text: "Turns GP letters, photographed prescriptions and outside labs into one sourced history: unit conversions, conflicts, unclear handwriting, questions for the visit.", href: "module.html?id=referral" },
     ],
   },
   {

@@ -11,6 +11,7 @@ export const STROKE_PATIENT_ID = "syn-000527";
 // Order of the live prototypes along Thomas's journey (journey story lives on the dashboard).
 export const JOURNEY_STEPS = [
   { id: "triage", label: "Triage", href: "module.html?id=triage" },
+  { id: "referral", label: "Records digest", href: "module.html?id=referral" },
   { id: "scribe", label: "OPD visit", href: "module.html?id=scribe" },
   { id: "diabetes", label: "Diabetes", href: "module.html?id=diabetes" },
   { id: "ortho", label: "Ortho plan", href: "module.html?id=ortho" },

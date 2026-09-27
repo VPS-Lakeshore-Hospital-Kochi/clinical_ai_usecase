@@ -1,6 +1,7 @@
 import { DEFAULT_PATIENT_ID } from "../patient.js";
 import triage from "./triage.js";
 import routing from "./routing.js";
+import referral from "./referral.js";
 import stroke from "./stroke.js";
 import scribe from "./scribe.js";
 import diabetes from "./diabetes.js";
@@ -26,7 +27,7 @@ import antenatal from "./antenatal.js";
 import paeds from "./paeds.js";
 import journey from "./journey.js";
 
-export const modules = [routing, triage, scribe, diabetes, ortho, radiology, oncology, cardiology, preauth, preop, nursing, discharge, coding, labs, nephrology, icu, medrec, rehab, monitoring, journey, transplant, decision, heartfailure, antenatal, paeds, stroke].sort(
+export const modules = [routing, triage, referral, scribe, diabetes, ortho, radiology, oncology, cardiology, preauth, preop, nursing, discharge, coding, labs, nephrology, icu, medrec, rehab, monitoring, journey, transplant, decision, heartfailure, antenatal, paeds, stroke].sort(
   (a, b) => a.order - b.order,
 );
 

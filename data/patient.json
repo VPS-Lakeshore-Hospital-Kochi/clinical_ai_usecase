@@ -551,6 +551,14 @@
       "detail": "Returning patient messaged about high sugars, night sweats, knee pain and weight loss. Triaged to Endocrinology within 1 week; red flags passed to the clinician."
     },
     {
+      "date": "2026-07-04",
+      "stage": "before",
+      "specialty": "Medical Records",
+      "module": "referral",
+      "title": "Outside records digested before the OPD visit",
+      "detail": "GP letter, two photographed prescriptions, an outside lab report, a 2019 discharge summary and an eye report reconciled. Flagged haemoglobin falling from 13.4 to 11.1 g/dL with no cause sought, months of aceclofenac, a wrong 'no allergies' entry in the GP letter, and new diabetic retinopathy."
+    },
+    {
       "date": "2026-07-06",
       "stage": "consultation",
       "specialty": "Endocrinology",

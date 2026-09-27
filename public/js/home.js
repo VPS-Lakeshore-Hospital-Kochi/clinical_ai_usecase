@@ -7,7 +7,7 @@ const liveCount = STAGES.flatMap((s) => s.items).filter((i) => i.href).length;
 const total = STAGES.flatMap((s) => s.items).length;
 
 document.getElementById("stages").innerHTML =
-  `<p class="muted" style="margin:0 0 16px">${liveCount} live prototypes · ${total - liveCount} more on the roadmap</p>` +
+  `<p class="muted" style="margin:0 0 16px">${liveCount === total ? `All ${total} use cases are live prototypes` : `${liveCount} live prototypes · ${total - liveCount} more on the roadmap`}</p>` +
   STAGES.map(
     (stage, i) => `
     <section class="stage">
