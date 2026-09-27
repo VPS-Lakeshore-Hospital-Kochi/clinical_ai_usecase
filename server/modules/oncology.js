@@ -66,6 +66,7 @@ Question: Confirm stage and recommend a treatment sequence. Advise on timing of 
 ## Patient-specific considerations
 - **Oxaliplatin + existing diabetic neuropathy**: higher risk of disabling cumulative neuropathy. This favours **CAPOX 3 months if pT1–3 N1** (IDEA: less neuropathy, small DFS difference) and documenting baseline neuropathy scores. Consider early dose modification.
 - **Glycaemia during chemotherapy**: dexamethasone antiemetic premedication will cause hyperglycaemia, so plan a steroid-sparing antiemetic regimen or a correction insulin scale. Capecitabine diarrhoea and dehydration raise the **SGLT2 inhibitor DKA / AKI risk**: give sick-day rules and hold empagliflozin during significant GI toxicity.
+- **DPYD genotyping before the first fluoropyrimidine dose** (EMA/ESMO recommendation; CPIC dosing if a variant is found). It is a send-out test in most centres, so **the result must be back before cycle 1**.
 - **Renal**: eGFR 68 means no capecitabine dose reduction (adjust if CrCl <50). Monitor.
 - **Peri-operative**: hold empagliflozin ≥3 days pre-op, metformin on the day of surgery. Aim for glucose <180 mg/dL. ERAS pathway.
 - **Anaemia**: continue iron repletion; recheck Hb before surgery.
@@ -89,6 +90,7 @@ Question: Confirm stage and recommend a treatment sequence. Advise on timing of 
 - **Recommendation:** Laparoscopic anterior resection (ERAS) → adjuvant CAPOX, duration per final pathology: ___
 - **Supportive:** baseline neuropathy score; steroid-sparing antiemetics; diabetes plan by Endocrinology; continue iron.
 - **Knee:** Right TKA deferred until after adjuvant therapy; Ortho to re-review at: ___
+- **DPYD genotype:** sent ___ (result required before cycle 1)
 - **Genetics referral:** ___ | **Trial screening:** ___
 - **Board members present:** ___ | **Date:** 5 Aug 2026
 `,

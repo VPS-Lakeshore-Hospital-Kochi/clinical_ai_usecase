@@ -6,7 +6,7 @@ Working prototypes of Claude across the patient journey at VPS Lakeshore Hospita
 
 ## The journey
 
-**Thomas Varghese (synthetic), 58, Kakkanad.** He messages the hospital about diabetes and a painful knee. At each step an AI-assisted check surfaces something, and together these lead to an early colon cancer diagnosis. Along the way his staging CT report is corrected, he is cleared by Cardiology, gets cashless insurance approval, and has his kidneys checked before chemotherapy.
+**Thomas Varghese (synthetic), 58, Kakkanad.** He messages the hospital about diabetes and a painful knee. At each step an AI-assisted check surfaces something, and together these lead to an early colon cancer diagnosis. Along the way his staging CT report is corrected, he is cleared by Cardiology, gets cashless insurance approval, has his kidneys checked before chemotherapy, and is admitted to the ICU with chemotherapy toxicity.
 
 | # | Prototype | Specialty | What Claude does |
 |---|---|---|---|
@@ -20,9 +20,16 @@ Working prototypes of Claude across the patient journey at VPS Lakeshore Hospita
 | 8 | Pre-auth & TPA Packet Builder | Insurance desk | Checks policy clauses, calculates room-rent proportionate deductions, drafts the medical-necessity letter, document checklist and TPA query responses |
 | 9 | Intelligent Discharge | Surgical Gastroenterology | Medication reconciliation, clinician summary, cross-specialty follow-up, plain-English home instructions, medication calendar |
 | 10 | Kidney Co-pilot | Nephrology | eGFR trend and CKD staging, Cockcroft-Gault dosing check for CAPOX, sick-day rules, contrast guidance, albuminuria plan |
-| 11 | Patient Journey Story | Cross-specialty | One narrative across specialties: where AI changed the course, open loops, the next 90 days |
+| 11 | ICU Round Co-pilot | Critical Care | Euglycaemic DKA, neutropenic sepsis and AKI during chemotherapy: problem-based plan, bundle tracking, drug review, SBAR handover; links early toxicity to a missing DPYD result |
+| 12 | Patient Journey Story | Cross-specialty | One narrative across specialties: where AI changed the course, open loops, the next 90 days |
 
-The home page also maps all 25 use cases from the roadmap (heart failure, liver transplant, ICU, remote monitoring and more). The eleven above are live; the rest are marked "Roadmap".
+**Second journey: Anitha Joseph (synthetic), 49, Aluva.** Decompensated MASH cirrhosis with a small liver cancer; her son is the living-donor candidate.
+
+| # | Prototype | Specialty | What Claude does |
+|---|---|---|---|
+| 1 | Liver Transplant Work-up | Hepatology / Liver Transplant | MELD 3.0 and Child-Pugh with arithmetic, Milan criteria, recipient and donor readiness tracker, GRWR and remnant volume, THOTA legal steps, family explanation |
+
+The home page also maps all 26 use cases from the roadmap (heart failure, pre-op readiness, nursing handover, remote monitoring and more). The thirteen above are live; the rest are marked "Roadmap".
 
 On each module page the clinician can edit the input, run Claude, then **Approve & file** the draft. Filed outputs appear on the patient timeline (stored in the browser only) and feed into the journey story.
 
@@ -56,8 +63,9 @@ server/
   patient.js        Loads the synthetic record, renders the prompt context
   modules/*.js      One file per prototype: system prompt, sample input,
                     prompt builder, sample output
-data/patient.json   Synthetic patient (FHIR-shaped): problems, meds, labs,
-                    CGM profile, reports, timeline
+data/patient.json   Main synthetic patient (FHIR-shaped): problems, meds,
+                    labs, CGM profile, reports, timeline
+data/patient-transplant.json  Second synthetic patient (liver transplant)
 public/             Vanilla HTML/CSS/JS front end (VPS Lakeshore brand)
 test/               node:test suite, including a mock Claude API
 ```

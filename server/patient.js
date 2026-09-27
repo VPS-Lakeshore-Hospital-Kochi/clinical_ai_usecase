@@ -3,27 +3,45 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
-const PATIENT_FILE = path.join(here, "..", "data", "patient.json");
+const DATA_DIR = path.join(here, "..", "data");
 
-export const patient = JSON.parse(readFileSync(PATIENT_FILE, "utf8"));
+function load(file) {
+  return JSON.parse(readFileSync(path.join(DATA_DIR, file), "utf8"));
+}
+
+// Thomas Varghese: the main journey. Kept as a named export for the modules
+// that read his CGM trace and reports directly.
+export const patient = load("patient.json");
+export const transplantPatient = load("patient-transplant.json");
+
+export const DEFAULT_PATIENT_ID = patient.patient.id;
+
+const patients = new Map([patient, transplantPatient].map((p) => [p.patient.id, p]));
+
+export function getPatient(id = DEFAULT_PATIENT_ID) {
+  return patients.get(id);
+}
 
 // Plain-text chart summary used as stable context in every prompt. It is built
 // once at startup so the prompt prefix stays byte-identical and cacheable.
 function renderSummary(p) {
   const pt = p.patient;
+  const allergies = pt.allergies.length
+    ? pt.allergies.map((a) => `${a.substance} (${a.reaction})`).join("; ")
+    : "No known drug allergies";
   const lines = [
     "SYNTHETIC PATIENT RECORD (demo data, not a real person)",
-    `Name: ${pt.name} | MRN: ${pt.mrn} | ${pt.age}-year-old ${pt.gender} | DOB ${pt.birthDate}`,
+    `Name: ${pt.name} | MRN: ${pt.mrn} | ${pt.age}-year-old ${pt.gender} | DOB ${pt.birthDate}${pt.bloodGroup ? ` | Blood group ${pt.bloodGroup}` : ""}`,
     `Address: ${pt.address} | Languages: ${pt.languages.join(", ")} | Occupation: ${pt.occupation}`,
     `Payer: ${pt.payer}`,
     `Lifestyle: ${pt.lifestyle}`,
     `Family history: ${pt.familyHistory}`,
-    `Allergies: ${pt.allergies.map((a) => `${a.substance} (${a.reaction})`).join("; ")}`,
+    `Allergies: ${allergies}`,
     "",
     "Problem list:",
     ...p.conditions.map((c) => `- ${c.display} [${c.code}]${c.onset ? `, since ${c.onset}` : ""}`),
     "",
-    "Current medications (before July 2026 changes):",
+    `Medications (${p.medicationsNote || "current"}):`,
     ...p.medications.map((m) => `- ${m.name} ${m.dose} ${m.frequency}`),
     "",
     "Vitals:",
@@ -35,4 +53,8 @@ function renderSummary(p) {
   return lines.join("\n");
 }
 
-export const patientSummary = renderSummary(patient);
+const summaries = new Map([...patients].map(([id, p]) => [id, renderSummary(p)]));
+
+export function patientSummaryFor(id = DEFAULT_PATIENT_ID) {
+  return summaries.get(id);
+}

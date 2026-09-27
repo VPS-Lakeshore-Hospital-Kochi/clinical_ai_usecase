@@ -1,6 +1,6 @@
 import {
   renderHeader, renderPatientStrip, renderStepper, getJSON, esc, formatDate,
-  JOURNEY_STEPS, getFiled, fileOutput,
+  stepsFor, getFiled, fileOutput,
 } from "./common.js";
 import { attachRunner } from "./runner.js";
 import { renderCgmWidget } from "./charts.js";
@@ -9,11 +9,13 @@ const id = new URLSearchParams(location.search).get("id") || "scribe";
 if (id === "journey") location.replace("dashboard.html");
 
 renderHeader("home");
-renderStepper(document.getElementById("stepper"), id);
 
 const $ = (sel) => document.getElementById(sel);
 
-const [mod, patient] = await Promise.all([getJSON(`/api/modules/${encodeURIComponent(id)}`), getJSON("/api/patient")]);
+const mod = await getJSON(`/api/modules/${encodeURIComponent(id)}`);
+const patient = await getJSON(`/api/patient?id=${encodeURIComponent(mod.patientId)}`);
+const steps = stepsFor(mod.patientId);
+renderStepper($("stepper"), id, mod.patientId);
 
 document.title = `${mod.title} · VPS Lakeshore Clinical AI`;
 renderPatientStrip($("patient"), patient);
@@ -63,7 +65,7 @@ approve.addEventListener("click", () => {
   fileOutput(id, { title: mod.title, specialty: mod.specialty, date: mod.date, text: latest });
   approve.disabled = true;
   filedNote.textContent = "✓ Approved and filed to the patient timeline";
-  renderStepper($("stepper"), id);
+  renderStepper($("stepper"), id, mod.patientId);
 });
 
 copy.addEventListener("click", async () => {
@@ -84,9 +86,9 @@ if (filed) {
   filedNote.textContent = "✓ Filed to the patient timeline";
 }
 
-const idx = JOURNEY_STEPS.findIndex((s) => s.id === id);
-const prev = JOURNEY_STEPS[idx - 1];
-const next = JOURNEY_STEPS[idx + 1];
+const idx = steps.findIndex((s) => s.id === id);
+const prev = steps[idx - 1];
+const next = steps[idx + 1];
 $("module-nav").innerHTML = `
   <span>${prev ? `<a class="btn btn--ghost" href="${prev.href}">← ${esc(prev.label)}</a>` : ""}</span>
   <span>${next ? `<a class="btn btn--secondary" href="${next.href}">Next: ${esc(next.label)} →</a>` : ""}</span>`;

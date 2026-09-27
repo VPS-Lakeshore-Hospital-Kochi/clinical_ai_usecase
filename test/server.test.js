@@ -53,9 +53,9 @@ async function readEvents(res) {
     .map((f) => JSON.parse(f.slice(6)));
 }
 
-test("lists the eleven journey modules without leaking prompts", async () => {
+test("lists all thirteen modules in journey order without leaking prompts", async () => {
   const mods = await (await fetch(`${base}/api/modules`)).json();
-  assert.deepEqual(mods.map((m) => m.id), ["triage", "scribe", "diabetes", "ortho", "radiology", "oncology", "cardiology", "preauth", "discharge", "nephrology", "journey"]);
+  assert.deepEqual(mods.map((m) => m.id), ["triage", "scribe", "diabetes", "ortho", "radiology", "oncology", "cardiology", "preauth", "discharge", "nephrology", "icu", "journey", "transplant"]);
   for (const m of mods) {
     assert.equal(m.system, undefined);
     assert.equal(m.demoOutput, undefined);
@@ -77,6 +77,25 @@ test("serves the synthetic patient", async () => {
   assert.equal(p.patient.mrn, "LH-SYN-000158");
   const r = p.cgm.ranges;
   assert.equal(r.veryLow + r.low + r.inRange + r.high + r.veryHigh, 100);
+});
+
+test("serves the second patient and rejects unknown ids", async () => {
+  const p = await (await fetch(`${base}/api/patient?id=syn-000271`)).json();
+  assert.equal(p.patient.mrn, "LH-SYN-000271");
+  const missing = await fetch(`${base}/api/patient?id=nobody`);
+  assert.equal(missing.status, 404);
+  const mods = await (await fetch(`${base}/api/modules`)).json();
+  assert.equal(mods.find((m) => m.id === "transplant").patientId, "syn-000271");
+  assert.equal(mods.find((m) => m.id === "icu").patientId, "syn-000158");
+});
+
+test("transplant prompt carries the transplant patient's record", async () => {
+  const { buildRequest } = await import("../server/claude.js");
+  const { getModule } = await import("../server/modules/index.js");
+  const req = buildRequest(getModule("transplant"), "x");
+  assert.match(req.system[0].text, /LH-SYN-000271/);
+  assert.doesNotMatch(req.system[0].text, /LH-SYN-000158/);
+  assert.match(req.messages[0].content, /^Today is 2026-09-22\./);
 });
 
 test("reports live mode when a credential is set", async () => {

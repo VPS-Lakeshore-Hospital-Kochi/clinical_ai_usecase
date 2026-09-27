@@ -1,6 +1,6 @@
 import Anthropic from "@anthropic-ai/sdk";
 import { composeSystem } from "./modules/common.js";
-import { patientSummary } from "./patient.js";
+import { patientSummaryFor } from "./patient.js";
 
 export const MODEL = process.env.CLAUDE_MODEL || "claude-opus-5";
 const EFFORT = process.env.CLAUDE_EFFORT || "high";
@@ -39,7 +39,7 @@ export function buildRequest(mod, input) {
     system: [
       {
         type: "text",
-        text: `${composeSystem(mod.system)}\n\n<patient_record>\n${patientSummary}\n</patient_record>`,
+        text: `${composeSystem(mod.system)}\n\n<patient_record>\n${patientSummaryFor(mod.patientId)}\n</patient_record>`,
         cache_control: { type: "ephemeral" },
       },
     ],

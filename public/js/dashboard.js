@@ -1,16 +1,24 @@
 import {
   renderHeader, renderPatientStrip, renderStepper, getJSON, esc, formatDate,
-  getFiled, clearFiled, renderMarkdown,
+  getFiled, clearFiled, renderMarkdown, MAIN_PATIENT_ID,
 } from "./common.js";
 import { attachRunner } from "./runner.js";
 
 renderHeader("dashboard");
 const $ = (sel) => document.getElementById(sel);
 const stepper = $("stepper");
-renderStepper(stepper, "journey");
+const patientId = new URLSearchParams(location.search).get("patient") || MAIN_PATIENT_ID;
+// The cross-specialty journey story is built for Thomas's journey only.
+const hasStory = patientId === MAIN_PATIENT_ID;
+const activeStep = hasStory ? "journey" : "timeline";
+renderStepper(stepper, activeStep, patientId);
 
-const patient = await getJSON("/api/patient");
+const patient = await getJSON(`/api/patient?id=${encodeURIComponent(patientId)}`);
 renderPatientStrip($("patient"), patient);
+if (!hasStory) {
+  $("story-panel").hidden = true;
+  $("dash").classList.add("dash--single");
+}
 
 const MAX_FILED_CHARS = 4000;
 
@@ -61,7 +69,7 @@ renderTimeline();
 $("clear").addEventListener("click", () => {
   clearFiled();
   renderTimeline();
-  renderStepper(stepper, "journey");
+  renderStepper(stepper, activeStep, patientId);
 });
 
 attachRunner({

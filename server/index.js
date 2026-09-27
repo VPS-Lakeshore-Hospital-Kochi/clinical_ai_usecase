@@ -3,7 +3,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 import Anthropic from "@anthropic-ai/sdk";
 import { modules, getModule, publicModule } from "./modules/index.js";
-import { patient } from "./patient.js";
+import { getPatient } from "./patient.js";
 import { streamModule, liveMode, MODEL, RefusalError } from "./claude.js";
 import { streamDemo } from "./demo.js";
 
@@ -33,8 +33,10 @@ export function createApp({ demoChunkDelayMs } = {}) {
     res.json(publicModule(mod));
   });
 
-  app.get("/api/patient", (_req, res) => {
-    res.json(patient);
+  app.get("/api/patient", (req, res) => {
+    const p = getPatient(req.query.id || undefined);
+    if (!p) return res.status(404).json({ error: "Unknown patient" });
+    res.json(p);
   });
 
   // Runs a module and streams the result as server-sent events:

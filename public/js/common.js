@@ -1,20 +1,34 @@
 import { marked } from "/vendor/marked/marked.esm.js";
 import DOMPurify from "/vendor/dompurify/purify.es.mjs";
 
-// Order of the live prototypes along the journey (journey story lives on the dashboard).
+export const MAIN_PATIENT_ID = "syn-000158";
+export const TRANSPLANT_PATIENT_ID = "syn-000271";
+
+// Order of the live prototypes along Thomas's journey (journey story lives on the dashboard).
 export const JOURNEY_STEPS = [
   { id: "triage", label: "Triage", href: "module.html?id=triage" },
-  { id: "scribe", label: "Consultation", href: "module.html?id=scribe" },
+  { id: "scribe", label: "OPD visit", href: "module.html?id=scribe" },
   { id: "diabetes", label: "Diabetes", href: "module.html?id=diabetes" },
-  { id: "ortho", label: "Ortho planning", href: "module.html?id=ortho" },
+  { id: "ortho", label: "Ortho plan", href: "module.html?id=ortho" },
   { id: "radiology", label: "CT report", href: "module.html?id=radiology" },
   { id: "oncology", label: "Tumour board", href: "module.html?id=oncology" },
-  { id: "cardiology", label: "Cardiac pre-op", href: "module.html?id=cardiology" },
+  { id: "cardiology", label: "Cardiac", href: "module.html?id=cardiology" },
   { id: "preauth", label: "Pre-auth", href: "module.html?id=preauth" },
   { id: "discharge", label: "Discharge", href: "module.html?id=discharge" },
-  { id: "nephrology", label: "Kidney review", href: "module.html?id=nephrology" },
+  { id: "nephrology", label: "Kidney", href: "module.html?id=nephrology" },
+  { id: "icu", label: "ICU", href: "module.html?id=icu" },
   { id: "journey", label: "Journey story", href: "dashboard.html" },
 ];
+
+// Anitha Joseph's liver transplant journey.
+const TRANSPLANT_STEPS = [
+  { id: "transplant", label: "Transplant work-up", href: "module.html?id=transplant" },
+  { id: "timeline", label: "Patient timeline", href: `dashboard.html?patient=${TRANSPLANT_PATIENT_ID}` },
+];
+
+export function stepsFor(patientId) {
+  return patientId === TRANSPLANT_PATIENT_ID ? TRANSPLANT_STEPS : JOURNEY_STEPS;
+}
 
 export function esc(s) {
   return String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -67,7 +81,9 @@ export function renderPatientStrip(el, data) {
   const p = data.patient;
   const initials = p.name.split(" ").map((w) => w[0]).join("");
   const problems = data.conditions.map((c) => `<span class="chip chip--muted">${esc(c.display)}</span>`).join("");
-  const allergies = p.allergies.map((a) => esc(a.substance)).join(", ");
+  const allergy = p.allergies.length
+    ? `<span class="chip chip--maroon">⚠ Allergy: ${p.allergies.map((a) => esc(a.substance)).join(", ")}</span>`
+    : '<span class="chip chip--muted">No known drug allergies</span>';
   el.classList.add("card", "patient-strip");
   el.innerHTML = `
     <div class="patient-strip__avatar" aria-hidden="true">${esc(initials)}</div>
@@ -76,14 +92,14 @@ export function renderPatientStrip(el, data) {
       <div class="patient-strip__meta">${p.age} y · ${esc(p.gender)} · MRN ${esc(p.mrn)} · ${esc(p.address)}</div>
     </div>
     <div class="patient-strip__problems">${problems}</div>
-    <div class="patient-strip__allergy"><span class="chip chip--maroon">⚠ Allergy: ${allergies}</span></div>`;
+    <div class="patient-strip__allergy">${allergy}</div>`;
 }
 
-export function renderStepper(el, activeId) {
+export function renderStepper(el, activeId, patientId = MAIN_PATIENT_ID) {
   const filed = getFiled();
   el.className = "stepper";
   el.setAttribute("aria-label", "Patient journey steps");
-  el.innerHTML = JOURNEY_STEPS.map(
+  el.innerHTML = stepsFor(patientId).map(
     (s, i) => `<a href="${s.href}" class="${filed[s.id] ? "is-filed" : ""}"${s.id === activeId ? ' aria-current="step"' : ""}>
       <span class="stepper__n">${i + 1}</span>${esc(s.label)}</a>`,
   ).join("");
