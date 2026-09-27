@@ -4,6 +4,8 @@ import DOMPurify from "/vendor/dompurify/purify.es.mjs";
 export const MAIN_PATIENT_ID = "syn-000158";
 export const TRANSPLANT_PATIENT_ID = "syn-000271";
 export const HF_PATIENT_ID = "syn-000342";
+export const MOTHER_PATIENT_ID = "syn-000415";
+export const CHILD_PATIENT_ID = "syn-000416";
 
 // Order of the live prototypes along Thomas's journey (journey story lives on the dashboard).
 export const JOURNEY_STEPS = [
@@ -36,11 +38,25 @@ const TRANSPLANT_STEPS = [
 
 // Rajan Pillai's heart-failure journey.
 const HF_STEPS = [
+  { id: "decision", label: "ED decision support", href: "module.html?id=decision" },
   { id: "heartfailure", label: "Heart-failure clinic", href: "module.html?id=heartfailure" },
   { id: "timeline", label: "Patient timeline", href: `dashboard.html?patient=${HF_PATIENT_ID}` },
 ];
 
-const STEPS_BY_PATIENT = { [TRANSPLANT_PATIENT_ID]: TRANSPLANT_STEPS, [HF_PATIENT_ID]: HF_STEPS };
+// Fathima and Ayaan Rasheed: mother-and-child journey shared by both records.
+const FAMILY_STEPS = [
+  { id: "antenatal", label: "Antenatal review", href: "module.html?id=antenatal" },
+  { id: "paeds", label: "Ayaan: ED prescription", href: "module.html?id=paeds" },
+  { id: "timeline", label: "Fathima's timeline", href: `dashboard.html?patient=${MOTHER_PATIENT_ID}` },
+  { id: "timeline-child", label: "Ayaan's timeline", href: `dashboard.html?patient=${CHILD_PATIENT_ID}` },
+];
+
+const STEPS_BY_PATIENT = {
+  [TRANSPLANT_PATIENT_ID]: TRANSPLANT_STEPS,
+  [HF_PATIENT_ID]: HF_STEPS,
+  [MOTHER_PATIENT_ID]: FAMILY_STEPS,
+  [CHILD_PATIENT_ID]: FAMILY_STEPS,
+};
 
 export function stepsFor(patientId) {
   return STEPS_BY_PATIENT[patientId] ?? JOURNEY_STEPS;

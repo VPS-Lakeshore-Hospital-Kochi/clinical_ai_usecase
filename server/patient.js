@@ -14,10 +14,12 @@ function load(file) {
 export const patient = load("patient.json");
 export const transplantPatient = load("patient-transplant.json");
 export const heartFailurePatient = load("patient-hf.json");
+export const motherPatient = load("patient-mother.json");
+export const childPatient = load("patient-child.json");
 
 export const DEFAULT_PATIENT_ID = patient.patient.id;
 
-const patients = new Map([patient, transplantPatient, heartFailurePatient].map((p) => [p.patient.id, p]));
+const patients = new Map([patient, transplantPatient, heartFailurePatient, motherPatient, childPatient].map((p) => [p.patient.id, p]));
 
 export function getPatient(id = DEFAULT_PATIENT_ID) {
   return patients.get(id);

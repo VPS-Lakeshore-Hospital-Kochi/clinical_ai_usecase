@@ -19,9 +19,12 @@ import rehab from "./rehab.js";
 import monitoring from "./monitoring.js";
 import transplant from "./transplant.js";
 import heartfailure from "./heartfailure.js";
+import decision from "./decision.js";
+import antenatal from "./antenatal.js";
+import paeds from "./paeds.js";
 import journey from "./journey.js";
 
-export const modules = [triage, scribe, diabetes, ortho, radiology, oncology, cardiology, preauth, preop, nursing, discharge, coding, labs, nephrology, icu, medrec, rehab, monitoring, journey, transplant, heartfailure].sort(
+export const modules = [triage, scribe, diabetes, ortho, radiology, oncology, cardiology, preauth, preop, nursing, discharge, coding, labs, nephrology, icu, medrec, rehab, monitoring, journey, transplant, decision, heartfailure, antenatal, paeds].sort(
   (a, b) => a.order - b.order,
 );
 

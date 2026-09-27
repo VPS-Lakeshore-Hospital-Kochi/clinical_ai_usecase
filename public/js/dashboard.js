@@ -10,7 +10,7 @@ const stepper = $("stepper");
 const patientId = new URLSearchParams(location.search).get("patient") || MAIN_PATIENT_ID;
 // The cross-specialty journey story is built for Thomas's journey only.
 const hasStory = patientId === MAIN_PATIENT_ID;
-const activeStep = hasStory ? "journey" : "timeline";
+const activeStep = hasStory ? "journey" : patientId === "syn-000416" ? "timeline-child" : "timeline";
 renderStepper(stepper, activeStep, patientId);
 
 const patient = await getJSON(`/api/patient?id=${encodeURIComponent(patientId)}`);

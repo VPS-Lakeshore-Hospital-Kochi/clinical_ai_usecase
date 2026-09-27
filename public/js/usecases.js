@@ -17,7 +17,7 @@ export const STAGES = [
     blurb: "The AI-augmented clinician in the OPD.",
     items: [
       { title: "Ambient clinical scribe", specialty: "Endocrinology OPD", text: "Conversation to SOAP note, ICD-10 codes, orders and a patient summary.", href: "module.html?id=scribe" },
-      { title: "Decision-support sidebar", specialty: "Internal Medicine", text: "Differential diagnosis, guideline-cited next steps and drug-interaction checks." },
+      { title: "Decision-support sidebar", specialty: "Emergency / Internal Medicine", text: "Ranked differential, can't-miss checks, guideline-cited first 6 hours and a drug-interaction check that finds the trigger.", href: "module.html?id=decision" },
       { title: "Lab & report explainer", specialty: "Laboratory / OPD", text: "Trend-aware clinician summary and a plain-language take-home explanation of pathology and labs.", href: "module.html?id=labs" },
     ],
   },
@@ -35,7 +35,8 @@ export const STAGES = [
       { title: "Kidney co-pilot", specialty: "Nephrology", text: "eGFR trend, CKD staging, chemo dosing, sick-day rules and a kidney-protection plan.", href: "module.html?id=nephrology" },
       { title: "Stroke & neuro-surgical planning", specialty: "Neurology / Neurosurgery", text: "Thrombolysis eligibility and pre-operative planning summaries." },
       { title: "ICU round co-pilot", specialty: "Critical Care", text: "Problem-based plan, sepsis and DKA bundle tracking, drug safety review, SBAR handover, family update.", href: "module.html?id=icu" },
-      { title: "Antenatal & paediatric safety", specialty: "Obstetrics / Paediatrics", text: "Antenatal risk flags and weight-based paediatric dosing checks." },
+      { title: "Antenatal risk review", specialty: "Obstetrics", text: "New hypertension and pre-eclampsia work-up, GDM titration, anaemia, missed anti-D, delivery planning.", href: "module.html?id=antenatal" },
+      { title: "Paediatric prescription safety", specialty: "Paediatrics / Pharmacy", text: "Weight-based dose recalculation, mL-vs-mg errors, age restrictions, corrected orders and a parent dosing card.", href: "module.html?id=paeds" },
       { title: "Structured radiology reporting", specialty: "Radiology", text: "Dictation to structured staging report, contradiction check, incidental-finding follow-up, patient version.", href: "module.html?id=radiology" },
     ],
   },

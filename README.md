@@ -36,13 +36,21 @@ Working prototypes of Claude across the patient journey at VPS Lakeshore Hospita
 |---|---|---|---|
 | 1 | Liver Transplant Work-up | Hepatology / Liver Transplant | MELD 3.0 and Child-Pugh with arithmetic, Milan criteria, recipient and donor readiness tracker, GRWR and remnant volume, THOTA legal steps, family explanation |
 
-**Third journey: Rajan Pillai (synthetic), 67, Tripunithura.** Heart failure with reduced ejection fraction, seen in clinic a week after an admission.
+**Third journey: Rajan Pillai (synthetic), 67, Tripunithura.** Heart failure with reduced ejection fraction, from the emergency department to clinic a week after discharge.
 
 | # | Prototype | Specialty | What Claude does |
 |---|---|---|---|
-| 1 | Heart Failure Co-pilot | Cardiology / HF clinic | Congestion status, four-pillar medicine gaps, dated titration plan with BP/K/creatinine checks, ARNI washout, iron, CRT-D eligibility, Kerala-diet salt and fluid advice |
+| 1 | Decision-Support Sidebar | Emergency / Internal Medicine | ED admission: ranked differential, can't-miss checks (ACS with LBBB, shock), guideline-cited first 6 hours; interaction check finds the diclofenac + ACE inhibitor + diuretic trigger |
+| 2 | Heart Failure Co-pilot | Cardiology / HF clinic | Congestion status, four-pillar medicine gaps, dated titration plan with BP/K/creatinine checks, ARNI washout, iron, CRT-D eligibility, Kerala-diet salt and fluid advice |
 
-The home page also maps all 26 use cases from the roadmap (antenatal and paediatric safety, decision-support sidebar, specialist routing, referral digest and more). The twenty-one above are live; the rest are marked "Roadmap".
+**Fourth journey: Fathima Rasheed (synthetic), 29, and her son Ayaan, 4, Mattancherry.**
+
+| # | Prototype | Specialty | What Claude does |
+|---|---|---|---|
+| 1 | Antenatal Risk Review | Obstetrics | 30-week visit: new hypertension and pre-eclampsia work-up, GDM insulin titration, IV iron, missed 28-week anti-D, delivery planning, warning signs |
+| 2 | Paediatric Prescription Safety | Paediatric ED / Pharmacy | Recalculates every dose per kg: catches a 3× paracetamol volume error, double-dose ondansetron, codeine under 12, ibuprofen while dehydrated; corrected orders and a parent dosing card |
+
+The home page also maps all 27 use cases from the roadmap (specialist routing and the referral digest are the remaining ones). The twenty-four above are live; the rest are marked "Roadmap".
 
 On each module page the clinician can edit the input, run Claude, then **Approve & file** the draft. Filed outputs appear on the patient timeline (stored in the browser only) and feed into the journey story.
 
@@ -80,6 +88,8 @@ data/patient.json   Main synthetic patient (FHIR-shaped): problems, meds,
                     labs, CGM profile, reports, timeline
 data/patient-transplant.json  Second synthetic patient (liver transplant)
 data/patient-hf.json          Third synthetic patient (heart failure)
+data/patient-mother.json      Fourth journey: mother (antenatal)
+data/patient-child.json       Fourth journey: child (paediatric ED)
 public/             Vanilla HTML/CSS/JS front end (VPS Lakeshore brand)
 test/               node:test suite, including a mock Claude API
 ```
