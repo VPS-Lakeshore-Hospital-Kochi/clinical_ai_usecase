@@ -7,7 +7,7 @@ export const STAGES = [
     blurb: "First point of contact, before the patient meets a doctor.",
     items: [
       { title: "Symptom intake & triage", specialty: "Digital front door", text: "Emergency screen, urgency, routing and a patient reply from a WhatsApp message.", href: "module.html?id=triage" },
-      { title: "Right specialist, right slot", specialty: "Front office", text: "Maps a free-text complaint to the right department and doctor and sends a pre-visit questionnaire." },
+      { title: "Right specialist, right slot", specialty: "Contact centre", text: "Routes a morning queue against the live roster, escalates hidden emergencies, merges duplicates, drafts replies.", href: "module.html?id=routing" },
       { title: "Referral & old-records digest", specialty: "All specialties", text: "Summarises GP letters and photographed prescriptions into a structured history before the visit." },
     ],
   },
@@ -33,7 +33,7 @@ export const STAGES = [
       { title: "Heart failure co-pilot", specialty: "Cardiology / HF clinic", text: "Four-pillar medicine gaps, dated titration plan with safety checks, iron, CRT-D eligibility, Kerala-diet advice. Third synthetic patient.", href: "module.html?id=heartfailure" },
       { title: "Liver transplant work-up", specialty: "Hepatology / Transplant", text: "MELD 3.0 and Milan criteria, recipient and living-donor readiness tracker, GRWR, THOTA steps. Second synthetic patient.", href: "module.html?id=transplant" },
       { title: "Kidney co-pilot", specialty: "Nephrology", text: "eGFR trend, CKD staging, chemo dosing, sick-day rules and a kidney-protection plan.", href: "module.html?id=nephrology" },
-      { title: "Stroke & neuro-surgical planning", specialty: "Neurology / Neurosurgery", text: "Thrombolysis eligibility and pre-operative planning summaries." },
+      { title: "Stroke code & neuro planning", specialty: "Neurology / Neurosurgery", text: "Thrombolysis and thrombectomy eligibility against the clock, BP targets, hemicraniectomy contingency, anticoagulant dose check. Fifth synthetic patient.", href: "module.html?id=stroke" },
       { title: "ICU round co-pilot", specialty: "Critical Care", text: "Problem-based plan, sepsis and DKA bundle tracking, drug safety review, SBAR handover, family update.", href: "module.html?id=icu" },
       { title: "Antenatal risk review", specialty: "Obstetrics", text: "New hypertension and pre-eclampsia work-up, GDM titration, anaemia, missed anti-D, delivery planning.", href: "module.html?id=antenatal" },
       { title: "Paediatric prescription safety", specialty: "Paediatrics / Pharmacy", text: "Weight-based dose recalculation, mL-vs-mg errors, age restrictions, corrected orders and a parent dosing card.", href: "module.html?id=paeds" },

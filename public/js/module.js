@@ -13,12 +13,15 @@ renderHeader("home");
 const $ = (sel) => document.getElementById(sel);
 
 const mod = await getJSON(`/api/modules/${encodeURIComponent(id)}`);
-const patient = await getJSON(`/api/patient?id=${encodeURIComponent(mod.patientId)}`);
-const steps = stepsFor(mod.patientId);
-renderStepper($("stepper"), id, mod.patientId);
+// Operational modules (for example a routing queue) have no single patient.
+const patient = mod.patientId ? await getJSON(`/api/patient?id=${encodeURIComponent(mod.patientId)}`) : null;
+const steps = mod.patientId ? stepsFor(mod.patientId) : [];
+if (patient) renderStepper($("stepper"), id, mod.patientId);
+else $("stepper").hidden = true;
 
 document.title = `${mod.title} · VPS Lakeshore Clinical AI`;
-renderPatientStrip($("patient"), patient);
+if (patient) renderPatientStrip($("patient"), patient);
+else $("patient").hidden = true;
 $("module-chips").innerHTML = `
   <span class="chip">${esc(mod.specialty)}</span>
   <span class="chip chip--muted">${formatDate(mod.date)}</span>`;
@@ -65,8 +68,8 @@ const runner = attachRunner({
 approve.addEventListener("click", () => {
   fileOutput(id, { title: mod.title, specialty: mod.specialty, date: mod.date, text: latest });
   approve.disabled = true;
-  filedNote.textContent = "✓ Approved and filed to the patient timeline";
-  renderStepper($("stepper"), id, mod.patientId);
+  filedNote.textContent = patient ? "✓ Approved and filed to the patient timeline" : "✓ Approved";
+  if (patient) renderStepper($("stepper"), id, mod.patientId);
 });
 
 copy.addEventListener("click", async () => {
@@ -84,7 +87,7 @@ if (filed) {
   latest = filed.text;
   runner.show(filed.text, `Filed ${new Date(filed.filedAt).toLocaleString("en-IN")}`);
   copy.disabled = false;
-  filedNote.textContent = "✓ Filed to the patient timeline";
+  filedNote.textContent = patient ? "✓ Filed to the patient timeline" : "✓ Approved";
 }
 
 const idx = steps.findIndex((s) => s.id === id);

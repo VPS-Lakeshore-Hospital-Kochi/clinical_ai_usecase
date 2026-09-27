@@ -50,7 +50,19 @@ Working prototypes of Claude across the patient journey at VPS Lakeshore Hospita
 | 1 | Antenatal Risk Review | Obstetrics | 30-week visit: new hypertension and pre-eclampsia work-up, GDM insulin titration, IV iron, missed 28-week anti-D, delivery planning, warning signs |
 | 2 | Paediatric Prescription Safety | Paediatric ED / Pharmacy | Recalculates every dose per kg: catches a 3× paracetamol volume error, double-dose ondansetron, codeine under 12, ibuprofen while dehydrated; corrected orders and a parent dosing card |
 
-The home page also maps all 27 use cases from the roadmap (specialist routing and the referral digest are the remaining ones). The twenty-four above are live; the rest are marked "Roadmap".
+**Fifth journey: Leela Menon (synthetic), 71, Kalamassery.** Acute stroke on apixaban.
+
+| # | Prototype | Specialty | What Claude does |
+|---|---|---|---|
+| 1 | Stroke Code & Neuro Planning | Neurology / Neurointervention / Neurosurgery | No thrombolysis (apixaban today), straight to thrombectomy; door-to-groin clock, eligibility tables, post-reperfusion BP targets, hemicraniectomy discussion at 71, apixaban under-dosing caught, ELAN restart timing |
+
+**Operations (no single patient)**
+
+| # | Prototype | Specialty | What Claude does |
+|---|---|---|---|
+| 1 | Right Specialist, Right Slot | Contact centre | Routes a morning request queue against the roster (with leave); escalates a thunderclap headache, possible pre-eclampsia and possible new type 1 diabetes; merges duplicates; drafts replies |
+
+The home page also maps all 27 use cases from the roadmap (the referral and old-records digest is the one remaining). The twenty-six above are live; the rest are marked "Roadmap".
 
 On each module page the clinician can edit the input, run Claude, then **Approve & file** the draft. Filed outputs appear on the patient timeline (stored in the browser only) and feed into the journey story.
 
@@ -90,6 +102,7 @@ data/patient-transplant.json  Second synthetic patient (liver transplant)
 data/patient-hf.json          Third synthetic patient (heart failure)
 data/patient-mother.json      Fourth journey: mother (antenatal)
 data/patient-child.json       Fourth journey: child (paediatric ED)
+data/patient-stroke.json      Fifth journey: acute stroke
 public/             Vanilla HTML/CSS/JS front end (VPS Lakeshore brand)
 test/               node:test suite, including a mock Claude API
 ```

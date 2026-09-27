@@ -1,0 +1,119 @@
+{
+  "_note": "SYNTHETIC PATIENT. Fictional person created for demonstration. Any resemblance to a real person is coincidental. Loosely FHIR R4-shaped for readability; not a validated FHIR bundle.",
+  "patient": {
+    "resourceType": "Patient",
+    "id": "syn-000527",
+    "mrn": "LH-SYN-000527",
+    "name": "Leela Menon",
+    "gender": "female",
+    "birthDate": "1955-03-08",
+    "age": 71,
+    "address": "Kalamassery, Ernakulam, Kerala",
+    "languages": [
+      "Malayalam",
+      "English"
+    ],
+    "occupation": "Retired school headmistress",
+    "payer": "Senior citizen health policy (synthetic)",
+    "lifestyle": "Independent before today (modified Rankin 0): lives with her daughter, walks daily, manages her own finances. Never smoker.",
+    "familyHistory": "Mother: stroke at 78.",
+    "allergies": []
+  },
+  "conditions": [
+    {
+      "code": "I48.9",
+      "display": "Atrial fibrillation (CHA2DS2-VASc 4)",
+      "onset": "2023"
+    },
+    {
+      "code": "I10",
+      "display": "Essential hypertension",
+      "onset": "2012"
+    },
+    {
+      "code": "E78.5",
+      "display": "Dyslipidaemia",
+      "onset": "2015"
+    }
+  ],
+  "medicationsNote": "before admission",
+  "medications": [
+    {
+      "name": "Apixaban",
+      "dose": "2.5 mg",
+      "frequency": "twice daily (last dose 08:00 on 21 Sep)"
+    },
+    {
+      "name": "Amlodipine",
+      "dose": "5 mg",
+      "frequency": "once daily"
+    },
+    {
+      "name": "Metoprolol succinate",
+      "dose": "25 mg",
+      "frequency": "once daily"
+    },
+    {
+      "name": "Rosuvastatin",
+      "dose": "10 mg",
+      "frequency": "once daily"
+    }
+  ],
+  "vitals": [
+    {
+      "date": "2026-09-21",
+      "bp": "186/104 mmHg",
+      "hr": "96/min irregular",
+      "weightKg": 62,
+      "heightCm": 154,
+      "bmi": 26.1
+    }
+  ],
+  "labs": [
+    {
+      "date": "2026-09-21",
+      "test": "Capillary glucose",
+      "value": 162,
+      "unit": "mg/dL",
+      "ref": "70-140"
+    },
+    {
+      "date": "2026-09-21",
+      "test": "Platelets",
+      "value": 210,
+      "unit": "x10^9/L",
+      "ref": "150-400"
+    },
+    {
+      "date": "2026-09-21",
+      "test": "INR",
+      "value": 1.1,
+      "unit": "",
+      "ref": "0.9-1.1"
+    },
+    {
+      "date": "2026-09-21",
+      "test": "Creatinine",
+      "value": 0.9,
+      "unit": "mg/dL",
+      "ref": "0.5-1.1"
+    }
+  ],
+  "timeline": [
+    {
+      "date": "2023-05-12",
+      "stage": "history",
+      "specialty": "Cardiology",
+      "title": "Atrial fibrillation diagnosed",
+      "detail": "Apixaban started (dose recorded as 2.5 mg twice daily)."
+    },
+    {
+      "date": "2026-09-21",
+      "stage": "inpatient",
+      "specialty": "Neurology / Stroke",
+      "module": "stroke",
+      "title": "Stroke code: left MCA stroke, M1 occlusion",
+      "detail": "Arrived 55 minutes after onset. On apixaban, so no thrombolysis; direct to thrombectomy. Apixaban under-dosing identified."
+    }
+  ]
+}

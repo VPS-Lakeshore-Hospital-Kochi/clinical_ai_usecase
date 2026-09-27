@@ -1,5 +1,7 @@
 import { DEFAULT_PATIENT_ID } from "../patient.js";
 import triage from "./triage.js";
+import routing from "./routing.js";
+import stroke from "./stroke.js";
 import scribe from "./scribe.js";
 import diabetes from "./diabetes.js";
 import ortho from "./ortho.js";
@@ -24,12 +26,13 @@ import antenatal from "./antenatal.js";
 import paeds from "./paeds.js";
 import journey from "./journey.js";
 
-export const modules = [triage, scribe, diabetes, ortho, radiology, oncology, cardiology, preauth, preop, nursing, discharge, coding, labs, nephrology, icu, medrec, rehab, monitoring, journey, transplant, decision, heartfailure, antenatal, paeds].sort(
+export const modules = [routing, triage, scribe, diabetes, ortho, radiology, oncology, cardiology, preauth, preop, nursing, discharge, coding, labs, nephrology, icu, medrec, rehab, monitoring, journey, transplant, decision, heartfailure, antenatal, paeds, stroke].sort(
   (a, b) => a.order - b.order,
 );
 
 // Modules belong to Thomas's journey unless they name another patient.
-for (const m of modules) m.patientId ??= DEFAULT_PATIENT_ID;
+// Operational modules that span many patients set patientId: null.
+for (const m of modules) if (m.patientId === undefined) m.patientId = DEFAULT_PATIENT_ID;
 
 const byId = new Map(modules.map((m) => [m.id, m]));
 

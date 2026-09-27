@@ -6,6 +6,7 @@ export const TRANSPLANT_PATIENT_ID = "syn-000271";
 export const HF_PATIENT_ID = "syn-000342";
 export const MOTHER_PATIENT_ID = "syn-000415";
 export const CHILD_PATIENT_ID = "syn-000416";
+export const STROKE_PATIENT_ID = "syn-000527";
 
 // Order of the live prototypes along Thomas's journey (journey story lives on the dashboard).
 export const JOURNEY_STEPS = [
@@ -51,7 +52,14 @@ const FAMILY_STEPS = [
   { id: "timeline-child", label: "Ayaan's timeline", href: `dashboard.html?patient=${CHILD_PATIENT_ID}` },
 ];
 
+// Leela Menon's stroke journey.
+const STROKE_STEPS = [
+  { id: "stroke", label: "Stroke code", href: "module.html?id=stroke" },
+  { id: "timeline", label: "Patient timeline", href: `dashboard.html?patient=${STROKE_PATIENT_ID}` },
+];
+
 const STEPS_BY_PATIENT = {
+  [STROKE_PATIENT_ID]: STROKE_STEPS,
   [TRANSPLANT_PATIENT_ID]: TRANSPLANT_STEPS,
   [HF_PATIENT_ID]: HF_STEPS,
   [MOTHER_PATIENT_ID]: FAMILY_STEPS,

@@ -39,7 +39,9 @@ export function buildRequest(mod, input) {
     system: [
       {
         type: "text",
-        text: `${composeSystem(mod.system)}\n\n<patient_record>\n${patientSummaryFor(mod.patientId)}\n</patient_record>`,
+        text: mod.patientId
+          ? `${composeSystem(mod.system)}\n\n<patient_record>\n${patientSummaryFor(mod.patientId)}\n</patient_record>`
+          : composeSystem(mod.system),
         cache_control: { type: "ephemeral" },
       },
     ],

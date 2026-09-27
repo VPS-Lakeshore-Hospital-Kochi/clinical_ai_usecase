@@ -53,9 +53,9 @@ async function readEvents(res) {
     .map((f) => JSON.parse(f.slice(6)));
 }
 
-test("lists all twenty-four modules in journey order without leaking prompts", async () => {
+test("lists all twenty-six modules in journey order without leaking prompts", async () => {
   const mods = await (await fetch(`${base}/api/modules`)).json();
-  assert.deepEqual(mods.map((m) => m.id), ["triage", "scribe", "diabetes", "ortho", "radiology", "oncology", "cardiology", "preauth", "preop", "nursing", "discharge", "coding", "labs", "nephrology", "icu", "medrec", "rehab", "monitoring", "journey", "transplant", "decision", "heartfailure", "antenatal", "paeds"]);
+  assert.deepEqual(mods.map((m) => m.id), ["routing", "triage", "scribe", "diabetes", "ortho", "radiology", "oncology", "cardiology", "preauth", "preop", "nursing", "discharge", "coding", "labs", "nephrology", "icu", "medrec", "rehab", "monitoring", "journey", "transplant", "decision", "heartfailure", "antenatal", "paeds", "stroke"]);
   for (const m of mods) {
     assert.equal(m.system, undefined);
     assert.equal(m.demoOutput, undefined);
@@ -104,6 +104,17 @@ test("transplant prompt carries the transplant patient's record", async () => {
   assert.match(req.system[0].text, /LH-SYN-000271/);
   assert.doesNotMatch(req.system[0].text, /LH-SYN-000158/);
   assert.match(req.messages[0].content, /^Today is 2026-09-22\./);
+});
+
+test("operational modules run without a patient record", async () => {
+  const { buildRequest } = await import("../server/claude.js");
+  const { getModule } = await import("../server/modules/index.js");
+  const routing = getModule("routing");
+  assert.equal(routing.patientId, null);
+  const req = buildRequest(routing, "queue");
+  assert.doesNotMatch(req.system[0].text, /patient_record/);
+  const stroke = await (await fetch(`${base}/api/patient?id=syn-000527`)).json();
+  assert.equal(stroke.patient.mrn, "LH-SYN-000527");
 });
 
 test("reports live mode when a credential is set", async () => {
