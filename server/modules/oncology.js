@@ -4,7 +4,7 @@ const d = patient.documents;
 
 export default {
   id: "oncology",
-  order: 5,
+  order: 6,
   title: "Tumour Board Assistant",
   specialty: "Oncology",
   stage: "specialty",
@@ -46,7 +46,7 @@ Question: Confirm stage and recommend a treatment sequence. Advise on timing of 
 |---|---|---|
 | T | **cT3** | Pericolic fat stranding without invasion of adjacent organs |
 | N | **cN1** (1–3 nodes) | 3 pericolic nodes, largest 11 mm (CT nodal staging is imprecise) |
-| M | **cM0** | No liver/lung lesions, no ascites |
+| M | **cM0** | No liver/lung lesions, no ascites. The 1.6 cm left adrenal nodule is a lipid-rich adenoma (8 HU), not a metastasis |
 | Stage group | **Clinical stage III (cT3 N1 M0)** | Final stage depends on resection pathology |
 
 **What would change it:** pT4 or ≥4 positive nodes (pN2) would make it *high-risk* stage III and lengthen adjuvant therapy. pN0 would make it stage II.

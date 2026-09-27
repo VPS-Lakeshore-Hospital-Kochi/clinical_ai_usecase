@@ -53,9 +53,9 @@ async function readEvents(res) {
     .map((f) => JSON.parse(f.slice(6)));
 }
 
-test("lists the nine journey modules without leaking prompts", async () => {
+test("lists the eleven journey modules without leaking prompts", async () => {
   const mods = await (await fetch(`${base}/api/modules`)).json();
-  assert.deepEqual(mods.map((m) => m.id), ["triage", "scribe", "diabetes", "ortho", "oncology", "cardiology", "preauth", "discharge", "journey"]);
+  assert.deepEqual(mods.map((m) => m.id), ["triage", "scribe", "diabetes", "ortho", "radiology", "oncology", "cardiology", "preauth", "discharge", "nephrology", "journey"]);
   for (const m of mods) {
     assert.equal(m.system, undefined);
     assert.equal(m.demoOutput, undefined);
@@ -109,6 +109,7 @@ test("live run streams Claude text and sends the expected request", async () => 
   assert.equal(b.system[0].cache_control.type, "ephemeral");
   assert.match(b.system[0].text, /LH-SYN-000158/);
   assert.match(b.messages[0].content, /Doctor: Hello\./);
+  assert.match(b.messages[0].content, /^Today is 2026-07-06\./);
 });
 
 test("demo run replays the sample output", async () => {

@@ -7,10 +7,12 @@ export const JOURNEY_STEPS = [
   { id: "scribe", label: "Consultation", href: "module.html?id=scribe" },
   { id: "diabetes", label: "Diabetes", href: "module.html?id=diabetes" },
   { id: "ortho", label: "Ortho planning", href: "module.html?id=ortho" },
+  { id: "radiology", label: "CT report", href: "module.html?id=radiology" },
   { id: "oncology", label: "Tumour board", href: "module.html?id=oncology" },
   { id: "cardiology", label: "Cardiac pre-op", href: "module.html?id=cardiology" },
   { id: "preauth", label: "Pre-auth", href: "module.html?id=preauth" },
   { id: "discharge", label: "Discharge", href: "module.html?id=discharge" },
+  { id: "nephrology", label: "Kidney review", href: "module.html?id=nephrology" },
   { id: "journey", label: "Journey story", href: "dashboard.html" },
 ];
 

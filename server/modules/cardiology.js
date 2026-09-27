@@ -1,6 +1,6 @@
 export default {
   id: "cardiology",
-  order: 6,
+  order: 7,
   title: "Cardiac Pre-op Co-pilot",
   specialty: "Cardiology",
   stage: "specialty",
@@ -30,6 +30,7 @@ Exam: BP 138/84, HR 78 regular, no murmurs, no signs of heart failure.
 ECG: Sinus rhythm 76/min, normal axis, 1 mm horizontal ST depression V5–V6, no Q waves. No prior ECG for comparison.
 Echo: LVEF 58%, no regional wall-motion abnormality, mild concentric LVH, grade 1 diastolic dysfunction, no significant valve disease.
 hs-Troponin I 6 ng/L (ref <20). NT-proBNP 180 pg/mL.
+Staging CT (1 Aug): coronary artery calcification and moderate aortic calcification (not scored).
 Hb 9.8 g/dL (IV ferric carboxymaltose 1 g given 6 Aug).
 Question: Is he fit for surgery? Does he need further testing, and what peri-operative cardiac plan do you recommend?`,
   demoOutput: `## Bottom line
@@ -54,6 +55,7 @@ Question: Is he fit for surgery? Does he need further testing, and what peri-ope
 
 ## Symptom assessment
 - Exertional central heaviness relieved by rest within 5 minutes is **typical of stable angina** in a man with diabetes, hypertension, dyslipidaemia and a family history of premature CAD. Pre-test probability is moderate to high.
+- **Coronary artery calcification on the staging CT** confirms atherosclerosis and raises the probability that the symptoms are ischaemic.
 - **Anaemia (Hb 9.8)** can provoke demand ischaemia and breathlessness. It may be contributing, and correcting it is part of the plan.
 - 1 mm horizontal ST depression in V5–V6 with **LVH** may be a strain pattern, or may reflect ischaemia. There is no prior ECG to compare.
 - **These symptoms need evaluation whether or not he has surgery.** The guidelines advise against testing only to "clear" asymptomatic patients, but this patient is symptomatic.

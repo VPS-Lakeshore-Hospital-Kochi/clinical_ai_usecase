@@ -4,7 +4,7 @@ const d = patient.documents;
 
 export default {
   id: "discharge",
-  order: 8,
+  order: 9,
   title: "Intelligent Discharge",
   specialty: "Surgical Gastroenterology",
   stage: "discharge",

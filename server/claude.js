@@ -21,6 +21,11 @@ function getClient() {
 
 export class RefusalError extends Error {}
 
+// The record spans the whole journey; each step only knows what existed on its date.
+export function asOfNote(date) {
+  return `Today is ${date}. Only record entries dated on or before today are known at this point in the journey; ignore anything dated later.`;
+}
+
 // Builds the request for a module run. The system prompt and patient record
 // come first and never change between runs, so they are cached.
 export function buildRequest(mod, input) {
@@ -38,7 +43,7 @@ export function buildRequest(mod, input) {
         cache_control: { type: "ephemeral" },
       },
     ],
-    messages: [{ role: "user", content: mod.buildPrompt(input) }],
+    messages: [{ role: "user", content: `${asOfNote(mod.date)}\n\n${mod.buildPrompt(input)}` }],
   };
 }
 

@@ -1,6 +1,6 @@
 export default {
   id: "preauth",
-  order: 7,
+  order: 8,
   title: "Pre-auth & TPA Packet Builder",
   specialty: "Insurance desk",
   stage: "inpatient",

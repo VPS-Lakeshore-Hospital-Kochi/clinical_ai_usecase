@@ -1,10 +1,10 @@
 export default {
   id: "journey",
-  order: 9,
+  order: 11,
   title: "Patient Journey Story",
   specialty: "Cross-specialty",
   stage: "journey",
-  date: "2026-08-24",
+  date: "2026-09-03",
   summary:
     "Reads the whole timeline across specialties and writes one coherent story: what happened, where AI changed the course, open loops and the next 90 days.",
   claudeRole: "Links the specialties into one narrative and spots dropped hand-offs.",
@@ -22,22 +22,27 @@ Produce in order:
   buildPrompt: (input) => `Patient journey timeline:\n\n${input}`,
   defaultInput: "",
   demoOutput: `## The story so far
-Mr. Thomas Varghese, a 58-year-old retired bank manager from Kakkanad, messaged the Lakeshore WhatsApp line on 2 July 2026 about rising sugars, night sweats and a painful knee. Triage routed him to Endocrinology within the week and flagged his weight loss for the doctor. The consultation note captured the weight loss, fatigue and bowel change, and a 14-day sensor showed dangerous overnight lows from glimepiride, so his regimen was changed. When Orthopaedics planned a knee replacement, the pre-operative check stopped the process: iron-deficiency anaemia with weight loss needed investigating first. Colonoscopy found a sigmoid cancer, and the tumour board recommended keyhole surgery followed by chemotherapy. Cardiology evaluated new exertional chest heaviness without delaying surgery; a stress echo was negative. The insurance desk secured cashless approval and explained the room-rent deduction to the family. He had an R0 resection on 19 August (stage IIIB) and went home on day 5 with a reconciled medicine list and follow-up across five specialties. His knee replacement is on hold until chemotherapy is complete.
+Mr. Thomas Varghese, a 58-year-old retired bank manager from Kakkanad, messaged the Lakeshore WhatsApp line on 2 July 2026 about rising sugars, night sweats and a painful knee. Triage routed him to Endocrinology within the week and flagged his weight loss for the doctor. The consultation note captured the weight loss, fatigue and bowel change, and a 14-day sensor showed dangerous overnight lows from glimepiride, so his regimen was changed. When Orthopaedics planned a knee replacement, the pre-operative check stopped the process: iron-deficiency anaemia with weight loss needed investigating first. Colonoscopy found a sigmoid cancer. The staging CT report was corrected before the tumour board (it had understated the lymph nodes), and the board recommended keyhole surgery followed by chemotherapy. Cardiology evaluated new exertional chest heaviness without delaying surgery; a stress echo was negative. The insurance desk secured cashless approval and explained the room-rent deduction to the family. He had an R0 resection on 19 August (stage IIIB) and went home on day 5 with a reconciled medicine list and follow-up across several specialties. Before chemotherapy, Nephrology confirmed his kidney function had recovered after stopping the painkiller, so he can have full-dose treatment. His knee replacement is on hold until chemotherapy is complete.
 
 ## Where AI assistance changed the course
 - **2 Jul · Digital front door (triage):** routed him to Endocrinology, not Orthopaedics, and passed recurrent hypoglycaemia and weight loss to the clinician as flags.
 - **6 Jul · Endocrinology (ambient scribe):** the red-flag section surfaced weight loss, bowel change, pallor and the NSAID risk. Labs ordered.
 - **20 Jul · Endocrinology (diabetes co-pilot):** identified the sulfonylurea-driven nocturnal hypoglycaemia pattern, and escalated the **iron-deficiency anaemia as needing GI evaluation before surgery**.
 - **22 Jul · Orthopaedics (surgery planner):** "Defer pending workup" decision. The GI referral became a hard gate before listing for TKA.
+- **1 Aug · Radiology (structured report):** caught an impression that said "no significant lymphadenopathy" despite three suspicious nodes, which would have understaged him at the MDT. It also corrected a left/right error and routed the adrenal adenoma (cortisol test), fatty liver and coronary calcification to the right teams.
 - **5 Aug · Oncology (tumour board pack):** connected oxaliplatin neuropathy risk with existing diabetic neuropathy (favouring 3-month CAPOX) and set the knee-surgery sequencing.
 - **8 Aug · Cardiology (pre-op co-pilot):** recognised typical exertional symptoms (RCRI 2) and recommended expedited stress imaging within the cancer-surgery window, plus post-op troponin surveillance.
 - **12 Aug · Insurance desk (pre-auth):** caught a ₹44,700 avoidable room-rent deduction before admission, and stated "laparoscopic, not robotic" to avoid a sub-limit query.
 - **24 Aug · Discharge:** caught the missing empagliflozin restart date and confirmed that no NSAIDs or sulfonamides were prescribed.
+- **3 Sep · Nephrology (kidney co-pilot):** showed the July eGFR dip was NSAID-related and has recovered (68 → 85), confirming full-dose CAPOX. It also flagged that the CKD diagnosis needs a repeat UACR after 6 Oct, and wrote sick-day rules for chemotherapy diarrhoea.
 
 *All decisions were made and signed by the treating clinicians and staff.*
 
 ## Open loops & hand-off risks
-- [ ] Empagliflozin restart date: confirm by phone (Endocrinology / nurse)
+- [ ] 1 mg dexamethasone suppression test for the adrenal adenoma (Endocrinology)
+- [ ] FIB-4 for hepatic steatosis (Endocrinology / Hepatology)
+- [ ] Repeat UACR on or after 6 Oct to confirm CKD A2 (Nephrology)
+- [ ] Telmisartan increase to 80 mg with K/creatinine check (Nephrology)
 - [ ] Oncology first visit booked within 6–8 weeks of surgery (Medical Oncology)
 - [ ] **Separate pre-authorisation for adjuvant chemotherapy** (Insurance desk)
 - [ ] Post-hospitalisation and pre-hospitalisation bills submitted within policy timelines (Insurance desk / family)
@@ -54,10 +59,13 @@ Mr. Thomas Varghese, a 58-year-old retired bank manager from Kakkanad, messaged 
 |---|---|---|
 | 31 Aug 2026 | Wound check, pathology discussion | Surgical Gastro |
 | 2 Sep 2026 | Insulin titration, SGLT2i restart | Endocrinology |
+| 3 Sep 2026 | Kidney review before chemo | Nephrology |
 | Early Sep 2026 | Chemotherapy pre-authorisation | Insurance desk |
-| 7–14 Sep 2026 | CAPOX cycle 1 | Medical Oncology |
+| 10 Sep 2026 | CAPOX cycle 1 (full dose) | Medical Oncology |
+| Sep 2026 | Dexamethasone suppression test | Endocrinology |
 | 16 Sep 2026 | Stop enoxaparin | Patient / nurse |
 | Early Oct 2026 | Cardiology review, lipid profile | Cardiology |
+| From 6 Oct 2026 | Repeat UACR | Nephrology |
 | Every 3 weeks | CAPOX cycles 2–4, glucose review | Oncology + Endo |
 | ~Early Dec 2026 | End of adjuvant chemo; CEA | Oncology |
 | Late Dec 2026 | HbA1c, TKA re-planning visit | Endo + Ortho |
@@ -69,10 +77,12 @@ Mr. Thomas Varghese, a 58-year-old retired bank manager from Kakkanad, messaged 
 | Endocrinology | Glycaemic control, first red-flag capture, peri-operative and chemo glucose plans |
 | Orthopaedics | Knee replacement planning; pre-op gate that triggered the GI workup |
 | Gastroenterology | Colonoscopy and biopsy |
+| Radiology | Staging CT; report corrected and incidental findings routed |
 | Oncology / MDT | Staging, treatment sequence, adjuvant chemotherapy |
 | Cardiology | Pre-operative risk assessment, stress echo, peri-operative drug plan |
 | Insurance desk | Cashless pre-authorisation, cost counselling |
 | Surgical Gastroenterology | Laparoscopic resection, inpatient care, discharge |
+| Nephrology | Kidney staging, chemo dosing, sick-day rules, albuminuria plan |
 | Nursing | Triage call-back, education, phone follow-up |
 `,
 };

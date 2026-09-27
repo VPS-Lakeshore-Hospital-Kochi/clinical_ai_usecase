@@ -32,11 +32,11 @@ export const STAGES = [
       { title: "Cardiac pre-op co-pilot", specialty: "Cardiology", text: "RCRI and biomarker risk, need for stress testing, peri-operative drug plan and clearance note.", href: "module.html?id=cardiology" },
       { title: "Chest-pain & heart-failure co-pilot", specialty: "Cardiology", text: "HEART score pathway, echo summaries and GDMT optimisation." },
       { title: "Liver & transplant work-up", specialty: "Gastro / Hepatology", text: "MELD/Child-Pugh, transplant checklists, donor–recipient readiness tracker." },
-      { title: "Kidney co-pilot", specialty: "Nephrology", text: "CKD staging, renal dose adjustment and dialysis adequacy notes." },
+      { title: "Kidney co-pilot", specialty: "Nephrology", text: "eGFR trend, CKD staging, chemo dosing, sick-day rules and a kidney-protection plan.", href: "module.html?id=nephrology" },
       { title: "Stroke & neuro-surgical planning", specialty: "Neurology / Neurosurgery", text: "Thrombolysis eligibility and pre-operative planning summaries." },
       { title: "ICU handover & sepsis bundle", specialty: "Critical Care", text: "SBAR handovers, sepsis bundle tracking and daily progress notes." },
       { title: "Antenatal & paediatric safety", specialty: "Obstetrics / Paediatrics", text: "Antenatal risk flags and weight-based paediatric dosing checks." },
-      { title: "Structured radiology reporting", specialty: "Radiology", text: "Drafts structured reports, flags incidental findings, writes patient versions." },
+      { title: "Structured radiology reporting", specialty: "Radiology", text: "Dictation to structured staging report, contradiction check, incidental-finding follow-up, patient version.", href: "module.html?id=radiology" },
     ],
   },
   {

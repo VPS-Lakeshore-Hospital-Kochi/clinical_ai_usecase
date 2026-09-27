@@ -6,7 +6,7 @@ Working prototypes of Claude across the patient journey at VPS Lakeshore Hospita
 
 ## The journey
 
-**Thomas Varghese (synthetic), 58, Kakkanad.** He messages the hospital about diabetes and a painful knee. At each step an AI-assisted check surfaces something, and together these lead to an early colon cancer diagnosis. Along the way he is cleared by Cardiology and gets cashless insurance approval.
+**Thomas Varghese (synthetic), 58, Kakkanad.** He messages the hospital about diabetes and a painful knee. At each step an AI-assisted check surfaces something, and together these lead to an early colon cancer diagnosis. Along the way his staging CT report is corrected, he is cleared by Cardiology, gets cashless insurance approval, and has his kidneys checked before chemotherapy.
 
 | # | Prototype | Specialty | What Claude does |
 |---|---|---|---|
@@ -14,13 +14,15 @@ Working prototypes of Claude across the patient journey at VPS Lakeshore Hospita
 | 2 | Ambient Clinical Scribe | Endocrinology OPD | Turns the transcript into a SOAP note, ICD-10 codes, orders and a patient summary; flags weight loss and bowel change |
 | 3 | Diabetes Co-pilot | Endocrinology | Reads the CGM patterns (with charts), drafts regimen changes for approval, writes Kerala-diet coaching; escalates the iron-deficiency anaemia |
 | 4 | Ortho Surgery Planner | Orthopaedics | Drafts the TKA indication, implant options, risk table, optimisation checklist, consent and rehab; returns "defer pending GI workup" |
-| 5 | Tumour Board Assistant | Oncology | Staging, tumour biology, guideline options, neuropathy and diabetes interactions, knee-surgery timing, draft MDT outcome |
-| 6 | Cardiac Pre-op Co-pilot | Cardiology | RCRI and biomarker risk, whether stress testing is needed within the cancer-surgery window, peri-operative drug plan, troponin surveillance, clearance note |
-| 7 | Pre-auth & TPA Packet Builder | Insurance desk | Checks policy clauses, calculates room-rent proportionate deductions, drafts the medical-necessity letter, document checklist and TPA query responses |
-| 8 | Intelligent Discharge | Surgical Gastroenterology | Medication reconciliation, clinician summary, cross-specialty follow-up, plain-English home instructions, medication calendar |
-| 9 | Patient Journey Story | Cross-specialty | One narrative across specialties: where AI changed the course, open loops, the next 90 days |
+| 5 | Structured Radiology Reporting | Radiology | Structures the staging CT dictation, catches a findings-vs-impression contradiction and a laterality error, routes incidental findings with guideline follow-up |
+| 6 | Tumour Board Assistant | Oncology | Staging, tumour biology, guideline options, neuropathy and diabetes interactions, knee-surgery timing, draft MDT outcome |
+| 7 | Cardiac Pre-op Co-pilot | Cardiology | RCRI and biomarker risk, whether stress testing is needed within the cancer-surgery window, peri-operative drug plan, troponin surveillance, clearance note |
+| 8 | Pre-auth & TPA Packet Builder | Insurance desk | Checks policy clauses, calculates room-rent proportionate deductions, drafts the medical-necessity letter, document checklist and TPA query responses |
+| 9 | Intelligent Discharge | Surgical Gastroenterology | Medication reconciliation, clinician summary, cross-specialty follow-up, plain-English home instructions, medication calendar |
+| 10 | Kidney Co-pilot | Nephrology | eGFR trend and CKD staging, Cockcroft-Gault dosing check for CAPOX, sick-day rules, contrast guidance, albuminuria plan |
+| 11 | Patient Journey Story | Cross-specialty | One narrative across specialties: where AI changed the course, open loops, the next 90 days |
 
-The home page also maps all 25 use cases from the roadmap (heart failure, nephrology, ICU, radiology, remote monitoring and more). The nine above are live; the rest are marked "Roadmap".
+The home page also maps all 25 use cases from the roadmap (heart failure, liver transplant, ICU, remote monitoring and more). The eleven above are live; the rest are marked "Roadmap".
 
 On each module page the clinician can edit the input, run Claude, then **Approve & file** the draft. Filed outputs appear on the patient timeline (stored in the browser only) and feed into the journey story.
 

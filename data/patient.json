@@ -97,6 +97,14 @@
       "weightKg": 88,
       "heightCm": 168,
       "bmi": 31.2
+    },
+    {
+      "date": "2026-09-02",
+      "bp": "132/80 mmHg",
+      "hr": "80/min",
+      "weightKg": 84,
+      "heightCm": 168,
+      "bmi": 29.8
     }
   ],
   "labs": [
@@ -155,7 +163,7 @@
     {
       "date": "2026-07-06",
       "test": "Creatinine",
-      "value": 1.1,
+      "value": 1.23,
       "unit": "mg/dL",
       "ref": "0.7-1.3"
     },
@@ -218,6 +226,49 @@
       "unit": "pg/mL",
       "ref": "<125 (age-dependent)",
       "flag": "H"
+    },
+    {
+      "date": "2026-08-24",
+      "test": "Creatinine",
+      "value": 1.0,
+      "unit": "mg/dL",
+      "ref": "0.7-1.3"
+    },
+    {
+      "date": "2026-08-24",
+      "test": "eGFR (CKD-EPI 2021)",
+      "value": 87,
+      "unit": "mL/min/1.73m2",
+      "ref": ">90"
+    },
+    {
+      "date": "2026-09-02",
+      "test": "Creatinine",
+      "value": 1.02,
+      "unit": "mg/dL",
+      "ref": "0.7-1.3"
+    },
+    {
+      "date": "2026-09-02",
+      "test": "eGFR (CKD-EPI 2021)",
+      "value": 85,
+      "unit": "mL/min/1.73m2",
+      "ref": ">90"
+    },
+    {
+      "date": "2026-09-02",
+      "test": "Urine albumin-creatinine ratio",
+      "value": 38,
+      "unit": "mg/g",
+      "ref": "<30",
+      "flag": "H"
+    },
+    {
+      "date": "2026-09-02",
+      "test": "Potassium",
+      "value": 4.6,
+      "unit": "mmol/L",
+      "ref": "3.5-5.1"
     }
   ],
   "cgm": {
@@ -430,6 +481,14 @@
       "detail": "Ulcerated circumferential mass at 25 cm. Biopsy: adenocarcinoma, moderately differentiated. CEA 6.8."
     },
     {
+      "date": "2026-08-01",
+      "stage": "diagnosis",
+      "specialty": "Radiology",
+      "module": "radiology",
+      "title": "Staging CT: structured report",
+      "detail": "cT3 N1 M0 sigmoid tumour. Dictation errors corrected before the tumour board; incidental adrenal adenoma, fatty liver and coronary calcification routed to the right teams."
+    },
+    {
       "date": "2026-08-05",
       "stage": "specialty",
       "specialty": "Oncology",
@@ -474,12 +533,20 @@
       "module": "discharge",
       "title": "Discharge, post-operative day 5",
       "detail": "Discharge summary, patient instructions and follow-up plan generated."
+    },
+    {
+      "date": "2026-09-03",
+      "stage": "recovery",
+      "specialty": "Nephrology",
+      "module": "nephrology",
+      "title": "Kidney review before chemotherapy",
+      "detail": "eGFR recovered from 68 to 85 after stopping the NSAID; UACR 38 (A2). Full-dose CAPOX, sick-day rules and a kidney-protection plan."
     }
   ],
   "documents": {
     "colonoscopy": "2026-07-29 Colonoscopy (Gastroenterology): Adequate prep (BBPS 7). Ulcerated, friable, near-circumferential mass at 25 cm from anal verge (sigmoid), scope passed with difficulty. Remaining colon to caecum: two diminutive polyps removed (transverse). Biopsies from mass. Tattoo placed distal to lesion.",
     "pathologyBiopsy": "2026-07-31 Histopathology: Sigmoid mass biopsy - invasive adenocarcinoma, moderately differentiated. Immunohistochemistry: MLH1, PMS2, MSH2, MSH6 retained (mismatch-repair proficient, pMMR). Molecular panel: KRAS G12D mutant; NRAS wild-type; BRAF V600E not detected. Transverse polyps: tubular adenomas, low-grade dysplasia.",
-    "ctStaging": "2026-08-01 CECT thorax, abdomen, pelvis: 4.5 cm segment of irregular circumferential wall thickening in sigmoid colon with pericolic fat stranding, no definite breach of serosa into adjacent organs (radiological T3). Three pericolic lymph nodes, largest 11 mm short axis (N1). Liver: no focal lesion. Lungs: no nodules. No ascites.",
+    "ctStaging": "2026-08-01 CECT thorax, abdomen, pelvis (finalised report): 4.5 cm segment of irregular circumferential wall thickening in the sigmoid colon with pericolic fat stranding and spiculation extending <5 mm beyond the muscularis propria, no invasion of adjacent organs (radiological T3). Three pericolic lymph nodes, largest 11 mm short axis, one with an irregular margin (N1). Liver: diffuse steatosis, no focal lesion. Lungs: no nodules. No ascites or peritoneal disease. Incidental: 1.6 cm left adrenal nodule measuring 8 HU unenhanced (lipid-rich adenoma); 1.2 cm simple cyst, left kidney upper pole (Bosniak I); coronary artery and moderate aortic calcification.",
     "kneeXray": "2026-07-22 X-ray right knee, standing AP + lateral + skyline, and long-leg alignment view: Severe medial tibiofemoral joint space loss with bone-on-bone contact, subchondral sclerosis, marginal osteophytes, subchondral cysts in medial tibial plateau (Kellgren-Lawrence grade 4). Moderate patellofemoral OA. Mechanical axis: 12 degrees varus. No fracture or loosening. Left knee: KL grade 2.",
     "operativeNote": "2026-08-19 Laparoscopic anterior resection with high ligation of inferior mesenteric artery, stapled colorectal anastomosis, leak test negative. No diverting stoma. EBL 150 mL. Duration 210 min.",
     "pathologyResection": "2026-08-22 Resection histopathology: Adenocarcinoma, moderately differentiated, 4.2 cm, invades through muscularis propria into pericolorectal tissue (pT3). No lymphovascular or perineural invasion. 2 of 18 lymph nodes positive (pN1b). Proximal, distal and radial margins clear (R0). No tumour deposits. pMMR (confirmed)."
