@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Clinical AI Showcase · VPS Lakeshore</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%232b7cbe%22/%3E%3Cpath d=%22M9 16h14M16 9v14%22 stroke=%22white%22 stroke-width=%224%22/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/lakeshore.css">
+</head>
+<body>
+  <main>
+    <section class="hero">
+      <div class="hero__text">
+        <span class="kicker">From symptoms to recovery</span>
+        <h1>Claude across the <em>patient journey</em> at VPS Lakeshore</h1>
+        <p>Working prototypes showing how each specialty can use Claude: documenting the consultation, reading CGM data, planning a knee replacement, preparing a tumour board and discharging safely. Every output is a draft that a clinician reviews and signs.</p>
+        <div class="hero__actions">
+          <a class="btn btn--primary" href="module.html?id=scribe">Start the journey →</a>
+          <a class="btn btn--secondary" href="dashboard.html">View patient timeline</a>
+        </div>
+      </div>
+      <aside class="card featured">
+        <span class="kicker">Featured journey · synthetic patient</span>
+        <h2>Thomas Varghese, 58 · Kakkanad</h2>
+        <p class="muted" style="margin:0">He came in for diabetes and a painful knee. At each step, AI-assisted checks surfaced a red flag that led to an early colon cancer diagnosis.</p>
+        <ol>
+          <li><a href="module.html?id=scribe">Endocrinology OPD: ambient scribe</a></li>
+          <li><a href="module.html?id=diabetes">CGM review: diabetes co-pilot</a></li>
+          <li><a href="module.html?id=ortho">Knee replacement planning</a></li>
+          <li><a href="module.html?id=oncology">Tumour board pack</a></li>
+          <li><a href="module.html?id=discharge">Intelligent discharge</a></li>
+          <li><a href="dashboard.html">Journey story</a></li>
+        </ol>
+      </aside>
+    </section>
+    <div id="stages"></div>
+  </main>
+  <footer class="site-footer">VPS Lakeshore Hospital, Kochi · Clinical AI Showcase prototype. All patient data is synthetic. Claude outputs are decision support only and must be reviewed by a qualified clinician.</footer>
+  <script type="module" src="js/home.js"></script>
+</body>
+</html>
