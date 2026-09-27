@@ -104,7 +104,8 @@ data/patient-hf.json          Third synthetic patient (heart failure)
 data/patient-mother.json      Fourth journey: mother (antenatal)
 data/patient-child.json       Fourth journey: child (paediatric ED)
 data/patient-stroke.json      Fifth journey: acute stroke
-public/             Vanilla HTML/CSS/JS front end (VPS Lakeshore brand)
+public/             Vanilla HTML/CSS/JS front end (VPS Lakeshore 2.0 brand: navy, magenta accent, cream, DM Sans served locally)
+  brand/            Official logos and DM Sans font files (SIL Open Font License)
 test/               node:test suite, including a mock Claude API
 ```
 

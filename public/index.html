@@ -4,25 +4,31 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Clinical AI Showcase · VPS Lakeshore</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
-  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%232b7cbe%22/%3E%3Cpath d=%22M9 16h14M16 9v14%22 stroke=%22white%22 stroke-width=%224%22/%3E%3C/svg%3E">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23001e5f%22/%3E%3Cpath d=%22M9 16h14M16 9v14%22 stroke=%22white%22 stroke-width=%224%22/%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/lakeshore.css">
 </head>
 <body>
-  <main>
-    <section class="hero">
+  <header class="hero-band">
+    <div class="hero-band__inner">
       <div class="hero__text">
-        <span class="kicker">From symptoms to recovery</span>
-        <h1>Claude across the <em>patient journey</em> at VPS Lakeshore</h1>
+        <span class="pill">Clinical AI · Prototypes</span>
+        <h1>Claude across the patient journey at VPS Lakeshore</h1>
         <p>Working prototypes showing how each specialty and department can use Claude, from a WhatsApp triage message to an ICU round, home monitoring, a heart-failure clinic and a living-donor liver transplant. Every output is a draft that a clinician or the insurance desk reviews and signs.</p>
         <div class="hero__actions">
-          <a class="btn btn--primary" href="module.html?id=triage">Start the journey →</a>
-          <a class="btn btn--secondary" href="dashboard.html">View patient timeline</a>
+          <a class="btn btn--light" href="module.html?id=triage">Start the journey →</a>
+          <a class="btn btn--outline-light" href="dashboard.html">View patient timeline</a>
         </div>
       </div>
-      <aside class="card featured">
+      <div class="hero-meta">
+        <div><span class="label">Prototypes</span><span>27 use cases, all live</span></div>
+        <div><span class="label">Patients</span><span>5 synthetic journeys</span></div>
+        <div><span class="label">Status</span><span>Drafts for clinician review</span></div>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="journeys-intro">
+      <div class="card featured">
         <span class="kicker">Featured journey · synthetic patient</span>
         <h2>Thomas Varghese, 58 · Kakkanad</h2>
         <p class="muted" style="margin:0">He came in for diabetes and a painful knee. At each step, AI-assisted checks surfaced a red flag that led to an early colon cancer diagnosis.</p>
@@ -48,12 +54,22 @@
           <li><a href="module.html?id=monitoring">Remote monitoring alert</a></li>
           <li><a href="dashboard.html">Journey story</a></li>
         </ol>
-        <p class="featured__second"><span class="kicker">More journeys</span><br><a href="module.html?id=transplant">Anitha Joseph, 49 · living-donor liver transplant work-up →</a><br><a href="module.html?id=decision">Rajan Pillai, 67 · heart failure: ED to clinic →</a><br><a href="module.html?id=antenatal">Fathima &amp; Ayaan Rasheed · antenatal review and a child's prescription check →</a><br><a href="module.html?id=stroke">Leela Menon, 71 · stroke code to thrombectomy →</a><br><a href="module.html?id=routing">Front office · routing the morning request queue →</a></p>
+      </div>
+      <aside class="card more-journeys">
+        <span class="kicker">More journeys</span>
+        <h2>Four more patients and the front office</h2>
+        <ul>
+          <li><a href="module.html?id=transplant">Anitha Joseph, 49 · Aluva</a><span>Living-donor liver transplant work-up</span></li>
+          <li><a href="module.html?id=decision">Rajan Pillai, 67 · Tripunithura</a><span>Heart failure, from the ED to clinic</span></li>
+          <li><a href="module.html?id=antenatal">Fathima &amp; Ayaan Rasheed · Mattancherry</a><span>Antenatal review and a child's prescription check</span></li>
+          <li><a href="module.html?id=stroke">Leela Menon, 71 · Kalamassery</a><span>Stroke code to thrombectomy</span></li>
+          <li><a href="module.html?id=routing">Front office</a><span>Routing the morning request queue</span></li>
+        </ul>
       </aside>
     </section>
     <div id="stages"></div>
   </main>
-  <footer class="site-footer">VPS Lakeshore Hospital, Kochi · Clinical AI Showcase prototype. All patient data is synthetic. Claude outputs are decision support only and must be reviewed by a qualified clinician.</footer>
+  <footer class="site-footer"><div class="site-footer__inner"><span>Clinical AI Showcase prototype · All patient data is synthetic · Claude outputs are decision support only and must be reviewed by a qualified clinician</span><img src="brand/logo-lakeshore-colour.png" alt="VPS Lakeshore"></div></footer>
   <script type="module" src="js/home.js"></script>
 </body>
 </html>

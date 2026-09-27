@@ -161,8 +161,8 @@ function renderVitalPanel(root, readings, p) {
 
   root.innerHTML = `
     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${p.title}: ${values.map(fmt).join(", ")} ${p.unit}. Latest ${fmt(last)}${beyond(last) ? ", beyond the alert threshold" : ""}.">
-      <text x="${m.left}" y="12" style="font-weight:700;fill:var(--ink)">${p.title}</text>
-      <text x="${W - m.right}" y="12" text-anchor="end" style="font-weight:700;fill:${beyond(last) ? "var(--critical)" : "var(--ink)"}">${beyond(last) ? "⚠ " : ""}${fmt(last)} ${p.unit}</text>
+      <text x="${m.left}" y="12" style="font-weight:600;fill:var(--ink)">${p.title}</text>
+      <text x="${W - m.right}" y="12" text-anchor="end" style="font-weight:600;fill:${beyond(last) ? "var(--critical)" : "var(--ink)"}">${beyond(last) ? "⚠ " : ""}${fmt(last)} ${p.unit}</text>
       ${p.band ? `<rect x="${m.left}" y="${y(p.band[1])}" width="${W - m.left - m.right}" height="${y(p.band[0]) - y(p.band[1])}" fill="var(--viz-target)"/>` : ""}
       <line x1="${m.left}" x2="${W - m.right}" y1="${y(p.threshold)}" y2="${y(p.threshold)}" stroke="var(--viz-axis)" stroke-dasharray="4 3"/>
       <text x="${m.left - 5}" y="${y(p.threshold) + 4}" text-anchor="end">${fmt(p.threshold)}</text>

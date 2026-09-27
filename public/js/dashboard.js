@@ -36,7 +36,7 @@ function renderTimeline() {
         <p class="timeline__detail">${esc(e.detail)}</p>
         ${e.module ? `<div class="timeline__tags">
             <a class="chip" href="module.html?id=${e.module}">Open AI prototype →</a>
-            ${f ? '<span class="chip chip--good">✓ Approved &amp; filed</span>' : ""}
+            ${f ? '<span class="chip chip--done">✓ Approved &amp; filed</span>' : ""}
           </div>` : ""}
         ${f ? `<details><summary>View filed output</summary><div class="md" data-filed-index="${i}"></div></details>` : ""}
       </li>`;

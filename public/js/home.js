@@ -28,7 +28,7 @@ function renderUsecase(u) {
     <p>${esc(u.text)}</p>
     <div class="usecase__foot">
       <span class="chip chip--muted">${esc(u.specialty)}</span>
-      ${u.href ? '<span class="chip chip--good">● Live prototype</span>' : '<span class="chip chip--muted">Roadmap</span>'}
+      ${u.href ? '<span class="chip chip--done">● Live prototype</span>' : '<span class="chip chip--muted">Roadmap</span>'}
     </div>`;
   return u.href
     ? `<a class="card usecase usecase--live" href="${u.href}">${body}</a>`
