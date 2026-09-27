@@ -3,11 +3,11 @@ import { esc } from "./common.js";
 // Time-in-range segments use the fixed status scale by clinical severity:
 // level-2 hypo is critical, level-1 hypo and >250 are serious, 181-250 is a warning.
 const RANGES = [
-  { key: "veryLow", label: "Very low", range: "<54", color: "var(--critical)", target: "<1%" },
-  { key: "low", label: "Low", range: "54–69", color: "var(--serious)", target: "<4%" },
-  { key: "inRange", label: "In range", range: "70–180", color: "var(--good)", target: ">70%" },
-  { key: "high", label: "High", range: "181–250", color: "var(--warning)", target: "<25%" },
-  { key: "veryHigh", label: "Very high", range: ">250", color: "var(--serious)", target: "<5%" },
+  { key: "veryLow", label: "Very low", range: "<54", color: "var(--chart-highlight)", target: "<1%" },
+  { key: "low", label: "Low", range: "54–69", color: "rgba(216, 16, 84, 0.45)", target: "<4%" },
+  { key: "inRange", label: "In range", range: "70–180", color: "var(--chart-1)", target: ">70%" },
+  { key: "high", label: "High", range: "181–250", color: "var(--chart-3)", target: "<25%" },
+  { key: "veryHigh", label: "Very high", range: ">250", color: "var(--chart-2)", target: "<5%" },
 ];
 
 export function renderCgmWidget(el, cgm) {
@@ -24,7 +24,7 @@ export function renderCgmWidget(el, cgm) {
     </div>
     <div class="widget">
       <p class="widget__title">Median glucose by hour (mg/dL), with interquartile range</p>
-      <p class="widget__sub">14-day ambulatory glucose profile · shaded green = target 70–180</p>
+      <p class="widget__sub">14-day ambulatory glucose profile · shaded band = target 70–180</p>
       <div class="viz-root" id="agp"></div>
       <details class="table-toggle">
         <summary>Show as table</summary>
@@ -162,7 +162,7 @@ function renderVitalPanel(root, readings, p) {
   root.innerHTML = `
     <svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${p.title}: ${values.map(fmt).join(", ")} ${p.unit}. Latest ${fmt(last)}${beyond(last) ? ", beyond the alert threshold" : ""}.">
       <text x="${m.left}" y="12" style="font-weight:600;fill:var(--ink)">${p.title}</text>
-      <text x="${W - m.right}" y="12" text-anchor="end" style="font-weight:600;fill:${beyond(last) ? "var(--critical)" : "var(--ink)"}">${beyond(last) ? "⚠ " : ""}${fmt(last)} ${p.unit}</text>
+      <text x="${W - m.right}" y="12" text-anchor="end" style="font-weight:600;fill:${beyond(last) ? "var(--chart-highlight)" : "var(--ink)"}">${beyond(last) ? "⚠ " : ""}${fmt(last)} ${p.unit}</text>
       ${p.band ? `<rect x="${m.left}" y="${y(p.band[1])}" width="${W - m.left - m.right}" height="${y(p.band[0]) - y(p.band[1])}" fill="var(--viz-target)"/>` : ""}
       <line x1="${m.left}" x2="${W - m.right}" y1="${y(p.threshold)}" y2="${y(p.threshold)}" stroke="var(--viz-axis)" stroke-dasharray="4 3"/>
       <text x="${m.left - 5}" y="${y(p.threshold) + 4}" text-anchor="end">${fmt(p.threshold)}</text>
@@ -170,7 +170,7 @@ function renderVitalPanel(root, readings, p) {
       <text x="${x(0)}" y="${H - 4}" text-anchor="start">25 Sep</text>
       <text x="${x(n - 1)}" y="${H - 4}" text-anchor="end">27 Sep</text>
       <path d="${line}" fill="none" stroke="var(--viz-series)" stroke-width="2" stroke-linejoin="round"/>
-      ${values.map((v, i) => `<circle cx="${x(i)}" cy="${y(v)}" r="${beyond(v) ? 4.5 : 3}" fill="${beyond(v) ? "var(--critical)" : "var(--viz-series)"}" stroke="var(--surface)" stroke-width="1.5"/>`).join("")}
+      ${values.map((v, i) => `<circle cx="${x(i)}" cy="${y(v)}" r="${beyond(v) ? 4.5 : 3}" fill="${beyond(v) ? "var(--chart-highlight)" : "var(--viz-series)"}" stroke="var(--surface)" stroke-width="1.5"/>`).join("")}
       <rect class="vp-hit" x="${m.left}" y="${m.top}" width="${W - m.left - m.right}" height="${H - m.top - m.bottom}" fill="transparent"/>
     </svg>
     <div class="viz-tooltip" role="status"></div>`;

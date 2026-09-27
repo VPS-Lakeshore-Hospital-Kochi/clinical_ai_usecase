@@ -98,7 +98,7 @@ export function renderHeader(active) {
   header.innerHTML = `
     <div class="site-header__inner">
       <a class="wordmark" href="index.html" aria-label="VPS Lakeshore home">
-        <img src="brand/logo-lakeshore-colour.png" alt="VPS Lakeshore, Global Lifecare">
+        <img src="brand/logo-lakeshore-white.png" alt="VPS Lakeshore, Global Lifecare">
       </a>
       <span class="site-title">Clinical AI Showcase · with Claude</span>
       <nav class="site-nav">${nav}</nav>
@@ -122,13 +122,13 @@ export function renderPatientStrip(el, data) {
   const initials = p.name.split(" ").map((w) => w[0]).join("");
   const problems = data.conditions.map((c) => `<span class="chip chip--muted">${esc(c.display)}</span>`).join("");
   const allergy = p.allergies.length
-    ? `<span class="chip chip--alert">⚠ Allergy: ${p.allergies.map((a) => esc(a.substance)).join(", ")}</span>`
+    ? `<span class="chip chip--danger">Allergy: ${p.allergies.map((a) => esc(a.substance)).join(", ")}</span>`
     : '<span class="chip chip--muted">No known drug allergies</span>';
   el.classList.add("card", "patient-strip");
   el.innerHTML = `
     <div class="patient-strip__avatar" aria-hidden="true">${esc(initials)}</div>
     <div>
-      <div class="patient-strip__name">${esc(p.name)} <span class="chip chip--alert">Synthetic</span></div>
+      <div class="patient-strip__name">${esc(p.name)} <span class="chip chip--muted">Synthetic</span></div>
       <div class="patient-strip__meta">${p.age} y · ${esc(p.gender)} · MRN ${esc(p.mrn)} · ${esc(p.address)}</div>
     </div>
     <div class="patient-strip__problems">${problems}</div>

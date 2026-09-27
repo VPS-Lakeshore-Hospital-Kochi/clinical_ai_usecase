@@ -6,6 +6,7 @@
   <title>Prototype · VPS Lakeshore Clinical AI</title>
   <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23001e5f%22/%3E%3Cpath d=%22M9 16h14M16 9v14%22 stroke=%22white%22 stroke-width=%224%22/%3E%3C/svg%3E">
   <link rel="stylesheet" href="css/lakeshore.css">
+  <link rel="stylesheet" href="css/demos.css">
 </head>
 <body>
   <main>
@@ -19,7 +20,15 @@
       </div>
       <div class="claude-role"><strong>What Claude does</strong><span id="module-role"></span></div>
     </section>
-    <section class="workspace">
+    <div class="view-tabs" id="view-tabs" role="tablist" aria-label="Views" hidden>
+      <button role="tab" id="tab-clinician" data-view="clinician" aria-selected="true">Clinician view</button>
+      <button role="tab" id="tab-classic" data-view="classic" aria-selected="false">Prompt &amp; text output</button>
+    </div>
+    <section class="clinician-view" id="clinician-view" hidden>
+      <ol class="guide" id="guide" aria-label="How to run this demo"></ol>
+      <div id="view-root"></div>
+    </section>
+    <section class="workspace" id="classic-view">
       <div class="card panel">
         <div class="panel__head"><h2 id="input-label">Input</h2></div>
         <div class="panel__body">
@@ -52,7 +61,7 @@
     </section>
     <nav class="module-nav" id="module-nav"></nav>
   </main>
-  <footer class="site-footer"><div class="site-footer__inner"><span>Clinical AI Showcase prototype · All patient data is synthetic · Claude outputs are decision support only and must be reviewed by a qualified clinician</span><img src="brand/logo-lakeshore-colour.png" alt="VPS Lakeshore"></div></footer>
+  <footer class="site-footer"><div class="site-footer__inner"><span>Clinical AI Showcase prototype · All patient data is synthetic · Claude outputs are decision support only and must be reviewed by a qualified clinician</span><img src="brand/logo-lakeshore-white.png" alt="VPS Lakeshore"></div></footer>
   <script type="module" src="js/module.js"></script>
 </body>
 </html>

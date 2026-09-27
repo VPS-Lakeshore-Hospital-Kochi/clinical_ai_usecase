@@ -11,11 +11,14 @@ const mockApi = http.createServer((req, res) => {
   req.on("end", () => {
     lastRequest = { url: req.url, headers: req.headers, body: JSON.parse(body) };
     res.writeHead(200, { "content-type": "text/event-stream" });
+    // Structured (clinician view) requests get a JSON answer; text runs get markdown.
+    const deltas = lastRequest.body.output_config?.format
+      ? [JSON.stringify({ urgency: "Routine" })]
+      : ["## Safety flags\n", "- None identified"];
     const events = [
       { type: "message_start", message: { id: "msg_test", type: "message", role: "assistant", model: "claude-opus-5", content: [], stop_reason: null, stop_sequence: null, usage: { input_tokens: 10, output_tokens: 0 } } },
       { type: "content_block_start", index: 0, content_block: { type: "text", text: "" } },
-      { type: "content_block_delta", index: 0, delta: { type: "text_delta", text: "## Safety flags\n" } },
-      { type: "content_block_delta", index: 0, delta: { type: "text_delta", text: "- None identified" } },
+      ...deltas.map((text) => ({ type: "content_block_delta", index: 0, delta: { type: "text_delta", text } })),
       { type: "content_block_stop", index: 0 },
       { type: "message_delta", delta: { stop_reason: "end_turn", stop_sequence: null }, usage: { output_tokens: 8 } },
       { type: "message_stop" },
@@ -35,7 +38,7 @@ before(async () => {
   delete process.env.ANTHROPIC_AUTH_TOKEN;
   delete process.env.DEMO_MODE;
   const { createApp } = await import("../server/index.js");
-  appServer = createApp({ demoChunkDelayMs: 0 }).listen(0);
+  appServer = createApp({ demoChunkDelayMs: 0, demoDelayMs: 0 }).listen(0);
   await new Promise((r) => appServer.once("listening", r));
   base = `http://127.0.0.1:${appServer.address().port}`;
 });
@@ -183,4 +186,72 @@ test("serves pages and vendored libraries", async () => {
     const res = await fetch(`${base}${path}`);
     assert.equal(res.status, 200, path);
   }
+});
+
+// Minimal JSON Schema check for the strict schemas used by the clinician views.
+function conforms(schema, value, path = "$") {
+  if (schema.enum) assert.ok(schema.enum.includes(value), `${path}: ${value} not in enum`);
+  if (schema.type === "object") {
+    assert.equal(typeof value, "object", `${path} should be an object`);
+    assert.deepEqual(Object.keys(value).sort(), [...schema.required].sort(), `${path} keys`);
+    for (const [k, sub] of Object.entries(schema.properties)) conforms(sub, value[k], `${path}.${k}`);
+  } else if (schema.type === "array") {
+    assert.ok(Array.isArray(value) && value.length > 0, `${path} should be a non-empty array`);
+    value.forEach((v, i) => conforms(schema.items, v, `${path}[${i}]`));
+  } else if (schema.type === "integer") assert.ok(Number.isInteger(value), `${path} should be an integer`);
+  else if (schema.type) assert.equal(typeof value, schema.type, `${path} should be ${schema.type}`);
+}
+
+const FLAGSHIPS = ["triage", "scribe", "nursing", "paeds", "stroke"];
+
+test("flagship sample data matches each clinician view's schema", async () => {
+  const { getModule } = await import("../server/modules/index.js");
+  for (const id of FLAGSHIPS) {
+    const view = getModule(id).interactive;
+    assert.ok(view, `${id} has a clinician view`);
+    conforms(view.schema, view.demo, id);
+    assert.ok(view.toText({}).length > 0);
+  }
+  const mods = await (await fetch(`${base}/api/modules`)).json();
+  assert.deepEqual(mods.filter((m) => m.interactive).map((m) => m.id).sort(), [...FLAGSHIPS].sort());
+});
+
+test("scribe sample cites real transcript lines", async () => {
+  const { getModule } = await import("../server/modules/index.js");
+  const mod = getModule("scribe");
+  const n = mod.defaultInput.split("\n").filter((l) => l.trim()).length;
+  const d = mod.interactive.demo;
+  for (const item of [...d.safetyFlags, ...d.codes, ...d.orders]) {
+    for (const l of item.lines) assert.ok(l >= 1 && l <= n, `line ${l} out of range`);
+  }
+});
+
+test("clinician view returns sample data offline and validates input", async () => {
+  const post = (id, body) => fetch(`${base}/api/interactive/${id}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
+  const res = await post("paeds", { payload: { orders: [] }, demo: true });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.mode, "demo");
+  assert.ok(body.data.appropriateness.length);
+  assert.equal((await post("oncology", { payload: {}, demo: true })).status, 404);
+  assert.equal((await post("triage", { demo: true })).status, 400);
+});
+
+test("live clinician view sends a JSON-schema request and parses the answer", async () => {
+  const res = await fetch(`${base}/api/interactive/triage`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ payload: { conversation: [{ from: "patient", text: "My sugar is high" }], mrn: "LH-SYN-000158" } }),
+  });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.mode, "live");
+  assert.deepEqual(body.data, { urgency: "Routine" });
+  const req = lastRequest.body;
+  assert.equal(req.output_config.format.type, "json_schema");
+  assert.equal(req.output_config.format.schema.additionalProperties, false);
+  assert.equal(req.fallbacks, "default");
+  assert.match(req.messages[0].content, /Today is 2026-07-02/);
+  assert.match(req.messages[0].content, /Patient: My sugar is high/);
+  assert.match(req.system[0].text, /<patient_record>/);
 });

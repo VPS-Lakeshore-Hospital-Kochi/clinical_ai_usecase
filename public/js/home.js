@@ -1,6 +1,9 @@
 import { renderHeader, esc } from "./common.js";
 import { STAGES } from "./usecases.js";
 
+// Flagship prototypes with a full interactive clinician view.
+const INTERACTIVE = new Set(["triage", "scribe", "nursing", "paeds", "stroke"]);
+
 renderHeader("home");
 
 const liveCount = STAGES.flatMap((s) => s.items).filter((i) => i.href).length;
@@ -23,12 +26,13 @@ document.getElementById("stages").innerHTML =
   ).join("");
 
 function renderUsecase(u) {
+  const id = u.href?.match(/id=(\w+)/)?.[1];
   const body = `
     <h3>${esc(u.title)}</h3>
     <p>${esc(u.text)}</p>
     <div class="usecase__foot">
       <span class="chip chip--muted">${esc(u.specialty)}</span>
-      ${u.href ? '<span class="chip chip--done">● Live prototype</span>' : '<span class="chip chip--muted">Roadmap</span>'}
+      ${INTERACTIVE.has(id) ? '<span class="chip chip--done">Interactive demo</span>' : u.href ? '<span class="chip">Live prototype</span>' : '<span class="chip chip--muted">Roadmap</span>'}
     </div>`;
   return u.href
     ? `<a class="card usecase usecase--live" href="${u.href}">${body}</a>`

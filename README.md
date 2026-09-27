@@ -65,6 +65,23 @@ Working prototypes of Claude across the patient journey at VPS Lakeshore Hospita
 
 The home page maps all 27 use cases from the roadmap, and all twenty-seven are now live prototypes.
 
+## Interactive clinician demos
+
+Five flagship prototypes open in a **clinician view** that looks like the tool a clinician would use. The text workspace is one tab away ("Prompt & text output").
+
+| Demo | What the clinician does |
+|---|---|
+| Symptom Intake & Triage | Plays a WhatsApp intake conversation; Claude triages it into a nurse console; the nurse confirms or overrides urgency, picks a slot, edits the reply and sends it back into the chat |
+| Ambient Clinical Scribe | Plays a recorded consultation line by line (optional on-device voice); Claude drafts the note; every flag, code and order links to the transcript lines it came from; codes and orders are accepted, edited or rejected before signing |
+| Nursing Handover & NEWS2 Watch | An observation chart scored live by the app (NEWS2, RCP 2017) with the response the chart requires; the nurse adds new observations; Claude reads the trend and drafts the escalation, SBAR, differential and day-shift tasks |
+| Paediatric Prescription Safety | Every dose recalculated live from the child's weight against a local formulary; unsafe orders block dispensing until corrected; Claude reviews appropriateness; the parent dosing card is built from the corrected orders |
+| Stroke Code & Neuro Planning | A simulated clock replays the code; the app runs door-to-CT and door-to-groin clocks and ticks off thrombolysis and thrombectomy eligibility as results arrive; Claude drafts the plan; the team records groin puncture |
+
+How they work:
+- **Offline first.** Without an API key each view uses checked sample data (`server/interactive/*.js`), so a demo never depends on the network. With a key, `POST /api/interactive/:id` asks Claude for the same shape using structured outputs (a strict JSON Schema per view).
+- **Rules in code, judgement from Claude.** NEWS2 scores, dose maths, eligibility checks, apixaban dose criteria and clocks are calculated by the app (`public/js/clinical.js`, unit-tested in `test/clinical.test.js`). Claude reads the trend, weighs the context and drafts the words.
+- **Clinician in control.** Every accept, edit, reject, override and escalation goes into a "Clinician actions" log, which is filed with the output to the patient timeline.
+
 On each module page the clinician can edit the input, run Claude, then **Approve & file** the draft. Filed outputs appear on the patient timeline (stored in the browser only) and feed into the journey story.
 
 ## Run it

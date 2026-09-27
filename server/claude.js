@@ -71,3 +71,29 @@ export async function streamModule(mod, input, onText, { signal } = {}) {
   }
   return { model: message.model, usage: message.usage };
 }
+
+// Structured request for a module's clinician view. Same cached system prompt as the
+// text run; the answer is constrained to the view's JSON Schema.
+export function buildInteractiveRequest(mod, payload) {
+  const base = buildRequest(mod, "");
+  return {
+    ...base,
+    output_config: { effort: EFFORT, format: { type: "json_schema", schema: mod.interactive.schema } },
+    messages: [{
+      role: "user",
+      content: `${asOfNote(mod.date)}\n\n${mod.interactive.instructions}\n\n${mod.interactive.toText(payload)}`,
+    }],
+  };
+}
+
+// Runs the clinician view's structured request and returns { model, data }.
+export async function runInteractive(mod, payload, { signal } = {}) {
+  const stream = getClient().beta.messages.stream(buildInteractiveRequest(mod, payload), { signal });
+  const message = await stream.finalMessage();
+  if (message.stop_reason === "refusal") {
+    throw new RefusalError(message.stop_details?.explanation || "Claude declined this request.");
+  }
+  if (message.stop_reason === "max_tokens") throw new Error("Claude's answer reached the length limit.");
+  const text = message.content.filter((b) => b.type === "text").map((b) => b.text).join("");
+  return { model: message.model, data: JSON.parse(text) };
+}

@@ -90,6 +90,45 @@ if (filed) {
   filedNote.textContent = patient ? "✓ Filed to the patient timeline" : "✓ Approved";
 }
 
+// Flagship modules open in an interactive clinician view; the text workspace stays one tab away.
+if (mod.interactive) {
+  const tabs = $("view-tabs");
+  const views = { clinician: $("clinician-view"), classic: $("classic-view") };
+  const show = (name) => {
+    for (const [k, v] of Object.entries(views)) v.hidden = k !== name;
+    tabs.querySelectorAll("[role=tab]").forEach((t) => t.setAttribute("aria-selected", String(t.dataset.view === name)));
+    try { localStorage.setItem("lakeshore.view", name); } catch { /* optional */ }
+  };
+  tabs.hidden = false;
+  tabs.addEventListener("click", (e) => { const v = e.target.closest("[data-view]")?.dataset.view; if (v) show(v); });
+  let saved = null;
+  try { saved = localStorage.getItem("lakeshore.view"); } catch { /* optional */ }
+  show(location.hash === "#classic" || saved === "classic" ? "classic" : "clinician");
+
+  const status = await getJSON("/api/status").catch(() => ({ mode: "demo" }));
+  const { default: view } = await import(`./demos/${id}.js`);
+  $("guide").innerHTML = view.guide.map((g) => `<li>${esc(g)}</li>`).join("");
+  view.mount($("view-root"), {
+    mod,
+    patient,
+    live: status.mode === "live",
+    async ask(payload, { demo = false } = {}) {
+      const res = await fetch(`/api/interactive/${encodeURIComponent(id)}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ payload, demo }),
+      });
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(body.error || `Request failed (${res.status})`);
+      return body;
+    },
+    file(markdown) {
+      fileOutput(id, { title: mod.title, specialty: mod.specialty, date: mod.date, text: markdown });
+      if (patient) renderStepper($("stepper"), id, mod.patientId);
+    },
+  });
+}
+
 const idx = steps.findIndex((s) => s.id === id);
 const prev = steps[idx - 1];
 const next = steps[idx + 1];

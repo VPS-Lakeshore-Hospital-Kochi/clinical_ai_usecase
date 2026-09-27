@@ -4,14 +4,14 @@ import { fileURLToPath } from "node:url";
 import Anthropic from "@anthropic-ai/sdk";
 import { modules, getModule, publicModule } from "./modules/index.js";
 import { getPatient } from "./patient.js";
-import { streamModule, liveMode, MODEL, RefusalError } from "./claude.js";
+import { streamModule, runInteractive, liveMode, MODEL, RefusalError } from "./claude.js";
 import { streamDemo } from "./demo.js";
 
 const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(here, "..");
 const MAX_INPUT_CHARS = 60_000;
 
-export function createApp({ demoChunkDelayMs } = {}) {
+export function createApp({ demoChunkDelayMs, demoDelayMs = 900 } = {}) {
   const app = express();
   app.use(express.json({ limit: "256kb" }));
 
@@ -78,6 +78,29 @@ export function createApp({ demoChunkDelayMs } = {}) {
     }
   });
 
+  // Clinician view: structured JSON for a flagship module. Offline-first: in demo mode
+  // (or on request) it returns the module's checked sample data.
+  app.post("/api/interactive/:id", async (req, res) => {
+    const mod = getModule(req.params.id);
+    if (!mod?.interactive) return res.status(404).json({ error: "This module has no clinician view" });
+    const payload = req.body?.payload;
+    if (!payload || typeof payload !== "object") return res.status(400).json({ error: "Missing payload" });
+    if (JSON.stringify(payload).length > MAX_INPUT_CHARS) return res.status(413).json({ error: "Input is too long" });
+
+    if (req.body?.demo === true || !liveMode()) {
+      if (demoDelayMs) await new Promise((r) => setTimeout(r, demoDelayMs));
+      return res.json({ mode: "demo", model: "sample output", data: mod.interactive.demo });
+    }
+    const abort = new AbortController();
+    res.on("close", () => { if (!res.writableEnded) abort.abort(); });
+    try {
+      const { model, data } = await runInteractive(mod, payload, { signal: abort.signal });
+      res.json({ mode: "live", model, data });
+    } catch (err) {
+      if (!abort.signal.aborted) res.status(502).json({ error: describeError(err) });
+    }
+  });
+
   return app;
 }
 
@@ -86,6 +109,7 @@ function describeError(err) {
   if (err instanceof Anthropic.AuthenticationError) return "The Claude API credential was rejected. Check ANTHROPIC_API_KEY.";
   if (err instanceof Anthropic.RateLimitError) return "Rate limited by the Claude API. Wait a moment and try again.";
   if (err instanceof Anthropic.APIError) return `Claude API error${err.status ? ` ${err.status}` : ""}: ${err.message}`;
+  if (err instanceof SyntaxError) return "Claude's answer could not be read as structured data.";
   console.error(err);
   return "Unexpected server error.";
 }
