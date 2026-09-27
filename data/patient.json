@@ -598,6 +598,14 @@
       "detail": "Coverage checked against policy clauses, estimate and medical-necessity letter prepared, room-rent deduction explained to the family."
     },
     {
+      "date": "2026-08-18",
+      "stage": "inpatient",
+      "specialty": "Surgery / Anaesthesia",
+      "module": "preop",
+      "title": "Admission-day pre-op readiness gate",
+      "detail": "Gaps closed before theatre: stoma-site marking and consent for a possible ileostomy, tonight's insulin dose, oral antibiotic bowel prep, group and screen."
+    },
+    {
       "date": "2026-08-19",
       "stage": "procedure",
       "specialty": "Surgical Gastroenterology",

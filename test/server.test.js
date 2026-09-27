@@ -53,9 +53,9 @@ async function readEvents(res) {
     .map((f) => JSON.parse(f.slice(6)));
 }
 
-test("lists all fifteen modules in journey order without leaking prompts", async () => {
+test("lists all seventeen modules in journey order without leaking prompts", async () => {
   const mods = await (await fetch(`${base}/api/modules`)).json();
-  assert.deepEqual(mods.map((m) => m.id), ["triage", "scribe", "diabetes", "ortho", "radiology", "oncology", "cardiology", "preauth", "discharge", "nephrology", "icu", "rehab", "monitoring", "journey", "transplant"]);
+  assert.deepEqual(mods.map((m) => m.id), ["triage", "scribe", "diabetes", "ortho", "radiology", "oncology", "cardiology", "preauth", "preop", "discharge", "nephrology", "icu", "rehab", "monitoring", "journey", "transplant", "heartfailure"]);
   for (const m of mods) {
     assert.equal(m.system, undefined);
     assert.equal(m.demoOutput, undefined);
@@ -87,6 +87,9 @@ test("serves the second patient and rejects unknown ids", async () => {
   const mods = await (await fetch(`${base}/api/modules`)).json();
   assert.equal(mods.find((m) => m.id === "transplant").patientId, "syn-000271");
   assert.equal(mods.find((m) => m.id === "icu").patientId, "syn-000158");
+  assert.equal(mods.find((m) => m.id === "heartfailure").patientId, "syn-000342");
+  const hf = await (await fetch(`${base}/api/patient?id=syn-000342`)).json();
+  assert.equal(hf.patient.mrn, "LH-SYN-000342");
 });
 
 test("transplant prompt carries the transplant patient's record", async () => {

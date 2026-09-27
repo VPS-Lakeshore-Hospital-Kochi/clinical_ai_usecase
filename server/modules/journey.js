@@ -33,6 +33,7 @@ Mr. Thomas Varghese, a 58-year-old retired bank manager from Kakkanad, messaged 
 - **5 Aug · Oncology (tumour board pack):** connected oxaliplatin neuropathy risk with existing diabetic neuropathy (favouring 3-month CAPOX), set the knee-surgery sequencing, and asked for a DPYD result before cycle 1. That request was sent but never tracked to completion (see open loops).
 - **8 Aug · Cardiology (pre-op co-pilot):** recognised typical exertional symptoms (RCRI 2) and recommended expedited stress imaging within the cancer-surgery window, plus post-op troponin surveillance.
 - **12 Aug · Insurance desk (pre-auth):** caught a ₹44,700 avoidable room-rent deduction before admission, and stated "laparoscopic, not robotic" to avoid a sub-limit query.
+- **18 Aug · Surgery / Anaesthesia (pre-op readiness):** cross-checked the admission against every earlier plan and caught a consent that did not mention the possible ileostomy, no stoma-site marking, an unadjusted night-before insulin dose and missing oral antibiotic bowel prep, all closed before theatre.
 - **24 Aug · Discharge:** caught the missing empagliflozin restart date and confirmed that no NSAIDs or sulfonamides were prescribed.
 - **3 Sep · Nephrology (kidney co-pilot):** showed the July eGFR dip was NSAID-related and has recovered (68 → 85), confirming full-dose CAPOX. It also flagged that the CKD diagnosis needs a repeat UACR after 6 Oct, and wrote sick-day rules for chemotherapy diarrhoea.
 - **20 Sep · Critical Care (ICU co-pilot):** recognised euglycaemic DKA despite a near-normal glucose, put potassium replacement before insulin, flagged the overdue antibiotics, and linked the early severe toxicity to the **missing DPYD result**, chasing it within the 96-hour uridine triacetate window.
@@ -93,6 +94,7 @@ Mr. Thomas Varghese, a 58-year-old retired bank manager from Kakkanad, messaged 
 | Oncology / MDT | Staging, treatment sequence, adjuvant chemotherapy |
 | Cardiology | Pre-operative risk assessment, stress echo, peri-operative drug plan |
 | Insurance desk | Cashless pre-authorisation, cost counselling |
+| Surgery / Anaesthesia | Pre-op readiness gate and WHO Surgical Safety Checklist |
 | Surgical Gastroenterology | Laparoscopic resection, inpatient care, discharge |
 | Critical Care | ICU management of DKA, sepsis, AKI and chemotherapy toxicity |
 | Nephrology | Kidney staging, chemo dosing, sick-day rules, albuminuria plan |

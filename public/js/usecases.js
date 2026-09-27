@@ -30,7 +30,7 @@ export const STAGES = [
       { title: "Ortho surgery planner", specialty: "Orthopaedics", text: "TKA indication, implant options, risk, optimisation, consent and rehab.", href: "module.html?id=ortho" },
       { title: "Tumour board assistant", specialty: "Oncology", text: "Staging, biology, guideline options, trials and a draft MDT outcome.", href: "module.html?id=oncology" },
       { title: "Cardiac pre-op co-pilot", specialty: "Cardiology", text: "RCRI and biomarker risk, need for stress testing, peri-operative drug plan and clearance note.", href: "module.html?id=cardiology" },
-      { title: "Chest-pain & heart-failure co-pilot", specialty: "Cardiology", text: "HEART score pathway, echo summaries and GDMT optimisation." },
+      { title: "Heart failure co-pilot", specialty: "Cardiology / HF clinic", text: "Four-pillar medicine gaps, dated titration plan with safety checks, iron, CRT-D eligibility, Kerala-diet advice. Third synthetic patient.", href: "module.html?id=heartfailure" },
       { title: "Liver transplant work-up", specialty: "Hepatology / Transplant", text: "MELD 3.0 and Milan criteria, recipient and living-donor readiness tracker, GRWR, THOTA steps. Second synthetic patient.", href: "module.html?id=transplant" },
       { title: "Kidney co-pilot", specialty: "Nephrology", text: "eGFR trend, CKD staging, chemo dosing, sick-day rules and a kidney-protection plan.", href: "module.html?id=nephrology" },
       { title: "Stroke & neuro-surgical planning", specialty: "Neurology / Neurosurgery", text: "Thrombolysis eligibility and pre-operative planning summaries." },
@@ -44,7 +44,7 @@ export const STAGES = [
     title: "Procedures & inpatient care",
     blurb: "AI for the institution, beyond the individual clinician.",
     items: [
-      { title: "Pre-op readiness & WHO checklist", specialty: "Surgery / Anaesthesia", text: "Readiness gating and plain-language consent drafting." },
+      { title: "Pre-op readiness & WHO checklist", specialty: "Surgery / Anaesthesia", text: "Admission-day readiness gate across all prior plans, gaps with owners, pre-filled WHO Surgical Safety Checklist.", href: "module.html?id=preop" },
       { title: "Nursing handover & NEWS2 watch", specialty: "Nursing", text: "Shift handovers and early-warning escalation." },
       { title: "Med reconciliation & antibiotic stewardship", specialty: "Pharmacy", text: "Admission reconciliation and antimicrobial review." },
       { title: "Pre-auth & TPA packet builder", specialty: "Insurance desk", text: "Policy-clause check, deduction arithmetic, medical-necessity letter and TPA query responses.", href: "module.html?id=preauth" },

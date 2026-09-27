@@ -3,6 +3,7 @@ import DOMPurify from "/vendor/dompurify/purify.es.mjs";
 
 export const MAIN_PATIENT_ID = "syn-000158";
 export const TRANSPLANT_PATIENT_ID = "syn-000271";
+export const HF_PATIENT_ID = "syn-000342";
 
 // Order of the live prototypes along Thomas's journey (journey story lives on the dashboard).
 export const JOURNEY_STEPS = [
@@ -14,6 +15,7 @@ export const JOURNEY_STEPS = [
   { id: "oncology", label: "Tumour board", href: "module.html?id=oncology" },
   { id: "cardiology", label: "Cardiac", href: "module.html?id=cardiology" },
   { id: "preauth", label: "Pre-auth", href: "module.html?id=preauth" },
+  { id: "preop", label: "Pre-op", href: "module.html?id=preop" },
   { id: "discharge", label: "Discharge", href: "module.html?id=discharge" },
   { id: "nephrology", label: "Kidney", href: "module.html?id=nephrology" },
   { id: "icu", label: "ICU", href: "module.html?id=icu" },
@@ -28,8 +30,16 @@ const TRANSPLANT_STEPS = [
   { id: "timeline", label: "Patient timeline", href: `dashboard.html?patient=${TRANSPLANT_PATIENT_ID}` },
 ];
 
+// Rajan Pillai's heart-failure journey.
+const HF_STEPS = [
+  { id: "heartfailure", label: "Heart-failure clinic", href: "module.html?id=heartfailure" },
+  { id: "timeline", label: "Patient timeline", href: `dashboard.html?patient=${HF_PATIENT_ID}` },
+];
+
+const STEPS_BY_PATIENT = { [TRANSPLANT_PATIENT_ID]: TRANSPLANT_STEPS, [HF_PATIENT_ID]: HF_STEPS };
+
 export function stepsFor(patientId) {
-  return patientId === TRANSPLANT_PATIENT_ID ? TRANSPLANT_STEPS : JOURNEY_STEPS;
+  return STEPS_BY_PATIENT[patientId] ?? JOURNEY_STEPS;
 }
 
 export function esc(s) {

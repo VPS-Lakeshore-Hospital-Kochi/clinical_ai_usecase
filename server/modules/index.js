@@ -7,15 +7,17 @@ import radiology from "./radiology.js";
 import oncology from "./oncology.js";
 import cardiology from "./cardiology.js";
 import preauth from "./preauth.js";
+import preop from "./preop.js";
 import discharge from "./discharge.js";
 import nephrology from "./nephrology.js";
 import icu from "./icu.js";
 import rehab from "./rehab.js";
 import monitoring from "./monitoring.js";
 import transplant from "./transplant.js";
+import heartfailure from "./heartfailure.js";
 import journey from "./journey.js";
 
-export const modules = [triage, scribe, diabetes, ortho, radiology, oncology, cardiology, preauth, discharge, nephrology, icu, rehab, monitoring, journey, transplant].sort(
+export const modules = [triage, scribe, diabetes, ortho, radiology, oncology, cardiology, preauth, preop, discharge, nephrology, icu, rehab, monitoring, journey, transplant, heartfailure].sort(
   (a, b) => a.order - b.order,
 );
 
