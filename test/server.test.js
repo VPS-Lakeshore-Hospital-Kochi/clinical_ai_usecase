@@ -1,3 +1,4 @@
+import fs from "node:fs";
 import { test, before, after } from "node:test";
 import assert from "node:assert/strict";
 import http from "node:http";
@@ -202,7 +203,7 @@ function conforms(schema, value, path = "$") {
   else if (schema.type) assert.equal(typeof value, schema.type, `${path} should be ${schema.type}`);
 }
 
-const FLAGSHIPS = ["triage", "scribe", "nursing", "paeds", "stroke", "decision", "radiology", "oncology", "icu", "preauth", "referral", "preop", "discharge", "medrec", "monitoring", "diabetes", "antenatal", "routing", "ortho", "cardiology", "nephrology", "coding", "labs", "rehab"];
+const FLAGSHIPS = ["triage", "scribe", "nursing", "paeds", "stroke", "decision", "radiology", "oncology", "icu", "preauth", "referral", "preop", "discharge", "medrec", "monitoring", "diabetes", "antenatal", "routing", "ortho", "cardiology", "nephrology", "coding", "labs", "rehab", "transplant", "heartfailure", "journey"];
 
 test("flagship sample data matches each clinician view's schema", async () => {
   const { getModule } = await import("../server/modules/index.js");
@@ -308,6 +309,26 @@ test("coding, labs and rehab samples agree with the app's checks", async () => {
   assert.deepEqual(c.jargonCheck(copy), []);
   assert.deepEqual(c.survivalCheck(copy), []);
   assert.equal(c.rehabTrafficLight({ temp: 36.8, anc: 1.9, platelets: 142, glucose: 212, looseStools: 1, chest: "none", kneePain: 6, dizzy: "none" }).overall, "green");
+});
+
+test("transplant, heart failure and journey samples agree with the app's rules", async () => {
+  const { getModule } = await import("../server/modules/index.js");
+  const c = await import("../public/js/clinical.js");
+  const tx = getModule("transplant").interactive.demo;
+  assert.match(tx.candidacy.urgency, new RegExp(`MELD 3.0 is ${c.meld3({ female: true, bilirubin: 3.4, sodium: 131, inr: 1.9, creatinine: 1.3, albumin: 2.6 }).score}`));
+  assert.ok(!/donor (is )?approved/i.test(JSON.stringify(tx)));
+  const hf = getModule("heartfailure").interactive.demo;
+  const arni = hf.steps.find((s) => s.check === "arni" && s.start);
+  assert.ok(c.washoutOk("26 Sep 08:00", arni.start));
+  assert.ok(hf.other.some((o) => o.includes(`${c.fcmTotalDose(11.8, 69.5).toLocaleString("en-IN")} mg`)));
+  const { timeline } = JSON.parse(fs.readFileSync(new URL("../data/patient.json", import.meta.url)));
+  const tagged = new Set(timeline.filter((e) => e.module).map((e) => e.module));
+  const jy = getModule("journey").interactive.demo;
+  for (const m of jy.aiMoments) assert.ok(tagged.has(m.module), `unknown module ${m.module}`);
+  assert.equal(jy.aiMoments.length, tagged.size);
+  const [contact, , , , dpyd] = c.journeyIntervals(timeline);
+  assert.match(jy.story, new RegExp(`${contact.days} days after his first message`));
+  assert.match(jy.story, new RegExp(`${dpyd.days} days after the request`));
 });
 
 test("clinician view returns sample data offline and validates input", async () => {

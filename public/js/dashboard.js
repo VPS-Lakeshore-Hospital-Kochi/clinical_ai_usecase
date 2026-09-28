@@ -1,6 +1,6 @@
 import {
   renderHeader, renderPatientStrip, renderStepper, getJSON, esc, formatDate,
-  getFiled, clearFiled, renderMarkdown, MAIN_PATIENT_ID,
+  getFiled, clearFiled, renderMarkdown, MAIN_PATIENT_ID, compileJourney,
 } from "./common.js";
 import { attachRunner } from "./runner.js";
 
@@ -19,8 +19,6 @@ if (!hasStory) {
   $("story-panel").hidden = true;
   $("dash").classList.add("dash--single");
 }
-
-const MAX_FILED_CHARS = 4000;
 
 function renderTimeline() {
   const filed = getFiled();
@@ -48,21 +46,7 @@ function renderTimeline() {
   });
 }
 
-function compileTimeline() {
-  const filed = getFiled();
-  const p = patient.patient;
-  const lines = [`Patient: ${p.name}, ${p.age}-year-old ${p.gender}, ${p.address} (synthetic).`, ""];
-  for (const e of patient.timeline) {
-    const tag = e.module ? " [AI-assisted step]" : "";
-    lines.push(`${e.date} · ${e.specialty} · ${e.title}${tag}: ${e.detail}`);
-    const f = e.module ? filed[e.module] : null;
-    if (f) {
-      const text = f.text.length > MAX_FILED_CHARS ? `${f.text.slice(0, MAX_FILED_CHARS)}\n[…truncated]` : f.text;
-      lines.push(`  Clinician-approved AI output:\n${text.replace(/^/gm, "    ")}`);
-    }
-  }
-  return lines.join("\n");
-}
+const compileTimeline = () => compileJourney(patient, getFiled());
 
 renderTimeline();
 

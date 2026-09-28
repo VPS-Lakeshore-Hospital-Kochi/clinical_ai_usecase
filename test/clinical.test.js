@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { news2, news2Response, checkOrder, apixabanCriteria, toMin, toHHMM, fmtDur, medicineCheck, colonStage, adjuvantGuide, anionGap, kdigoStage, dkaInsulinRate, preauthEstimate, adrenalRule, locateQuotes, hba1cIfccToNgsp, glucoseMmolToMg, creatinineUmolToMg, egfrCkdEpi2021, holdCheck, basalNightBefore, addDays, daysInclusive, idealBodyWeight, adjustedBodyWeight, cockcroftGault, qtRisk, thresholdAlerts, trendAlerts, stoolTrend, STANDARD_THRESHOLDS, EPISODE_THRESHOLDS, cgmCheck, gmiGap, hypoRegimenRule, gestation, dateAtGestation, bpClass, preEclampsiaCheck, gdmControl, antiDStatus, screenRequest, findDuplicates, slotCheck, oxfordKneeBand, tkaReadiness, rcri, periopPathway, minsCheck, kdigoRisk, ckdConfirmDate, capecitabineBand, oxaliplatinBand, metforminBand, contrastBand, inr, billChecks, claimReconcile, evidenceFound, labTrend, readability, jargonCheck, survivalCheck, rehabTrafficLight } from "../public/js/clinical.js";
+import { news2, news2Response, checkOrder, apixabanCriteria, toMin, toHHMM, fmtDur, medicineCheck, colonStage, adjuvantGuide, anionGap, kdigoStage, dkaInsulinRate, preauthEstimate, adrenalRule, locateQuotes, hba1cIfccToNgsp, glucoseMmolToMg, creatinineUmolToMg, egfrCkdEpi2021, holdCheck, basalNightBefore, addDays, daysInclusive, idealBodyWeight, adjustedBodyWeight, cockcroftGault, qtRisk, thresholdAlerts, trendAlerts, stoolTrend, STANDARD_THRESHOLDS, EPISODE_THRESHOLDS, cgmCheck, gmiGap, hypoRegimenRule, gestation, dateAtGestation, bpClass, preEclampsiaCheck, gdmControl, antiDStatus, screenRequest, findDuplicates, slotCheck, oxfordKneeBand, tkaReadiness, rcri, periopPathway, minsCheck, kdigoRisk, ckdConfirmDate, capecitabineBand, oxaliplatinBand, metforminBand, contrastBand, inr, billChecks, claimReconcile, evidenceFound, labTrend, readability, jargonCheck, survivalCheck, rehabTrafficLight, meld3, childPugh, milanCriteria, donorChecks, gdmtGaps, titrationCheck, hfHoldRule, arniEarliest, washoutOk, hfIronDeficient, fcmTotalDose, crtEligibility, weightAlarm, journeyIntervals } from "../public/js/clinical.js";
 import { QUEUE, ROSTER } from "../public/js/routing-data.js";
 import fs from "node:fs";
 
@@ -274,4 +274,55 @@ test("rehab traffic light", () => {
   assert.equal(rehabTrafficLight({ ...day1, platelets: 90 }).overall, "amber");
   assert.equal(rehabTrafficLight({ ...day1, kneePain: 7 }).overall, "amber");
   assert.equal(rehabTrafficLight({ ...day1, dizzy: "fall" }).session, "Skip today's session and call the care team");
+});
+
+test("MELD 3.0, Child-Pugh, Milan and living-donor checks", () => {
+  const anitha = { female: true, bilirubin: 3.4, sodium: 131, inr: 1.9, creatinine: 1.3, albumin: 2.6 };
+  const m = meld3(anitha);
+  assert.equal(m.score, 26);
+  assert.ok(Math.abs(m.raw - 26.06) < 0.05);
+  assert.equal(meld3({ ...anitha, sodium: 120 }).score, meld3({ ...anitha, sodium: 125 }).score);
+  assert.deepEqual(childPugh({ bilirubin: 3.4, albumin: 2.6, inr: 1.9, ascites: "moderate", encephalopathy: "1-2" }), { score: 13, cls: "C", parts: [["Bilirubin", 3], ["Albumin", 3], ["INR", 2], ["Ascites", 3], ["Encephalopathy", 2]] });
+  assert.equal(childPugh({ bilirubin: 1.2, albumin: 3.8, inr: 1.1, ascites: "none", encephalopathy: "none" }).cls, "A");
+  assert.equal(milanCriteria({ lesions: [2.4], vascularInvasion: false, extrahepatic: false }).within, true);
+  assert.equal(milanCriteria({ lesions: [2.4, 3.5], vascularInvasion: false, extrahepatic: false }).within, false);
+  const d = donorChecks({ graftMl: 830, totalMl: 1580, recipientKg: 58, donorAbo: "O", recipientAbo: "B", fatPct: 4 });
+  assert.equal(d.grwr, 1.43);
+  assert.equal(d.remnant, 47.5);
+  assert.equal(d.ok, true);
+  assert.equal(donorChecks({ graftMl: 830, totalMl: 1580, recipientKg: 64, donorAbo: "O", recipientAbo: "B", fatPct: 4 }).grwr, 1.3);
+  assert.equal(donorChecks({ graftMl: 1150, totalMl: 1580, recipientKg: 58, donorAbo: "O", recipientAbo: "B", fatPct: 4 }).ok, false);
+  assert.equal(donorChecks({ graftMl: 830, totalMl: 1580, recipientKg: 58, donorAbo: "A", recipientAbo: "B", fatPct: 4 }).ok, false);
+});
+
+test("heart failure GDMT gaps, safety checks, washout, iron and CRT", () => {
+  const gaps = gdmtGaps([{ name: "Ramipril", mgPerDay: 2.5 }, { name: "Metoprolol succinate", mgPerDay: 25 }]);
+  assert.deepEqual(gaps.map((g) => [g.pct, g.gap]), [[25, "Large"], [13, "Large"], [0, "Missing"], [0, "Missing"]]);
+  const v = { sbp: 108, hr: 92, k: 4.8, egfr: 55, creatRisePct: 0, congested: true };
+  assert.equal(titrationCheck("sglt2", v).ok, true);
+  assert.equal(titrationCheck("arni", v).ok, true);
+  assert.equal(titrationCheck("mra", v).ok, true);
+  assert.equal(titrationCheck("mra", { ...v, k: 5.6 }).ok, false);
+  assert.equal(titrationCheck("bb", v).ok, false);
+  assert.equal(titrationCheck("bb", { ...v, congested: false }).ok, true);
+  assert.equal(titrationCheck("arni", { ...v, sbp: 96 }).ok, false);
+  assert.equal(hfHoldRule(5.6, 10), true);
+  assert.equal(arniEarliest("26 Sep 08:00"), "27 Sep 20:00");
+  assert.equal(washoutOk("26 Sep 08:00", "28 Sep 08:00"), true);
+  assert.equal(washoutOk("26 Sep 08:00", "27 Sep 08:00"), false);
+  assert.equal(hfIronDeficient(62, 14), true);
+  assert.equal(hfIronDeficient(150, 25), false);
+  assert.equal(hfIronDeficient(150, 18), true);
+  assert.equal(fcmTotalDose(11.8, 69.5), 1000);
+  assert.equal(crtEligibility({ lvef: 30, qrs: 156, lbbb: true }).cls, "I");
+  assert.equal(crtEligibility({ lvef: 40, qrs: 156, lbbb: true }).eligible, false);
+  const w = [68.0, 68.3, 68.9, 69.3, 69.5].map((kg) => ({ kg }));
+  assert.deepEqual(weightAlarm(w, 68.0), { overDry: 1.5, gain2: 0.2, weekGain: 1.5, alarm: false });
+});
+
+test("journey intervals from Thomas's timeline", () => {
+  const { timeline } = JSON.parse(fs.readFileSync(new URL("../data/patient.json", import.meta.url)));
+  const rows = journeyIntervals(timeline);
+  assert.deepEqual(rows.map((r) => r.days), [27, 21, 22, 10, 47]);
+  assert.deepEqual(rows.map((r) => r.ok), [null, true, true, null, false]);
 });

@@ -8,7 +8,7 @@ export const MOTHER_PATIENT_ID = "syn-000415";
 export const CHILD_PATIENT_ID = "syn-000416";
 export const STROKE_PATIENT_ID = "syn-000527";
 
-// Order of the live prototypes along Thomas's journey (journey story lives on the dashboard).
+// Order of the live prototypes along Thomas's journey.
 export const JOURNEY_STEPS = [
   { id: "triage", label: "Triage", href: "module.html?id=triage" },
   { id: "referral", label: "Records digest", href: "module.html?id=referral" },
@@ -29,7 +29,7 @@ export const JOURNEY_STEPS = [
   { id: "medrec", label: "Med rec", href: "module.html?id=medrec" },
   { id: "rehab", label: "Rehab", href: "module.html?id=rehab" },
   { id: "monitoring", label: "Home monitor", href: "module.html?id=monitoring" },
-  { id: "journey", label: "Story", href: "dashboard.html" },
+  { id: "journey", label: "Story", href: "module.html?id=journey" },
 ];
 
 // Anitha Joseph's liver transplant journey.
@@ -212,4 +212,21 @@ export function clearFiled() {
   } catch {
     /* ignore */
   }
+}
+
+// The whole timeline as text, with any clinician-approved outputs filed in this browser.
+const MAX_FILED_CHARS = 4000;
+export function compileJourney(patient, filed) {
+  const p = patient.patient;
+  const lines = [`Patient: ${p.name}, ${p.age}-year-old ${p.gender}, ${p.address} (synthetic).`, ""];
+  for (const e of patient.timeline) {
+    const tag = e.module ? " [AI-assisted step]" : "";
+    lines.push(`${e.date} · ${e.specialty} · ${e.title}${tag}: ${e.detail}`);
+    const f = e.module ? filed[e.module] : null;
+    if (f) {
+      const text = f.text.length > MAX_FILED_CHARS ? `${f.text.slice(0, MAX_FILED_CHARS)}\n[…truncated]` : f.text;
+      lines.push(`  Clinician-approved AI output:\n${text.replace(/^/gm, "    ")}`);
+    }
+  }
+  return lines.join("\n");
 }

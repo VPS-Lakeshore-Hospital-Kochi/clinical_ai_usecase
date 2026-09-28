@@ -1,12 +1,11 @@
 import {
   renderHeader, renderPatientStrip, renderStepper, getJSON, esc, formatDate,
-  stepsFor, getFiled, fileOutput,
+  stepsFor, getFiled, fileOutput, compileJourney,
 } from "./common.js";
 import { attachRunner } from "./runner.js";
 import { renderCgmWidget, renderVitalsWidget } from "./charts.js";
 
 const id = new URLSearchParams(location.search).get("id") || "scribe";
-if (id === "journey") location.replace("dashboard.html");
 
 renderHeader("home");
 
@@ -33,8 +32,10 @@ $("input-hint").textContent = mod.inputHint;
 $("output-label").textContent = mod.outputLabel;
 
 const input = $("input");
-input.value = mod.defaultInput;
-$("reset").addEventListener("click", () => (input.value = mod.defaultInput));
+// The journey story reads the whole timeline, including outputs filed in this browser.
+const startInput = () => (id === "journey" && patient ? compileJourney(patient, getFiled()) : mod.defaultInput);
+input.value = startInput();
+$("reset").addEventListener("click", () => (input.value = startInput()));
 
 if (mod.widgets.includes("cgm")) renderCgmWidget($("widgets"), patient.cgm);
 if (mod.widgets.includes("vitals")) renderVitalsWidget($("widgets"), patient.homeMonitoring);

@@ -630,3 +630,154 @@ export function rehabTrafficLight({ temp, anc, platelets, glucose, looseStools, 
   const session = { green: "Full session from this week's plan", amber: "Half session: seated work and bike, no resistance", red: "Skip today's session and call the care team" }[overall];
   return { signals, overall, session };
 }
+
+/* ---------- Liver transplant: MELD 3.0, Child-Pugh, Milan, living-donor checks ---------- */
+const clamp = (v, lo, hi) => Math.min(hi, Math.max(lo, v));
+// MELD 3.0 (Kim et al. 2021), with UNOS bounds. Returns the rounded score and each term.
+export function meld3({ female, bilirubin, sodium, inr, creatinine, albumin }) {
+  const b = Math.log(clamp(bilirubin, 1, Infinity)), i = Math.log(clamp(inr, 1, Infinity)), c = Math.log(clamp(creatinine, 1, 3));
+  const na = 137 - clamp(sodium, 125, 137), al = 3.5 - clamp(albumin, 1.5, 3.5);
+  const terms = [
+    ["Female", female ? 1.33 : 0], ["4.56 × ln(bilirubin)", 4.56 * b], ["0.82 × (137 − Na)", 0.82 * na], ["−0.24 × (137 − Na) × ln(bilirubin)", -0.24 * na * b],
+    ["9.09 × ln(INR)", 9.09 * i], ["11.14 × ln(creatinine)", 11.14 * c], ["1.85 × (3.5 − albumin)", 1.85 * al], ["−1.83 × (3.5 − albumin) × ln(creatinine)", -1.83 * al * c], ["Constant", 6],
+  ];
+  const raw = terms.reduce((s, t) => s + t[1], 0);
+  return { score: Math.round(raw), raw: Math.round(raw * 100) / 100, terms: terms.map(([k, v]) => [k, Math.round(v * 100) / 100]) };
+}
+
+// ascites: "none" | "mild" | "moderate"; encephalopathy: "none" | "1-2" | "3-4".
+export function childPugh({ bilirubin, albumin, inr, ascites, encephalopathy }) {
+  const parts = [
+    ["Bilirubin", bilirubin < 2 ? 1 : bilirubin <= 3 ? 2 : 3],
+    ["Albumin", albumin > 3.5 ? 1 : albumin >= 2.8 ? 2 : 3],
+    ["INR", inr < 1.7 ? 1 : inr <= 2.3 ? 2 : 3],
+    ["Ascites", { none: 1, mild: 2, moderate: 3 }[ascites]],
+    ["Encephalopathy", { none: 1, "1-2": 2, "3-4": 3 }[encephalopathy]],
+  ];
+  const score = parts.reduce((s, p) => s + p[1], 0);
+  return { score, cls: score <= 6 ? "A" : score <= 9 ? "B" : "C", parts };
+}
+
+// Milan: one lesion ≤5 cm, or up to 3 lesions each ≤3 cm; no macrovascular invasion or spread.
+export function milanCriteria({ lesions, vascularInvasion, extrahepatic }) {
+  const size = lesions.length === 1 ? lesions[0] <= 5 : lesions.length <= 3 && lesions.every((l) => l <= 3);
+  return { within: size && !vascularInvasion && !extrahepatic, size };
+}
+
+const ABO_OK = { O: ["O", "A", "B", "AB"], A: ["A", "AB"], B: ["B", "AB"], AB: ["AB"] };
+// Living-donor checks: graft-to-recipient weight ratio (graft mL ≈ g), remnant, fat and ABO.
+export function donorChecks({ graftMl, totalMl, recipientKg, donorAbo, recipientAbo, fatPct }) {
+  const grwr = Math.round((graftMl / (recipientKg * 1000)) * 10000) / 100;
+  const remnant = Math.round(((totalMl - graftMl) / totalMl) * 1000) / 10;
+  const items = [
+    { key: "abo", ok: ABO_OK[donorAbo].includes(recipientAbo), text: `ABO: donor ${donorAbo} → recipient ${recipientAbo}` },
+    { key: "grwr", ok: grwr >= 0.8, text: `GRWR ${grwr}% (minimum 0.8%)` },
+    { key: "remnant", ok: remnant >= 30, text: `Donor remnant ${remnant}% (minimum 30%)` },
+    { key: "fat", ok: fatPct < 10, text: `Liver fat ${fatPct}% (under 10%)` },
+  ];
+  return { grwr, remnant, items, ok: items.every((x) => x.ok) };
+}
+
+/* ---------- Heart failure (HFrEF): GDMT, safety checks, iron, CRT ---------- */
+// Target daily doses (mg/day) for the dose-percentage column.
+export const GDMT_TARGETS = {
+  "Sacubitril/valsartan": { pillar: "ARNI / ACEi / ARB", target: 194, text: "97/103 mg twice daily" },
+  Ramipril: { pillar: "ARNI / ACEi / ARB", target: 10, text: "5 mg twice daily" },
+  "Metoprolol succinate": { pillar: "Beta-blocker", target: 200, text: "200 mg daily" },
+  Spironolactone: { pillar: "MRA", target: 50, text: "25–50 mg daily" },
+  Dapagliflozin: { pillar: "SGLT2 inhibitor", target: 10, text: "10 mg daily" },
+};
+const PILLARS = ["ARNI / ACEi / ARB", "Beta-blocker", "MRA", "SGLT2 inhibitor"];
+// meds: [{ name, mgPerDay }]
+export function gdmtGaps(meds) {
+  return PILLARS.map((pillar) => {
+    const m = meds.find((x) => GDMT_TARGETS[x.name]?.pillar === pillar);
+    if (!m) return { pillar, current: "None", pct: 0, gap: "Missing" };
+    const pct = Math.round((m.mgPerDay / GDMT_TARGETS[m.name].target) * 100);
+    return { pillar, current: `${m.name} ${m.mgPerDay} mg/day`, pct, gap: pct >= 100 ? "At target" : pct >= 50 ? "Partial" : "Large" };
+  });
+}
+
+// Safety check before a titration step. v: { sbp, hr, k, egfr, creatRisePct, congested }.
+export function titrationCheck(step, v) {
+  const no = (why) => ({ ok: false, why }), yes = (why) => ({ ok: true, why });
+  if (step === "sglt2") return v.egfr >= 20 ? yes(`eGFR ${v.egfr} ≥20`) : no(`eGFR ${v.egfr} <20`);
+  if (step === "arni") return v.sbp >= 100 ? yes(`SBP ${v.sbp} ≥100`) : no(`SBP ${v.sbp} <100: do not start or increase`);
+  if (step === "mra") {
+    if (v.k > 5.0) return no(`K ${v.k} >5.0: do not start or increase`);
+    if (v.egfr <= 30) return no(`eGFR ${v.egfr} ≤30`);
+    if (v.creatRisePct >= 30) return no(`Creatinine up ${v.creatRisePct}%`);
+    return yes(`K ${v.k}, eGFR ${v.egfr}`);
+  }
+  if (step === "bb") {
+    if (v.congested) return no("Still congested: keep the dose");
+    if (v.hr <= 70) return no(`HR ${v.hr}: no room to increase`);
+    if (v.sbp < 100) return no(`SBP ${v.sbp} <100`);
+    return yes(`HR ${v.hr}, SBP ${v.sbp}, euvolaemic`);
+  }
+  return yes("No app check");
+}
+
+// Hold new drugs when K >5.5 or creatinine rises >50% (monitoring rule).
+export const hfHoldRule = (k, creatRisePct) => k > 5.5 || creatRisePct > 50;
+
+// ACE inhibitor → ARNI needs 36 hours after the last ACE-inhibitor dose ("D Mon HH:MM").
+export function arniEarliest(lastAceDose) {
+  const [d, mo, hm] = lastAceDose.split(" ");
+  const [h, m] = hm.split(":").map(Number);
+  const t = new Date(Date.UTC(2026, MONTHS[mo], Number(d), h + 36, m));
+  return `${t.getUTCDate()} ${Object.keys(MONTHS)[t.getUTCMonth()]} ${String(t.getUTCHours()).padStart(2, "0")}:${String(t.getUTCMinutes()).padStart(2, "0")}`;
+}
+export const washoutOk = (lastAceDose, arniStart) => hoursBetween(lastAceDose, arniStart) >= 36;
+
+// Iron deficiency in HF (ESC 2021/2023) and the simplified ferric carboxymaltose total dose.
+export const hfIronDeficient = (ferritin, tsat) => ferritin < 100 || (ferritin <= 299 && tsat < 20);
+export function fcmTotalDose(hb, weightKg) {
+  if (hb < 10) return weightKg < 70 ? 1500 : 2000;
+  if (hb < 14) return weightKg < 70 ? 1000 : 1500;
+  return 500;
+}
+
+// CRT (ESC 2021): LVEF ≤35%, sinus rhythm, after ≥3 months of optimised medicines.
+export function crtEligibility({ lvef, qrs, lbbb, sinus = true }) {
+  if (lvef > 35 || !sinus || qrs < 130) return { eligible: false, cls: "—", text: "Not indicated on current criteria" };
+  if (lbbb && qrs >= 150) return { eligible: true, cls: "I", text: "Recommended (class I): LBBB with QRS ≥150 ms" };
+  if (lbbb) return { eligible: true, cls: "IIa", text: "Should be considered (IIa): LBBB with QRS 130–149 ms" };
+  return { eligible: true, cls: qrs >= 150 ? "IIa" : "IIb", text: qrs >= 150 ? "Should be considered (IIa): non-LBBB with QRS ≥150 ms" : "May be considered (IIb): non-LBBB with QRS 130–149 ms" };
+}
+
+// Weight alarm: +1 kg in 2 days or +2 kg in a week; gain over dry weight.
+export function weightAlarm(weights, dry) {
+  const last = weights[weights.length - 1];
+  const twoDaysAgo = weights.length >= 2 ? weights[weights.length - 2] : last;
+  const gain2 = Math.round((last.kg - twoDaysAgo.kg) * 10) / 10;
+  const overDry = Math.round((last.kg - dry) * 10) / 10;
+  const weekGain = Math.round((last.kg - weights[0].kg) * 10) / 10;
+  return { overDry, gain2, weekGain, alarm: gain2 >= 1 || weekGain >= 2 };
+}
+
+/* ---------- Journey story: milestones and intervals from the timeline ---------- */
+export const daysBetweenIso = (a, b) => Math.round((Date.parse(b) - Date.parse(a)) / DAY);
+export const JOURNEY_MILESTONES = {
+  contact: (e) => e.module === "triage",
+  diagnosis: (e) => /colonoscopy/i.test(e.title),
+  mdt: (e) => e.module === "oncology",
+  surgery: (e) => !e.module && /anterior resection/i.test(e.title),
+  chemo: (e) => /cycle 1/i.test(e.title),
+  icu: (e) => e.module === "icu",
+  dpyd: (e) => /DPYD result/i.test(e.title),
+};
+export function journeyIntervals(timeline) {
+  const at = Object.fromEntries(Object.entries(JOURNEY_MILESTONES).map(([k, f]) => [k, timeline.find(f)?.date]));
+  const row = (label, from, to, target) => {
+    const days = at[from] && at[to] ? daysBetweenIso(at[from], at[to]) : null;
+    return { label, from: at[from], to: at[to], days, target: target?.days ?? null, ok: target ? days != null && target.test(days) : null, note: target?.note ?? "" };
+  };
+  return [
+    row("First contact → diagnosis", "contact", "diagnosis"),
+    row("Diagnosis → surgery", "diagnosis", "surgery", { days: 42, test: (d) => d <= 42, note: "within 6 weeks" }),
+    row("Surgery → chemotherapy", "surgery", "chemo", { days: 56, test: (d) => d <= 56, note: "within 8 weeks" }),
+    row("Chemotherapy → ICU", "chemo", "icu"),
+    row("DPYD requested (MDT) → result", "mdt", "dpyd", { days: null, test: (d) => at.chemo && daysBetweenIso(at.mdt, at.chemo) >= d, note: "should be back before cycle 1" }),
+  ];
+}
