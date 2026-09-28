@@ -135,3 +135,97 @@ export function apixabanCriteria({ ageYears, weightKg, creatinine }) {
 export const toMin = (hhmm) => { const [h, m] = hhmm.split(":").map(Number); return h * 60 + m; };
 export const toHHMM = (min) => `${String(Math.floor(min / 60)).padStart(2, "0")}:${String(Math.round(min) % 60).padStart(2, "0")}`;
 export const fmtDur = (min) => (min < 60 ? `${Math.round(min)} min` : `${Math.floor(min / 60)} h ${String(Math.round(min % 60)).padStart(2, "0")} min`);
+
+/* ---------- Rule-based medicine check (demo rule set) ---------- */
+// meds: [{ name, cls: ["nsaid" | "acei" | "arb" | "loop" | "thiazide" | "antiplatelet" | "metformin" | "betablocker" | ...] }]
+// ctx: { k, creatinine, creatinineBaseline, spo2, heartFailure }
+export function medicineCheck(meds, ctx = {}) {
+  const has = (c) => meds.filter((m) => m.cls.includes(c));
+  const names = (list) => list.map((m) => m.name).join(" + ");
+  const out = [];
+  const nsaid = has("nsaid"), raas = [...has("acei"), ...has("arb")], diuretic = [...has("loop"), ...has("thiazide")];
+  if (nsaid.length && raas.length && diuretic.length) out.push({ severity: "High", title: `${names([...nsaid, ...raas, ...diuretic])}`, detail: "NSAID + ACE inhibitor/ARB + diuretic (\"triple whammy\"): acute kidney injury and fluid retention risk" });
+  if (nsaid.length && ctx.heartFailure) out.push({ severity: "High", title: `${names(nsaid)} in heart failure`, detail: "NSAIDs cause sodium and water retention and can precipitate decompensation" });
+  if (nsaid.length && has("antiplatelet").length) out.push({ severity: "Moderate", title: `${names([...nsaid, ...has("antiplatelet")])}`, detail: "GI bleeding risk; NSAIDs may reduce aspirin's antiplatelet effect" });
+  const rise = ctx.creatinine != null && ctx.creatinineBaseline != null ? Math.round((ctx.creatinine - ctx.creatinineBaseline) * 100) / 100 : 0;
+  if (has("metformin").length && ((ctx.spo2 != null && ctx.spo2 < 92) || rise >= 0.2)) out.push({ severity: "High", title: `${names(has("metformin"))} during acute illness`, detail: `Lactic acidosis risk (${[ctx.spo2 < 92 && `SpO2 ${ctx.spo2}%`, rise >= 0.2 && `creatinine ${ctx.creatinineBaseline} → ${ctx.creatinine}`].filter(Boolean).join(", ")})` });
+  if (raas.length && ctx.k >= 5.0) out.push({ severity: "Moderate", title: `${names(raas)} with K ${ctx.k}`, detail: "Hyperkalaemia risk; recheck potassium and renal function" });
+  return out;
+}
+
+/* ---------- Imaging rules ---------- */
+// ACR incidental adrenal mass: unenhanced attenuation ≤10 HU = lipid-rich adenoma.
+export function adrenalRule(hu) {
+  return hu <= 10
+    ? { label: "Lipid-rich adenoma (≤10 HU unenhanced)", followUp: "Benign: no imaging follow-up" }
+    : { label: "Indeterminate (>10 HU unenhanced)", followUp: "Adrenal-protocol washout CT or chemical-shift MRI" };
+}
+
+// Finds verbatim quotes in a text; returns non-overlapping [start, end, tag] ranges in order.
+export function locateQuotes(text, items) {
+  const ranges = [];
+  items.forEach((quotes, tag) => {
+    for (const q of quotes) {
+      const start = text.indexOf(q);
+      if (start >= 0) ranges.push([start, start + q.length, tag]);
+    }
+  });
+  ranges.sort((a, b) => a[0] - b[0]);
+  return ranges.filter((r, i) => i === 0 || r[0] >= ranges[i - 1][1]);
+}
+
+/* ---------- Colon cancer stage group (AJCC 8th edition) ---------- */
+export function colonStage(T, N, M) {
+  if (M === "M1a") return "IVA";
+  if (M === "M1b") return "IVB";
+  if (M === "M1c") return "IVC";
+  if (N === "N0") return { Tis: "0", T1: "I", T2: "I", T3: "IIA", T4a: "IIB", T4b: "IIC" }[T];
+  const n1 = N === "N1a" || N === "N1b" || N === "N1c" || N === "N1";
+  if (T === "T4b") return "IIIC";
+  if (n1) return ["T1", "T2"].includes(T) ? "IIIA" : "IIIB";
+  if (N === "N2a") return T === "T1" ? "IIIA" : T === "T4a" ? "IIIC" : "IIIB";
+  if (N === "N2b") return ["T1", "T2"].includes(T) ? "IIIB" : "IIIC";
+  return "Unknown";
+}
+
+// Adjuvant duration for stage III colon cancer (IDEA collaboration): low risk T1–3 N1, high risk T4 or N2.
+export function adjuvantGuide(T, N, M) {
+  const stage = colonStage(T, N, M);
+  if (stage.startsWith("IV")) return "Metastatic: systemic therapy plan, not adjuvant";
+  if (!stage.startsWith("III")) return stage.startsWith("II") ? "Stage II: adjuvant therapy only if high-risk features; discuss" : "No adjuvant chemotherapy";
+  const high = T.startsWith("T4") || N.startsWith("N2");
+  return high ? "High-risk stage III: CAPOX 6 months (or FOLFOX 6 months)" : "Low-risk stage III: CAPOX 3 months (IDEA)";
+}
+
+/* ---------- ICU calculations ---------- */
+export const anionGap = ({ na, cl, hco3 }) => na - (cl + hco3);
+// KDIGO AKI stage from the creatinine ratio to baseline (≥4.0 mg/dL also counts as stage 3).
+export function kdigoStage(creatinine, baseline) {
+  const ratio = creatinine / baseline;
+  const stage = creatinine >= 4 || ratio >= 3 ? 3 : ratio >= 2 ? 2 : ratio >= 1.5 || creatinine - baseline >= 0.3 ? 1 : 0;
+  return { ratio: Math.round(ratio * 100) / 100, stage };
+}
+export const dkaInsulinRate = (weightKg) => Math.round(weightKg * 0.1 * 10) / 10; // fixed-rate 0.1 U/kg/h
+export const K_INSULIN_THRESHOLD = 3.3;
+
+/* ---------- Insurance: room-rent proportionate deduction (policy clause 5.1 pattern) ---------- */
+// heads: [{ key, label, amount, rule: "room" | "icu" | "proportional" | "exempt" | "excluded" }]
+export function preauthEstimate({ heads, roomRate, roomDays, sumInsured, bonus = 0, includeBonus = false, roomPct = 0.01, icuPct = 0.02 }) {
+  const base = sumInsured + (includeBonus ? bonus : 0);
+  const roomCap = base * roomPct;
+  const icuCap = base * icuPct;
+  const proportion = roomRate > roomCap ? roomCap / roomRate : 1;
+  const rows = heads.map((h) => {
+    let payable = h.amount;
+    let note = "";
+    if (h.rule === "room") { payable = Math.min(roomRate, roomCap) * roomDays; note = roomRate > roomCap ? `Capped at ₹${roomCap.toLocaleString("en-IN")}/day` : "Within cap"; }
+    if (h.rule === "icu") { payable = Math.min(h.amount, icuCap * (h.days ?? 1)); note = h.amount / (h.days ?? 1) > icuCap ? "Capped" : `Within ₹${icuCap.toLocaleString("en-IN")} cap`; }
+    if (h.rule === "proportional") { payable = Math.round(h.amount * proportion); note = proportion < 1 ? `× ${(proportion * 100).toFixed(1)}% (proportionate)` : "Payable in full"; }
+    if (h.rule === "exempt") note = "Exempt from the proportion";
+    if (h.rule === "excluded") { payable = 0; note = "Excluded (non-medical consumables)"; }
+    return { ...h, amount: h.rule === "room" ? roomRate * roomDays : h.amount, payable, note };
+  });
+  const total = rows.reduce((a, r) => a + r.amount, 0);
+  const payable = rows.reduce((a, r) => a + r.payable, 0);
+  return { rows, roomCap, icuCap, proportion, total, payable, patientShare: total - payable };
+}

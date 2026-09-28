@@ -21,6 +21,12 @@ const ROWS = [
 const URINE = { ml: 180, hours: 10, weightKg: 88 };
 
 export default {
+  notes: [
+    "The NEWS2 score is calculated by the app from the chart, not by Claude, so it is exact and works offline.",
+    "The night nurse recorded 4 at 04:00 and planned to wait for handover at 06:00. At 6, the chart requires an urgent response now.",
+    "Add the preset 07:00 observations: the score reaches 9 and the response changes to an emergency.",
+    "Claude reads the trend with the fluid balance (urine 0.2 mL/kg/h) and lists what the night shift did not document.",
+  ],
   guide: [
     "The app scores every set of observations with NEWS2 and shows the response the chart requires.",
     "Add a new set of observations to see the score and response change.",

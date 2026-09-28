@@ -67,19 +67,24 @@ The home page maps all 27 use cases from the roadmap, and all twenty-seven are n
 
 ## Interactive clinician demos
 
-Five flagship prototypes open in a **clinician view** that looks like the tool a clinician would use. The text workspace is one tab away ("Prompt & text output").
+Ten flagship prototypes, across ten departments, open in a **clinician view** that looks like the tool a clinician would use. The text workspace is one tab away ("Prompt & text output"). Every view has a step guide, presenter notes ("what to point out"), a **Reset demo** button and a **What Claude saw** drawer showing the exact input sent.
 
 | Demo | What the clinician does |
 |---|---|
-| Symptom Intake & Triage | Plays a WhatsApp intake conversation; Claude triages it into a nurse console; the nurse confirms or overrides urgency, picks a slot, edits the reply and sends it back into the chat |
+| Symptom Intake & Triage | Plays a WhatsApp intake conversation; Claude triages it into a nurse console; the nurse confirms or overrides urgency, picks a slot, edits the reply and sends it back into the chat. A second scenario (chest pain at rest) shows the switch to an emergency |
 | Ambient Clinical Scribe | Plays a recorded consultation line by line (optional on-device voice); Claude drafts the note; every flag, code and order links to the transcript lines it came from; codes and orders are accepted, edited or rejected before signing |
 | Nursing Handover & NEWS2 Watch | An observation chart scored live by the app (NEWS2, RCP 2017) with the response the chart requires; the nurse adds new observations; Claude reads the trend and drafts the escalation, SBAR, differential and day-shift tasks |
 | Paediatric Prescription Safety | Every dose recalculated live from the child's weight against a local formulary; unsafe orders block dispensing until corrected; Claude reviews appropriateness; the parent dosing card is built from the corrected orders |
 | Stroke Code & Neuro Planning | A simulated clock replays the code; the app runs door-to-CT and door-to-groin clocks and ticks off thrombolysis and thrombectomy eligibility as results arrive; Claude drafts the plan; the team records groin puncture |
+| Decision-Support Sidebar (ED) | An ED board the app scores (NEWS2, lab flags, rule-based medicine check that finds the NSAID + ACE inhibitor + diuretic combination); Claude gives the differential, can't-miss checks and guideline-tagged first-6-hours orders |
+| Structured Radiology Reporting | Claude's report-quality issues are highlighted in the dictation itself; the radiologist accepts corrections, edits the structured report and routes each incidental finding to a team |
+| Tumour Board Assistant | The board sets T, N and M and the app calculates the AJCC 8th edition stage and adjuvant duration; Claude prepares the pack; the board records decisions and assigns actions, with the DPYD result flagged for tracking |
+| ICU Round Co-pilot | The app runs the sepsis and DKA bundle tracker (insulin blocked until potassium ≥3.3), anion gap, KDIGO stage and the uridine triacetate window; Claude drafts the problem-based plan and drug review |
+| Pre-auth & TPA Packet Builder | The family's room choice drives a live room-rent deduction calculator; Claude checks policy clauses, drafts the medical-necessity letter and prepares answers to TPA queries |
 
 How they work:
 - **Offline first.** Without an API key each view uses checked sample data (`server/interactive/*.js`), so a demo never depends on the network. With a key, `POST /api/interactive/:id` asks Claude for the same shape using structured outputs (a strict JSON Schema per view).
-- **Rules in code, judgement from Claude.** NEWS2 scores, dose maths, eligibility checks, apixaban dose criteria and clocks are calculated by the app (`public/js/clinical.js`, unit-tested in `test/clinical.test.js`). Claude reads the trend, weighs the context and drafts the words.
+- **Rules in code, judgement from Claude.** NEWS2 scores, dose maths, eligibility checks, apixaban dose criteria, AJCC staging, ICU calculations, the medicine rule set, room-rent deductions and clocks are calculated by the app (`public/js/clinical.js`, unit-tested in `test/clinical.test.js`). Claude reads the trend, weighs the context and drafts the words.
 - **Clinician in control.** Every accept, edit, reject, override and escalation goes into a "Clinician actions" log, which is filed with the output to the patient timeline.
 
 On each module page the clinician can edit the input, run Claude, then **Approve & file** the draft. Filed outputs appear on the patient timeline (stored in the browser only) and feed into the journey story.

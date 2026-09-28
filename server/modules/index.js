@@ -31,6 +31,11 @@ import scribeView from "../interactive/scribe.js";
 import nursingView from "../interactive/nursing.js";
 import paedsView from "../interactive/paeds.js";
 import strokeView from "../interactive/stroke.js";
+import decisionView from "../interactive/decision.js";
+import radiologyView from "../interactive/radiology.js";
+import oncologyView from "../interactive/oncology.js";
+import icuView from "../interactive/icu.js";
+import preauthView from "../interactive/preauth.js";
 
 export const modules = [routing, triage, referral, scribe, diabetes, ortho, radiology, oncology, cardiology, preauth, preop, nursing, discharge, coding, labs, nephrology, icu, medrec, rehab, monitoring, journey, transplant, decision, heartfailure, antenatal, paeds, stroke].sort(
   (a, b) => a.order - b.order,
@@ -41,7 +46,7 @@ export const modules = [routing, triage, referral, scribe, diabetes, ortho, radi
 for (const m of modules) if (m.patientId === undefined) m.patientId = DEFAULT_PATIENT_ID;
 
 // Flagship modules with an interactive clinician view (structured output + sample data).
-const views = { triage: triageView, scribe: scribeView, nursing: nursingView, paeds: paedsView, stroke: strokeView };
+const views = { triage: triageView, scribe: scribeView, nursing: nursingView, paeds: paedsView, stroke: strokeView, decision: decisionView, radiology: radiologyView, oncology: oncologyView, icu: icuView, preauth: preauthView };
 for (const m of modules) if (views[m.id]) m.interactive = views[m.id];
 
 const byId = new Map(modules.map((m) => [m.id, m]));

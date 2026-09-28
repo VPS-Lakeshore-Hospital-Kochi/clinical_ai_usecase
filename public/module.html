@@ -26,7 +26,12 @@
     </div>
     <section class="clinician-view" id="clinician-view" hidden>
       <ol class="guide" id="guide" aria-label="How to run this demo"></ol>
+      <div class="view-tools">
+        <details class="notes" id="notes"><summary>Presenter notes: what to point out</summary><ul id="notes-list"></ul></details>
+        <button class="btn btn--ghost" id="reset-demo" type="button">↺ Reset demo</button>
+      </div>
       <div id="view-root"></div>
+      <details class="sent" id="sent" hidden><summary>What Claude saw: the input sent with this request</summary><pre id="sent-text"></pre><p class="hint" id="sent-meta"></p></details>
     </section>
     <section class="workspace" id="classic-view">
       <div class="card panel">

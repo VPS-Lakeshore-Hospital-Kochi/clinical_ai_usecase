@@ -38,6 +38,12 @@ const CHECKS = [
 ].map((c) => ({ ...c, m: toMin(c.at) }));
 
 export default {
+  notes: [
+    "The clocks and eligibility checks are run by the app from the timeline, so they update the moment each result arrives.",
+    "Thrombolysis turns to No at 10:44, when the daughter confirms apixaban was taken at 08:00. A normal INR does not make it safe.",
+    "The app checks the apixaban dose criteria: she meets none, so 2.5 mg was an under-dose, which is a medication-safety event.",
+    "Claude drafts the plan, including the hemicraniectomy conversation to have early with the family. The team accepts each action.",
+  ],
   guide: [
     "Press Play to replay the stroke code. Results arrive on the timeline as they did in the ED.",
     "The app runs the clocks and ticks off eligibility as each result lands.",
@@ -213,5 +219,6 @@ export default {
     }
 
     render();
+    return () => clearInterval(timer);
   },
 };

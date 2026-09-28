@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { news2, news2Response, checkOrder, apixabanCriteria, toMin, toHHMM, fmtDur } from "../public/js/clinical.js";
+import { news2, news2Response, checkOrder, apixabanCriteria, toMin, toHHMM, fmtDur, medicineCheck, colonStage, adjuvantGuide, anionGap, kdigoStage, dkaInsulinRate, preauthEstimate, adrenalRule, locateQuotes } from "../public/js/clinical.js";
 
 test("NEWS2 scores the night-shift observations as charted", () => {
   const night = [
@@ -68,4 +68,48 @@ test("apixaban dose criteria and clock helpers", () => {
   assert.equal(apixabanCriteria({ ageYears: 82, weightKg: 58, creatinine: 1.0 }).correctDose, "2.5 mg twice daily");
   assert.equal(toHHMM(toMin("10:35") + 90), "12:05");
   assert.equal(fmtDur(85), "1 h 25 min");
+});
+
+test("rule-based medicine check flags the triple whammy and metformin in acute illness", () => {
+  const meds = [{ name: "Ramipril", cls: ["acei"] }, { name: "Furosemide", cls: ["loop"] }, { name: "Diclofenac", cls: ["nsaid"] }, { name: "Aspirin", cls: ["antiplatelet"] }, { name: "Metformin", cls: ["metformin"] }];
+  const f = medicineCheck(meds, { k: 5.1, creatinine: 1.5, creatinineBaseline: 1.3, spo2: 89, heartFailure: true });
+  assert.ok(f.some((x) => /triple whammy/.test(x.detail) && x.severity === "High"));
+  assert.ok(f.some((x) => /Metformin/.test(x.title) && /creatinine 1.3 → 1.5/.test(x.detail)));
+  assert.equal(medicineCheck([{ name: "Atorvastatin", cls: [] }], {}).length, 0);
+});
+
+test("AJCC 8 colon stage groups and adjuvant guide", () => {
+  assert.equal(colonStage("T3", "N1b", "M0"), "IIIB");
+  assert.equal(colonStage("T2", "N0", "M0"), "I");
+  assert.equal(colonStage("T4b", "N0", "M0"), "IIC");
+  assert.equal(colonStage("T1", "N2a", "M0"), "IIIA");
+  assert.equal(colonStage("T4a", "N2a", "M0"), "IIIC");
+  assert.equal(colonStage("T3", "N2b", "M0"), "IIIC");
+  assert.equal(colonStage("T3", "N1b", "M1b"), "IVB");
+  assert.match(adjuvantGuide("T3", "N1b", "M0"), /3 months/);
+  assert.match(adjuvantGuide("T4a", "N1b", "M0"), /6 months/);
+});
+
+test("ICU calculations", () => {
+  assert.equal(anionGap({ na: 134, cl: 104, hco3: 9 }), 21);
+  assert.deepEqual(kdigoStage(2.4, 1.02), { ratio: 2.35, stage: 2 });
+  assert.equal(kdigoStage(1.4, 1.0).stage, 1);
+  assert.equal(kdigoStage(4.1, 2.5).stage, 3);
+  assert.equal(dkaInsulinRate(84), 8.4);
+});
+
+test("pre-auth room-rent deduction matches the hand-checked estimate", () => {
+  const heads = [{ key: "room", label: "Room", rule: "room" }, { key: "hdu", label: "HDU", amount: 18000, days: 1, rule: "icu" }, { key: "ot", label: "OT", amount: 165000, rule: "proportional" }, { key: "dev", label: "Devices", amount: 72000, rule: "exempt" }, { key: "inv", label: "Investigations", amount: 28000, rule: "proportional" }, { key: "ph", label: "Pharmacy", amount: 38000, rule: "exempt" }, { key: "nm", label: "Consumables", amount: 9000, rule: "excluded" }, { key: "nu", label: "Nursing", amount: 15000, rule: "proportional" }];
+  const deluxe = preauthEstimate({ heads, roomRate: 12000, roomDays: 5, sumInsured: 1000000, bonus: 200000 });
+  assert.equal(deluxe.total, 405000);
+  assert.equal(deluxe.payable, 351333);
+  assert.equal(deluxe.patientShare, 53667);
+  assert.equal(preauthEstimate({ heads, roomRate: 9500, roomDays: 5, sumInsured: 1000000 }).patientShare, 9000);
+  assert.equal(preauthEstimate({ heads, roomRate: 12000, roomDays: 5, sumInsured: 1000000, bonus: 200000, includeBonus: true }).patientShare, 9000);
+});
+
+test("imaging helpers", () => {
+  assert.match(adrenalRule(8).label, /Lipid-rich/);
+  assert.match(adrenalRule(25).label, /Indeterminate/);
+  assert.deepEqual(locateQuotes("abc left kidney xyz Right", [["left kidney"], ["Right", "missing"]]), [[4, 15, 0], [20, 25, 1]]);
 });

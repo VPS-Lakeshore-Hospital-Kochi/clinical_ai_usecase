@@ -23,6 +23,12 @@ const WHEN = {
 };
 
 export default {
+  notes: [
+    "Three orders are dangerous as written: 3× the paracetamol dose, double the ondansetron dose and codeine under 12. Dispensing is blocked until they are fixed.",
+    "Change the weight to 10 kg or 25 kg: every dose check recalculates instantly. The maths is done by the app from the formulary, not by Claude.",
+    "Claude adds what a formulary cannot: whether antibiotics are indicated, for how long, and why ibuprofen should wait while he is dehydrated.",
+    "The parent dosing card is built from the corrected orders, in mL, with when to come back.",
+  ],
   guide: [
     "The prescription is checked as written: each dose is recalculated from Ayaan's weight.",
     "Change the weight or a dose and watch every check update. Apply the suggested corrections.",

@@ -108,7 +108,9 @@ if (mod.interactive) {
   const status = await getJSON("/api/status").catch(() => ({ mode: "demo" }));
   const { default: view } = await import(`./demos/${id}.js`);
   $("guide").innerHTML = view.guide.map((g) => `<li>${esc(g)}</li>`).join("");
-  view.mount($("view-root"), {
+  if (view.notes?.length) $("notes-list").innerHTML = view.notes.map((n) => `<li>${esc(n)}</li>`).join("");
+  else $("notes").hidden = true;
+  const ctx = {
     mod,
     patient,
     live: status.mode === "live",
@@ -120,12 +122,26 @@ if (mod.interactive) {
       });
       const body = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(body.error || `Request failed (${res.status})`);
+      if (body.input) {
+        $("sent").hidden = false;
+        $("sent-text").textContent = body.input;
+        $("sent-meta").textContent = body.mode === "live"
+          ? `Sent to ${body.model} with the module's instructions and ${patient ? "the patient's record" : "no patient record"}.`
+          : "Offline demo: this is the input that would be sent; the answer shown is the checked sample output.";
+      }
       return body;
     },
     file(markdown) {
       fileOutput(id, { title: mod.title, specialty: mod.specialty, date: mod.date, text: markdown });
       if (patient) renderStepper($("stepper"), id, mod.patientId);
     },
+  };
+  let cleanup = view.mount($("view-root"), ctx);
+  $("reset-demo").addEventListener("click", () => {
+    if (typeof cleanup === "function") cleanup();
+    $("sent").hidden = true;
+    cleanup = view.mount($("view-root"), ctx);
+    $("view-root").scrollIntoView({ block: "start", behavior: "smooth" });
   });
 }
 

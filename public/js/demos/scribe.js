@@ -5,6 +5,12 @@ import { el, esc, AuditLog, reviewList, withClaude, sourceNote } from "../kit.js
 const MS_PER_CHAR = 42;
 
 export default {
+  notes: [
+    "Nothing is typed: the note is drafted from the recording once it ends.",
+    "Click any L-number to jump to the exact line of the conversation behind a flag, code or order. This is how a doctor checks the draft quickly.",
+    "The dietitian referral is marked \"Suggested, not discussed\": Claude separates what was agreed from what it recommends.",
+    "Unreviewed codes and orders are left out of the signed note. Every edit is logged.",
+  ],
   guide: [
     "Play the recorded consultation (turn on voice if you like). The transcript fills in as it plays.",
     "When it ends, Claude drafts the note. Click any L-number to see the line it came from.",
@@ -186,6 +192,7 @@ export default {
         q("#signed").textContent = "✓ Signed and filed to the patient timeline";
       };
     }
+    return () => { token++; window.speechSynthesis?.cancel(); };
   },
 };
 

@@ -87,15 +87,17 @@ export function createApp({ demoChunkDelayMs, demoDelayMs = 900 } = {}) {
     if (!payload || typeof payload !== "object") return res.status(400).json({ error: "Missing payload" });
     if (JSON.stringify(payload).length > MAX_INPUT_CHARS) return res.status(413).json({ error: "Input is too long" });
 
+    const input = mod.interactive.toText(payload);
     if (req.body?.demo === true || !liveMode()) {
       if (demoDelayMs) await new Promise((r) => setTimeout(r, demoDelayMs));
-      return res.json({ mode: "demo", model: "sample output", data: mod.interactive.demo });
+      const data = mod.interactive.demoFor?.(payload) ?? mod.interactive.demo;
+      return res.json({ mode: "demo", model: "sample output", data, input });
     }
     const abort = new AbortController();
     res.on("close", () => { if (!res.writableEnded) abort.abort(); });
     try {
       const { model, data } = await runInteractive(mod, payload, { signal: abort.signal });
-      res.json({ mode: "live", model, data });
+      res.json({ mode: "live", model, data, input });
     } catch (err) {
       if (!abort.signal.aborted) res.status(502).json({ error: describeError(err) });
     }

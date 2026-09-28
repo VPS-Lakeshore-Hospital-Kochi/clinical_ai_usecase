@@ -202,7 +202,7 @@ function conforms(schema, value, path = "$") {
   else if (schema.type) assert.equal(typeof value, schema.type, `${path} should be ${schema.type}`);
 }
 
-const FLAGSHIPS = ["triage", "scribe", "nursing", "paeds", "stroke"];
+const FLAGSHIPS = ["triage", "scribe", "nursing", "paeds", "stroke", "decision", "radiology", "oncology", "icu", "preauth"];
 
 test("flagship sample data matches each clinician view's schema", async () => {
   const { getModule } = await import("../server/modules/index.js");
@@ -210,6 +210,7 @@ test("flagship sample data matches each clinician view's schema", async () => {
     const view = getModule(id).interactive;
     assert.ok(view, `${id} has a clinician view`);
     conforms(view.schema, view.demo, id);
+    if (view.demoFor) conforms(view.schema, view.demoFor({ scenario: "chest-pain" }), `${id} (variation)`);
     assert.ok(view.toText({}).length > 0);
   }
   const mods = await (await fetch(`${base}/api/modules`)).json();
@@ -226,6 +227,14 @@ test("scribe sample cites real transcript lines", async () => {
   }
 });
 
+test("radiology sample quotes are verbatim in the dictation", async () => {
+  const { getModule } = await import("../server/modules/index.js");
+  const mod = getModule("radiology");
+  for (const issue of mod.interactive.demo.issues) {
+    for (const q of issue.quotes) assert.ok(mod.defaultInput.includes(q), `quote not found: ${q}`);
+  }
+});
+
 test("clinician view returns sample data offline and validates input", async () => {
   const post = (id, body) => fetch(`${base}/api/interactive/${id}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
   const res = await post("paeds", { payload: { orders: [] }, demo: true });
@@ -233,7 +242,10 @@ test("clinician view returns sample data offline and validates input", async () 
   const body = await res.json();
   assert.equal(body.mode, "demo");
   assert.ok(body.data.appropriateness.length);
-  assert.equal((await post("oncology", { payload: {}, demo: true })).status, 404);
+  assert.match(body.input, /Orders and the app's dose check/);
+  const chest = await (await post("triage", { payload: { scenario: "chest-pain", conversation: [] }, demo: true })).json();
+  assert.equal(chest.data.urgency, "Emergency now");
+  assert.equal((await post("coding", { payload: {}, demo: true })).status, 404);
   assert.equal((await post("triage", { demo: true })).status, 400);
 });
 

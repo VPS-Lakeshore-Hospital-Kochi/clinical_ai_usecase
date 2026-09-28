@@ -2,7 +2,7 @@ import { renderHeader, esc } from "./common.js";
 import { STAGES } from "./usecases.js";
 
 // Flagship prototypes with a full interactive clinician view.
-const INTERACTIVE = new Set(["triage", "scribe", "nursing", "paeds", "stroke"]);
+const INTERACTIVE = new Set(["triage", "scribe", "nursing", "paeds", "stroke", "decision", "radiology", "oncology", "icu", "preauth"]);
 
 renderHeader("home");
 

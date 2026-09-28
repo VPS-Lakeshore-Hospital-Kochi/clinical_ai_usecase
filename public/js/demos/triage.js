@@ -4,6 +4,18 @@ import { el, esc, AuditLog, reviewList, withClaude, sourceNote } from "../kit.js
 
 const OPENING = "Hello, I am Thomas Varghese. I was seen in your hospital last year for sugar. Now my sugar is always 250 to 300 after food, and some nights I wake up sweating and shaking. My right knee pain is very bad, I cannot walk to church. I feel very tired and my wife says I have become thin. Which doctor should I see?";
 
+const CHEST_OPENING = "Hello, I am Thomas Varghese. For the last 40 minutes I have heavy pressure in my chest going to my left arm. I am sweating a lot and feel sick. My sugar is 190. Which doctor should I see?";
+
+const CHEST_INTAKE = [
+  ["Thank you, Mr Thomas. Are you having chest pain or pressure right now, while resting?", "Yes. Heavy, going to my left arm."],
+  ["Are you breathless while resting?", "A little."],
+  ["Are you sweating, feeling sick or faint?", "Sweating a lot, feel sick."],
+  ["Any confusion or drowsiness?", "No"],
+  ["What is your sugar reading now?", "190"],
+  ["Have you noticed blood in your stool, or black stools?", "Not noticed"],
+  ["Any fever?", "No"],
+];
+
 const INTAKE = [
   ["Thank you, Mr Thomas. I will ask a few quick safety questions first. Do you have chest pain, or breathlessness while resting?", "No"],
   ["Any confusion, drowsiness, vomiting, or trouble keeping fluids down?", "No"],
@@ -24,15 +36,37 @@ const SLOTS = {
 
 const STATUS = { absent: ["✓", "absent"], present: ["!", "present"], unknown: ["?", "unknown"] };
 
+let run = 0;
+
+const SCENARIOS = {
+  routine: { label: "Diabetes and weight loss", opening: OPENING, intake: () => INTAKE, closing: "Thank you. A nurse is reviewing your answers now and will reply shortly." },
+  "chest-pain": { label: "Variation: chest pain at rest", opening: CHEST_OPENING, intake: () => CHEST_INTAKE, closing: "Your answers need urgent attention. A nurse is calling you now. If the pain gets worse or you feel faint, call 108 immediately." },
+};
+
 export default {
+  notes: [
+    "The patient only asked which doctor to see. Claude passes on the weight loss, night-time lows and daily NSAID, which he did not ask about.",
+    "Claude sets the urgency, but the nurse decides. Change it and the slot options change with it; the override is logged.",
+    "Run the chest-pain variation: the same patient, and the console switches to an emergency with no clinic slot offered.",
+    "The reply never diagnoses or changes medicines, and always tells the patient when to go to Emergency.",
+  ],
   guide: [
     "Press Play to run the WhatsApp intake as the patient would experience it.",
     "Claude triages the conversation and fills in the nurse console.",
     "Confirm or change the urgency, pick a slot and edit the reply.",
     "Approve: the reply goes to the patient and the triage is filed to the record.",
   ],
-  mount(root, ctx) {
+  mount(root, ctx, scenarioKey = "routine") {
+    const scenario = SCENARIOS[scenarioKey];
     root.innerHTML = "";
+    const picker = el(`<div class="scenarios" role="group" aria-label="Scenario">${Object.entries(SCENARIOS).map(([k, s]) => `<button data-sc="${k}" aria-pressed="${k === scenarioKey}">${esc(s.label)}</button>`).join("")}</div>`);
+    root.append(picker);
+    picker.addEventListener("click", (e) => {
+      const k = e.target.closest("[data-sc]")?.dataset.sc;
+      if (!k || k === scenarioKey) return;
+      run++;
+      this.mount(root, ctx, k);
+    });
     const layout = el(`<div class="triage">
       <div class="phone" aria-label="WhatsApp conversation">
         <div class="phone__bar"><span class="phone__avatar">L</span><div><strong>Lakeshore Care</strong><span>Automated intake · a nurse reviews every message</span></div></div>
@@ -42,7 +76,7 @@ export default {
           <button class="btn btn--ghost" id="skip">Skip to end</button>
         </div>
         <details class="phone__edit"><summary>Edit the patient's first message</summary>
-          <textarea id="opening" rows="5">${esc(OPENING)}</textarea>
+          <textarea id="opening" rows="5">${esc(scenario.opening)}</textarea>
           <p class="hint">${ctx.live ? "Claude will triage whatever the patient writes." : "Offline demo: the sample triage was written for the original message."}</p>
         </details>
       </div>
@@ -57,7 +91,6 @@ export default {
     const chat = $("#chat");
     const audit = new AuditLog($("#audit-slot"));
     const conversation = [];
-    let run = 0;
     let finished = false;
 
     const bubble = (from, text, extra = "") => {
@@ -69,7 +102,7 @@ export default {
     const typing = () => { const t = el(`<div class="bubble bubble--bot bubble--typing"><span></span><span></span><span></span></div>`); chat.append(t); chat.scrollTop = chat.scrollHeight; return t; };
     const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
-    const script = () => [["patient", $("#opening").value.trim() || OPENING], ...INTAKE.flatMap(([q, a]) => [["bot", q], ["patient", a]]), ["bot", "Thank you. A nurse is reviewing your answers now and will reply shortly."]];
+    const script = () => [["patient", $("#opening").value.trim() || scenario.opening], ...scenario.intake().flatMap(([q, a]) => [["bot", q], ["patient", a]]), ["bot", scenario.closing]];
 
     // Each call takes over from any playback already running (Skip interrupts Play).
     async function play(fast) {
@@ -98,7 +131,7 @@ export default {
 
     async function triage() {
       const body = $("#console-body");
-      const result = await withClaude(body, (o) => ctx.ask({ conversation, mrn: ctx.patient.patient.mrn, slotPreference: "Mornings" }, o), { label: "Claude is triaging the conversation…" });
+      const result = await withClaude(body, (o) => ctx.ask({ scenario: scenarioKey, conversation, mrn: ctx.patient.patient.mrn, slotPreference: scenarioKey === "routine" ? "Mornings" : "Not asked" }, o), { label: "Claude is triaging the conversation…" });
       $("#src").textContent = sourceNote(result).replace(/<[^>]+>/g, "");
       renderConsole(body, result.data);
     }
@@ -156,8 +189,12 @@ export default {
         if (urgency !== "Emergency now" && !slot) return;
         bubble("bot", `${reply}${slot ? `\n\nYour appointment: ${slot}.` : ""}`, "bubble--nurse");
         audit.add(`Approved urgency "${urgency}"${slot ? ` and booked ${slot}` : ""}; reply sent`, "accept");
-        if (q("#callback")?.checked) audit.add("Nurse call-back task created for tomorrow", "info");
+        if (q("#callback")?.checked) audit.add(`Call-back task created: ${d.callBack}`, "info");
         q("#send").disabled = true;
+        if (scenarioKey !== "routine") {
+          q("#sent-note").textContent = "✓ Sent. This variation is not filed to Thomas's record.";
+          return;
+        }
         q("#sent-note").textContent = "✓ Sent to the patient and filed to the record";
         ctx.file([
           `## Triage decision`,
@@ -176,5 +213,6 @@ export default {
         ].filter(Boolean).join("\n\n"));
       };
     }
+    return () => { run++; };
   },
 };
