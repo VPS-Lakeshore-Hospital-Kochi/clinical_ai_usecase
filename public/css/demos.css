@@ -634,3 +634,59 @@ tr.is-key td { background: var(--cream); }
 .nk__answers { margin: 4px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 15px; }
 @media (max-width: 1000px) { .nk__top { grid-template-columns: 1fr; } }
 @media (max-width: 640px) { .nk__inputs { grid-template-columns: 1fr 1fr; } }
+
+/* ---------- Coding & billing audit ---------- */
+.cb { display: grid; gap: 20px; }
+.cb > *, .cb__rec > *, .cb__out > * { min-width: 0; }
+.cb__bill tr[data-flag="true"] td:first-child { color: var(--warn); }
+.cb__total td { font-weight: 500; color: var(--navy); border-top: 1px solid var(--navy-line); }
+.cb__out { display: grid; gap: 22px; }
+.cb__summary { margin: 4px 0 0; padding-left: 18px; display: grid; gap: 4px; font-size: 14.5px; }
+.cb__proc p { margin: 0 0 6px; font-size: 14.5px; }
+.cb__proc strong { font-weight: 500; color: var(--navy); }
+.cb__rec { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 20px; align-items: start; }
+.cb__head { display: flex; gap: 8px; align-items: baseline; margin: 10px 0 0; font-size: 14px; color: var(--ok); }
+.cb__head[data-over="true"] { color: var(--danger); }
+.cb__codes { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; margin: 10px 0 0; }
+@media (max-width: 1000px) { .cb__rec { grid-template-columns: 1fr; } }
+
+/* ---------- Lab & report explainer ---------- */
+.lb { display: grid; gap: 20px; }
+.lb > *, .lb__editor > *, .lb__out > * { min-width: 0; }
+.lb__v { font-weight: 500; color: var(--navy); }
+.lb__v[data-flag="L"], .lb__v[data-flag="H"] { color: var(--danger); }
+.lb__gate { background: var(--panel); border-radius: var(--radius-sm); padding: 12px 16px; font-size: 14px; }
+.lb__gate .check { margin: 0; }
+.lb__out { display: grid; gap: 22px; }
+.lb__editor { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 20px; align-items: start; }
+.lb__score { position: sticky; top: 90px; }
+.lb__jargon { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.lb__gloss { margin: 0; display: grid; grid-template-columns: minmax(0, auto) minmax(0, 1fr); gap: 6px 14px; font-size: 14px; }
+.lb__gloss dt { font-weight: 500; color: var(--navy); }
+.lb__gloss dd { margin: 0; }
+.lb__q { margin: 0; padding-left: 20px; display: grid; gap: 6px; font-size: 14px; }
+@media (max-width: 1000px) { .lb__editor { grid-template-columns: 1fr; } .lb__score { position: static; } }
+@media (max-width: 640px) { .lb__gloss { grid-template-columns: 1fr; } .lb__gloss dd { margin-bottom: 6px; } }
+
+/* ---------- Rehab coach ---------- */
+.rh { display: grid; gap: 20px; }
+.rh > *, .rh__top > *, .rh__out > * { min-width: 0; }
+.rh__top { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 20px; align-items: start; }
+.rh__checkin { border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; display: grid; gap: 12px; }
+.rh__checkin .btn { justify-self: start; }
+.rh__presets { display: flex; flex-wrap: wrap; gap: 6px; }
+.rh__fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.rh__fields input, .rh__fields select { font: inherit; }
+.rh__result { border-left: 4px solid var(--ok); background: var(--panel); border-radius: var(--radius-sm); padding: 10px 14px; font-size: 14px; }
+.rh__result[data-light="amber"] { border-left-color: var(--warn); }
+.rh__result[data-light="red"] { border-left-color: var(--danger); }
+.rh__result strong { font-weight: 500; color: var(--navy); display: flex; gap: 8px; align-items: baseline; }
+.rh__result ul { list-style: none; margin: 6px 0 0; padding: 0; display: grid; gap: 3px; }
+.rh__rules td { font-size: 13px; }
+.rh__log { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; font-size: 14px; }
+.rh__esc { color: var(--danger); font-weight: 500; }
+.rh__out { display: grid; gap: 22px; }
+.rh__msg { font-style: italic; font-size: 14px; color: var(--ink-2); margin: 6px 0; }
+.rh__q { margin: 0; padding-left: 20px; display: grid; gap: 4px; font-size: 14px; }
+.rh__warn { display: flex; gap: 8px; align-items: baseline; color: var(--danger); font-size: 14px; margin: 6px 0; }
+@media (max-width: 1000px) { .rh__top { grid-template-columns: 1fr; } }

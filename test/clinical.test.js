@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { news2, news2Response, checkOrder, apixabanCriteria, toMin, toHHMM, fmtDur, medicineCheck, colonStage, adjuvantGuide, anionGap, kdigoStage, dkaInsulinRate, preauthEstimate, adrenalRule, locateQuotes, hba1cIfccToNgsp, glucoseMmolToMg, creatinineUmolToMg, egfrCkdEpi2021, holdCheck, basalNightBefore, addDays, daysInclusive, idealBodyWeight, adjustedBodyWeight, cockcroftGault, qtRisk, thresholdAlerts, trendAlerts, stoolTrend, STANDARD_THRESHOLDS, EPISODE_THRESHOLDS, cgmCheck, gmiGap, hypoRegimenRule, gestation, dateAtGestation, bpClass, preEclampsiaCheck, gdmControl, antiDStatus, screenRequest, findDuplicates, slotCheck, oxfordKneeBand, tkaReadiness, rcri, periopPathway, minsCheck, kdigoRisk, ckdConfirmDate, capecitabineBand, oxaliplatinBand, metforminBand, contrastBand } from "../public/js/clinical.js";
+import { news2, news2Response, checkOrder, apixabanCriteria, toMin, toHHMM, fmtDur, medicineCheck, colonStage, adjuvantGuide, anionGap, kdigoStage, dkaInsulinRate, preauthEstimate, adrenalRule, locateQuotes, hba1cIfccToNgsp, glucoseMmolToMg, creatinineUmolToMg, egfrCkdEpi2021, holdCheck, basalNightBefore, addDays, daysInclusive, idealBodyWeight, adjustedBodyWeight, cockcroftGault, qtRisk, thresholdAlerts, trendAlerts, stoolTrend, STANDARD_THRESHOLDS, EPISODE_THRESHOLDS, cgmCheck, gmiGap, hypoRegimenRule, gestation, dateAtGestation, bpClass, preEclampsiaCheck, gdmControl, antiDStatus, screenRequest, findDuplicates, slotCheck, oxfordKneeBand, tkaReadiness, rcri, periopPathway, minsCheck, kdigoRisk, ckdConfirmDate, capecitabineBand, oxaliplatinBand, metforminBand, contrastBand, inr, billChecks, claimReconcile, evidenceFound, labTrend, readability, jargonCheck, survivalCheck, rehabTrafficLight } from "../public/js/clinical.js";
 import { QUEUE, ROSTER } from "../public/js/routing-data.js";
 import fs from "node:fs";
 
@@ -236,4 +236,42 @@ test("KDIGO grid, CKD confirmation date and renal dose bands", () => {
   assert.equal(metforminBand(40), "Maximum 1000 mg a day");
   assert.match(contrastBand(85), /No prophylactic/);
   assert.match(contrastBand(25), /High risk/);
+});
+
+test("bill checks, claim reconciliation and evidence matching", () => {
+  assert.equal(inr(390200), "₹3,90,200");
+  const lines = [{ id: "a", item: "Stress echocardiogram", amount: 6500, date: "2026-08-11" }, { id: "b", item: "Stress echocardiogram", amount: 6500, date: "2026-08-11" }, { id: "c", item: "Room", amount: 47500, date: "2026-08-18" }];
+  assert.deepEqual(billChecks(lines, "2026-08-18"), { duplicates: ["b"], preAdmission: ["a", "b"], total: 60500 });
+  const findings = [{ kind: "remove", amount: 6500 }, { kind: "move", amount: 6500 }, { kind: "move", amount: 9800 }, { kind: "add", amount: 4500 }, { kind: "add", amount: 3600 }, { kind: "add", amount: 2400 }];
+  const all = claimReconcile({ draftTotal: 402500, findings: findings.map((f) => ({ ...f, accepted: true })), patientPayable: 9000, approval: 385000 });
+  assert.deepEqual(all, { corrected: 390200, insurer: 381200, preHospitalisation: 16300, headroom: 3800, enhancement: 0 });
+  const noDup = claimReconcile({ draftTotal: 402500, findings: findings.map((f, i) => ({ ...f, accepted: i !== 0 })), patientPayable: 9000, approval: 385000 });
+  assert.equal(noDup.enhancement, 2700);
+  assert.equal(evidenceFound("Allergy: sulfonamides.", "allergy: sulfonamides"), true);
+  assert.equal(evidenceFound("Allergy: sulfonamides.", "sepsis"), false);
+});
+
+test("lab trends, readability, jargon and survival checks", () => {
+  assert.deepEqual(labTrend(2.1, 6.8, { high: 5 }), { flag: "", delta: -4.7, direction: "down" });
+  assert.equal(labTrend(11.2, 10.9, { low: 13, high: 17 }).flag, "L");
+  assert.equal(labTrend(11.2, 10.9, { low: 13, high: 17 }).direction, "up");
+  assert.equal(labTrend(1.0, 1.0, { high: 1.3 }).direction, "stable");
+  assert.ok(readability("Keep taking your medicines. Bring this sheet to the appointment.").grade < 6);
+  assert.ok(readability("Histopathological examination demonstrated moderately differentiated adenocarcinoma infiltrating pericolorectal adipose tissue with nodal involvement.").grade > 14);
+  assert.deepEqual(jargonCheck("The adenocarcinoma was R0.").map((j) => j.term), ["adenocarcinoma", "R0"]);
+  assert.deepEqual(jargonCheck("Your cancer was removed."), []);
+  assert.equal(survivalCheck("5-year survival is 70% of patients").length, 2);
+  assert.equal(survivalCheck("Your doctors will check it regularly.").length, 0);
+});
+
+test("rehab traffic light", () => {
+  const day1 = { temp: 36.8, anc: 1.9, platelets: 142, glucose: 212, looseStools: 1, chest: "none", kneePain: 6, dizzy: "none" };
+  assert.equal(rehabTrafficLight(day1).overall, "green");
+  assert.equal(rehabTrafficLight({ ...day1, temp: 38.2 }).overall, "red");
+  assert.equal(rehabTrafficLight({ ...day1, looseStools: 3 }).overall, "amber");
+  assert.equal(rehabTrafficLight({ ...day1, glucose: 320 }).overall, "red");
+  assert.equal(rehabTrafficLight({ ...day1, glucose: 270 }).overall, "amber");
+  assert.equal(rehabTrafficLight({ ...day1, platelets: 90 }).overall, "amber");
+  assert.equal(rehabTrafficLight({ ...day1, kneePain: 7 }).overall, "amber");
+  assert.equal(rehabTrafficLight({ ...day1, dizzy: "fall" }).session, "Skip today's session and call the care team");
 });

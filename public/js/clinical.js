@@ -543,3 +543,90 @@ export function contrastBand(egfr) {
   if (egfr < 45) return "Consider IV hydration; check creatinine after";
   return "No prophylactic hydration; metformin can continue";
 }
+
+/* ---------- Coding & billing audit ---------- */
+export const inr = (n) => `₹${Math.round(n).toLocaleString("en-IN")}`;
+
+// Bill lines: { id, item, amount, date? }. Duplicates share an item name; pre-admission lines
+// are dated before the admission day (ISO dates).
+export function billChecks(lines, admitIso) {
+  const seen = new Map(), duplicates = [], preAdmission = [];
+  for (const l of lines) {
+    const k = l.item.toLowerCase();
+    if (seen.has(k)) duplicates.push(l.id); else seen.set(k, l.id);
+    if (l.date && l.date < admitIso) preAdmission.push(l.id);
+  }
+  return { duplicates, preAdmission, total: lines.reduce((s, l) => s + l.amount, 0) };
+}
+
+// Findings: { kind: "remove" | "move" | "add", amount, accepted }. Only accepted findings apply.
+export function claimReconcile({ draftTotal, findings, patientPayable, approval }) {
+  const applied = findings.filter((f) => f.accepted);
+  const sum = (k) => applied.filter((f) => f.kind === k).reduce((s, f) => s + f.amount, 0);
+  const corrected = draftTotal - sum("remove") - sum("move") + sum("add");
+  const insurer = corrected - patientPayable;
+  return { corrected, insurer, preHospitalisation: sum("move"), headroom: approval - insurer, enhancement: insurer > approval ? insurer - approval : 0 };
+}
+
+// A code is supported only when its evidence quote appears verbatim in the record.
+export const evidenceFound = (record, quote) => Boolean(quote) && record.toLowerCase().includes(quote.toLowerCase());
+
+/* ---------- Lab & report explainer ---------- */
+// Result flag and trend against the previous value. ref: { low?, high? }.
+export function labTrend(today, previous, ref) {
+  const flag = ref.low != null && today < ref.low ? "L" : ref.high != null && today > ref.high ? "H" : "";
+  const delta = previous == null ? null : Math.round((today - previous) * 100) / 100;
+  const pct = previous ? Math.abs(delta / previous) : 0;
+  const direction = delta == null ? "new" : pct < 0.02 ? "stable" : delta > 0 ? "up" : "down";
+  return { flag, delta, direction };
+}
+
+// Approximate syllable count (English heuristic) and Flesch–Kincaid grade level.
+const syllables = (w) => {
+  const s = w.toLowerCase().replace(/[^a-z]/g, "");
+  if (!s) return 0;
+  if (s.length <= 3) return 1;
+  const groups = s.replace(/(?:[^laeiouy]es|ed|[^laeiouy]e)$/, "").replace(/^y/, "").match(/[aeiouy]{1,2}/g);
+  return Math.max(1, groups ? groups.length : 1);
+};
+export function readability(text) {
+  const sentences = text.split(/[.!?]+(?:\s|$)|\n+/).map((s) => s.trim()).filter((s) => /[a-z]/i.test(s));
+  const words = text.match(/[A-Za-z][A-Za-z'’-]*/g) || [];
+  if (!words.length || !sentences.length) return { grade: 0, words: 0, sentences: 0, avgSentence: 0, longSentences: 0 };
+  const syl = words.reduce((n, w) => n + syllables(w), 0);
+  const grade = 0.39 * (words.length / sentences.length) + 11.8 * (syl / words.length) - 15.59;
+  const longSentences = sentences.filter((s) => (s.match(/[A-Za-z][A-Za-z'’-]*/g) || []).length > 20).length;
+  return { grade: Math.round(grade * 10) / 10, words: words.length, sentences: sentences.length, avgSentence: Math.round((words.length / sentences.length) * 10) / 10, longSentences };
+}
+
+export const JARGON = {
+  adenocarcinoma: "a type of bowel cancer", carcinoma: "cancer", metastasis: "cancer that has spread", metastatic: "has spread",
+  neoplasm: "growth", malignant: "cancer", lymphovascular: "in the small blood and lymph vessels", perineural: "around the nerves",
+  resection: "operation to remove", anastomosis: "join in the bowel", adjuvant: "extra treatment after surgery", prognosis: "outlook",
+  pT3: "how deep the cancer grew", pN1b: "cancer in 2 or 3 lymph glands", R0: "clear edges", pMMR: "a gene-repair test result",
+};
+export function jargonCheck(text) {
+  return Object.entries(JARGON).filter(([t]) => new RegExp(`\\b${t}\\b`, "i").test(text)).map(([term, plain]) => ({ term, plain }));
+}
+// News the patient copy must not introduce: survival or cure figures.
+export function survivalCheck(text) {
+  return (text.match(/\b(survival|survive|cure rate|life expectancy|years to live)\b|\d+\s?%\s?(chance|risk|of (people|patients))/gi) || []);
+}
+
+/* ---------- Rehab coach: pre-session traffic light ---------- */
+// chest: "none" | "breathless" (can talk in sentences) | "pain"; dizzy: "none" | "lightheaded" | "fall".
+export function rehabTrafficLight({ temp, anc, platelets, glucose, looseStools, chest, kneePain, dizzy }) {
+  const s = (label, level, why) => ({ label, level, why });
+  const signals = [
+    temp >= 38 ? s("Temperature", "red", `${temp} °C: fever after recent neutropenia`) : temp >= 37.5 ? s("Temperature", "amber", `${temp} °C`) : s("Temperature", "green", `${temp} °C`),
+    anc < 1 || platelets < 50 ? s("Blood counts", "red", `ANC ${anc}, platelets ${platelets}`) : anc < 1.5 || platelets < 100 ? s("Blood counts", "amber", `ANC ${anc}, platelets ${platelets}: no resistance bands`) : s("Blood counts", "green", `ANC ${anc}, platelets ${platelets}`),
+    glucose < 100 || glucose > 300 ? s("Glucose", "red", glucose < 100 ? `${glucose} mg/dL: eat first and recheck` : `${glucose} mg/dL: too high to exercise`) : glucose > 250 ? s("Glucose", "amber", `${glucose} mg/dL: walk only; check ketones`) : s("Glucose", "green", `${glucose} mg/dL`),
+    looseStools >= 4 ? s("Diarrhoea", "red", `${looseStools} loose stools`) : looseStools === 3 ? s("Diarrhoea", "amber", "3 loose stools: fluids first") : s("Diarrhoea", "green", `${looseStools} loose stools`),
+    chest === "pain" ? s("Chest", "red", "Chest pain or pressure") : chest === "breathless" ? s("Chest", "amber", "Breathless but can talk") : s("Chest", "green", "No symptoms"),
+    kneePain >= 8 ? s("Right knee", "red", `Pain ${kneePain}/10`) : kneePain === 7 ? s("Right knee", "amber", "Pain 7/10: bike and seated work instead of walking") : s("Right knee", "green", `Pain ${kneePain}/10 (usual 6)`),
+    dizzy === "fall" ? s("Dizziness / falls", "red", "Fall or faint") : dizzy === "lightheaded" ? s("Dizziness / falls", "amber", "Light-headed on standing: rise slowly") : s("Dizziness / falls", "green", "None"),
+  ];
+  const overall = signals.some((x) => x.level === "red") ? "red" : signals.some((x) => x.level === "amber") ? "amber" : "green";
+  const session = { green: "Full session from this week's plan", amber: "Half session: seated work and bike, no resistance", red: "Skip today's session and call the care team" }[overall];
+  return { signals, overall, session };
+}

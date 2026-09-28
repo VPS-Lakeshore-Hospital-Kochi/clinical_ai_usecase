@@ -202,7 +202,7 @@ function conforms(schema, value, path = "$") {
   else if (schema.type) assert.equal(typeof value, schema.type, `${path} should be ${schema.type}`);
 }
 
-const FLAGSHIPS = ["triage", "scribe", "nursing", "paeds", "stroke", "decision", "radiology", "oncology", "icu", "preauth", "referral", "preop", "discharge", "medrec", "monitoring", "diabetes", "antenatal", "routing", "ortho", "cardiology", "nephrology"];
+const FLAGSHIPS = ["triage", "scribe", "nursing", "paeds", "stroke", "decision", "radiology", "oncology", "icu", "preauth", "referral", "preop", "discharge", "medrec", "monitoring", "diabetes", "antenatal", "routing", "ortho", "cardiology", "nephrology", "coding", "labs", "rehab"];
 
 test("flagship sample data matches each clinician view's schema", async () => {
   const { getModule } = await import("../server/modules/index.js");
@@ -294,6 +294,22 @@ test("ortho, cardiology and kidney samples agree with the app's calculations", a
   assert.equal(c.egfrCkdEpi2021(1.02, 58, "male"), 85);
 });
 
+test("coding, labs and rehab samples agree with the app's checks", async () => {
+  const { getModule } = await import("../server/modules/index.js");
+  const c = await import("../public/js/clinical.js");
+  const coding = getModule("coding");
+  const d = coding.interactive.demo;
+  for (const x of [...d.codes, ...d.billing]) assert.ok(c.evidenceFound(coding.defaultInput, x.evidence), `not in record: ${x.evidence}`);
+  const r = c.claimReconcile({ draftTotal: 402500, findings: d.billing.filter((b) => b.kind !== "none").map((b) => ({ ...b, accepted: true })), patientPayable: 9000, approval: 385000 });
+  assert.equal(r.insurer, 381200);
+  assert.ok(d.summary.some((s) => s.includes("₹3,81,200")));
+  const copy = getModule("labs").interactive.demo.patientCopy.map((s) => `${s.heading}\n${s.text}`).join("\n\n");
+  assert.ok(c.readability(copy).grade <= 8);
+  assert.deepEqual(c.jargonCheck(copy), []);
+  assert.deepEqual(c.survivalCheck(copy), []);
+  assert.equal(c.rehabTrafficLight({ temp: 36.8, anc: 1.9, platelets: 142, glucose: 212, looseStools: 1, chest: "none", kneePain: 6, dizzy: "none" }).overall, "green");
+});
+
 test("clinician view returns sample data offline and validates input", async () => {
   const post = (id, body) => fetch(`${base}/api/interactive/${id}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
   const res = await post("paeds", { payload: { orders: [] }, demo: true });
@@ -304,8 +320,7 @@ test("clinician view returns sample data offline and validates input", async () 
   assert.match(body.input, /Orders and the app's dose check/);
   const chest = await (await post("triage", { payload: { scenario: "chest-pain", conversation: [] }, demo: true })).json();
   assert.equal(chest.data.urgency, "Emergency now");
-  assert.equal((await post("coding", { payload: {}, demo: true })).status, 404);
-  assert.equal((await post("rehab", { payload: {}, demo: true })).status, 404);
+  assert.equal((await post("not-a-module", { payload: {}, demo: true })).status, 404);
   assert.equal((await post("triage", { demo: true })).status, 400);
 });
 
