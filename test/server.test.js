@@ -202,7 +202,7 @@ function conforms(schema, value, path = "$") {
   else if (schema.type) assert.equal(typeof value, schema.type, `${path} should be ${schema.type}`);
 }
 
-const FLAGSHIPS = ["triage", "scribe", "nursing", "paeds", "stroke", "decision", "radiology", "oncology", "icu", "preauth", "referral", "preop", "discharge", "medrec", "monitoring"];
+const FLAGSHIPS = ["triage", "scribe", "nursing", "paeds", "stroke", "decision", "radiology", "oncology", "icu", "preauth", "referral", "preop", "discharge", "medrec", "monitoring", "diabetes", "antenatal", "routing"];
 
 test("flagship sample data matches each clinician view's schema", async () => {
   const { getModule } = await import("../server/modules/index.js");
@@ -253,6 +253,33 @@ test("pre-op actions resolve real checklist items", async () => {
   const items = new Set(d.checklist.map((c) => c.item));
   for (const a of d.actions) assert.ok(items.has(a.resolves), `unknown item: ${a.resolves}`);
   for (const c of d.checklist.filter((x) => x.status === "fail")) assert.ok(d.actions.some((a) => a.resolves === c.item), `no action for blocking item ${c.item}`);
+});
+
+test("routing sample uses valid roster slots and escalates every emergency flag", async () => {
+  const { getModule } = await import("../server/modules/index.js");
+  const { QUEUE, ROSTER } = await import("../public/js/routing-data.js");
+  const { screenRequest, slotCheck } = await import("../public/js/clinical.js");
+  const d = getModule("routing").interactive.demo;
+  const used = {};
+  for (const r of d.routes) {
+    const slot = ROSTER.find((s) => s.id === r.slotId);
+    const check = slotCheck(slot, r.urgency, used[r.slotId] || 0);
+    assert.ok(check.ok, `${r.request} → ${r.slotId}: ${check.reason}`);
+    used[r.slotId] = (used[r.slotId] || 0) + 1;
+  }
+  const merged = new Set(d.duplicates.flatMap((x) => x.requests.slice(1)));
+  for (const q of QUEUE) if (!merged.has(q.id)) assert.ok(d.routes.some((r) => r.request === q.id), `${q.id} not routed`);
+  for (const q of QUEUE) if (screenRequest(`${q.from}: ${q.text}`).some((f) => f.level === "emergency")) assert.ok(d.escalations.some((e) => e.request === q.id), `${q.id} not escalated`);
+});
+
+test("diabetes and antenatal samples stay consistent with the app's rules", async () => {
+  const { getModule } = await import("../server/modules/index.js");
+  const dm = getModule("diabetes").interactive.demo;
+  for (const p of dm.patterns) assert.ok(p.fromHour >= 0 && p.toHour <= 23 && p.fromHour <= p.toHour, p.title);
+  assert.match(dm.changes.find((c) => c.drug === "Insulin glargine").suggested, /^1[34] U/);
+  assert.equal(dm.changes.find((c) => c.drug === "Glimepiride").kind, "Stop");
+  const an = getModule("antenatal").interactive.demo;
+  for (const p of ["Blood pressure", "Gestational diabetes", "Anaemia", "Rhesus", "Fetal wellbeing"]) assert.ok(an.orders.some((o) => o.problem === p), p);
 });
 
 test("clinician view returns sample data offline and validates input", async () => {

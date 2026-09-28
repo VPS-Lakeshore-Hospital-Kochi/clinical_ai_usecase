@@ -327,3 +327,119 @@ export function stoolTrend(days) {
   const rising = days.every((d, i) => i === 0 || d.count > days[i - 1].count);
   return { rising, latest: days[days.length - 1].count };
 }
+
+/* ---------- Diabetes: CGM consensus targets (International Consensus on Time in Range, 2019) ---------- */
+export const CGM_TARGETS = [
+  { key: "inRange", label: "Time in range 70–180", target: ">70%", met: (v) => v > 70 },
+  { key: "below70", label: "Time below 70", target: "<4%", met: (v) => v < 4 },
+  { key: "below54", label: "Time below 54", target: "<1%", met: (v) => v < 1 },
+  { key: "above180", label: "Time above 180", target: "<25%", met: (v) => v < 25 },
+  { key: "above250", label: "Time above 250", target: "<5%", met: (v) => v < 5 },
+  { key: "cv", label: "Glucose variability (CV)", target: "≤36%", met: (v) => v <= 36 },
+];
+
+export function cgmCheck(c) {
+  const r = c.ranges;
+  const values = { inRange: r.inRange, below70: r.veryLow + r.low, below54: r.veryLow, above180: r.high + r.veryHigh, above250: r.veryHigh, cv: c.cv };
+  const rows = CGM_TARGETS.map((t) => ({ key: t.key, label: t.label, target: t.target, value: values[t.key], met: t.met(values[t.key]) }));
+  return { rows, met: rows.filter((x) => x.met).length, hypoFirst: !rows[1].met || !rows[2].met };
+}
+
+// A GMI–HbA1c gap of 1 percentage point or more suggests a non-glycaemic influence on HbA1c.
+export function gmiGap(gmi, hba1c) {
+  const gap = Math.round((hba1c - gmi) * 10) / 10;
+  return { gap, discordant: Math.abs(gap) >= 1 };
+}
+
+// Hypoglycaemia on a sulfonylurea plus basal insulin: stop or reduce the sulfonylurea and
+// reduce basal insulin by 10–20%.
+export function hypoRegimenRule({ below70, below54, onSulfonylurea, basalUnits }) {
+  const triggered = below70 >= 4 || below54 >= 1;
+  return {
+    triggered,
+    stopSulfonylurea: triggered && onSulfonylurea,
+    basalRange: triggered ? [Math.round(basalUnits * 0.8), Math.round(basalUnits * 0.9)] : [basalUnits, basalUnits],
+  };
+}
+
+/* ---------- Antenatal ---------- */
+// Gestational age from the EDD (280 days) on a given date. Dates are ISO strings.
+export function gestation(edd, date) {
+  const d = 280 - Math.round((Date.parse(edd) - Date.parse(date)) / DAY);
+  return { weeks: Math.floor(d / 7), days: d % 7, totalDays: d, label: `${Math.floor(d / 7)}+${d % 7}` };
+}
+
+export function dateAtGestation(edd, weeks, days = 0) {
+  return new Date(Date.parse(edd) - (280 - weeks * 7 - days) * DAY).toISOString().slice(0, 10);
+}
+
+export function bpClass(sbp, dbp) {
+  if (sbp >= 160 || dbp >= 110) return "severe";
+  if (sbp >= 140 || dbp >= 90) return "hypertension";
+  return "normal";
+}
+
+// Pre-eclampsia screen after 20 weeks (NICE NG133 / ACOG thresholds, conventional units).
+export function preEclampsiaCheck({ sbp, dbp, pcr, platelets, alt, creatinine, symptoms = [], ratio = null }) {
+  const bp = bpClass(sbp, dbp);
+  const proteinuria = pcr >= 0.3;
+  const organ = [];
+  if (platelets < 150) organ.push(`Platelets ${platelets}`);
+  if (alt > 40) organ.push(`ALT ${alt}`);
+  if (creatinine >= 1.0) organ.push(`Creatinine ${creatinine}`);
+  const severe = [];
+  if (bp === "severe") severe.push(`BP ${sbp}/${dbp}`);
+  if (platelets < 100) severe.push(`Platelets ${platelets}`);
+  if (alt > 70) severe.push(`ALT ${alt}`);
+  if (creatinine > 1.1) severe.push(`Creatinine ${creatinine}`);
+  severe.push(...symptoms);
+  let category = "Normal blood pressure";
+  if (bp !== "normal") category = proteinuria || organ.length ? "Pre-eclampsia" : "Gestational hypertension";
+  if (bp !== "normal" && severe.length) category = "Pre-eclampsia with severe features";
+  const ratioNote = ratio == null ? null : ratio <= 38 ? "sFlt-1/PlGF ≤38: pre-eclampsia within 1 week unlikely" : ratio > 85 ? "sFlt-1/PlGF >85: pre-eclampsia likely" : "sFlt-1/PlGF 38–85: raised risk, repeat within 1–2 weeks";
+  const action = category === "Pre-eclampsia with severe features" ? "Admit now: senior obstetric review, stabilise BP, magnesium sulfate per protocol"
+    : category === "Pre-eclampsia" ? "Admit for assessment and daily review"
+    : category === "Gestational hypertension" ? "Treat to ≤135/85; BP twice weekly, bloods and urine weekly" : "Routine care";
+  return { bp, proteinuria, organ, severe, category, ratioNote, action };
+}
+
+// GDM self-monitoring targets (NICE NG3): fasting <95 mg/dL (5.3 mmol/L), 1 hour after meals <140 (7.8).
+export function gdmControl({ fasting, oneHour }) {
+  return { fastingOk: fasting[1] < 95, postOk: oneHour[1] < 140 };
+}
+
+// Routine antenatal anti-D: Rh-negative mother, partner Rh-positive or unknown, due from 28 weeks.
+export function antiDStatus({ rhNegative, partner, given, gaWeeks }) {
+  if (!rhNegative || partner === "negative") return { needed: false, status: "Not needed" };
+  if (given) return { needed: true, status: "Given" };
+  return { needed: true, status: gaWeeks >= 28 ? "Overdue" : "Due at 28 weeks" };
+}
+
+/* ---------- Front-office routing ---------- */
+export const RED_FLAGS = [
+  { id: "thunderclap", level: "emergency", label: "Sudden worst-ever headache", all: [/sudden|worst/i, /headache/i], not: [/pregnan/i] },
+  { id: "pre-eclampsia", level: "emergency", label: "Pregnant with swelling or headache", all: [/pregnan/i, /swollen|swelling|headache|vision/i] },
+  { id: "new-diabetes", level: "emergency", label: "Thirst, bedwetting and weight loss in a child", all: [/thirst/i, /wetting|thinner|weight/i] },
+  { id: "chest", level: "urgent", label: "Exertional chest tightness", all: [/chest (pain|tightness)/i] },
+  { id: "rectal-bleeding", level: "urgent", label: "Rectal bleeding with weight loss", all: [/blood in (his |her |the )?stool|rectal bleeding/i, /weight/i] },
+  { id: "breast-lump", level: "urgent", label: "Breast lump", all: [/lump/i, /breast/i] },
+];
+
+export function screenRequest(text) {
+  return RED_FLAGS.filter((f) => f.all.every((re) => re.test(text)) && !(f.not || []).some((re) => re.test(text)));
+}
+
+export function findDuplicates(requests) {
+  const byPhone = new Map();
+  for (const r of requests) byPhone.set(r.phone, [...(byPhone.get(r.phone) || []), r.id]);
+  return [...byPhone.values()].filter((ids) => ids.length > 1);
+}
+
+// Is a slot a valid destination for a request of this urgency?
+export function slotCheck(slot, urgency, used = 0) {
+  if (!slot) return { ok: false, reason: "Not in today's roster" };
+  if (slot.leave) return { ok: false, reason: `${slot.clinician} is on leave` };
+  if (urgency === "Emergency" && slot.kind !== "emergency") return { ok: false, reason: "A possible emergency must go to an emergency service, not a clinic" };
+  if (slot.free != null && slot.free - used <= 0) return { ok: false, reason: "No free capacity" };
+  return { ok: true, reason: slot.free == null ? "Open 24 h" : `${slot.free - used} free` };
+}

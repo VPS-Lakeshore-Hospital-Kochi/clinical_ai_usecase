@@ -67,7 +67,7 @@ The home page maps all 27 use cases from the roadmap, and all twenty-seven are n
 
 ## Interactive clinician demos
 
-Fifteen flagship prototypes, across fifteen departments, open in a **clinician view** that looks like the tool a clinician would use. The text workspace is one tab away ("Prompt & text output"). Every view has a step guide, presenter notes ("what to point out"), a **Reset demo** button and a **What Claude saw** drawer showing the exact input sent.
+Eighteen flagship prototypes, across seventeen departments and the front office, open in a **clinician view** that looks like the tool a clinician would use. The text workspace is one tab away ("Prompt & text output"). Every view has a step guide, presenter notes ("what to point out"), a **Reset demo** button and a **What Claude saw** drawer showing the exact input sent.
 
 | Demo | What the clinician does |
 |---|---|
@@ -86,10 +86,13 @@ Fifteen flagship prototypes, across fifteen departments, open in a **clinician v
 | Intelligent Discharge | The app builds the medication calendar, stop dates and dispense quantities from the discharge list; Claude reconciles medicines; follow-ups are booked from the pack |
 | Med Reconciliation & Antibiotic Stewardship | Home, ICU and draft ward orders side by side; the app calculates CrCl, the QT check and the antibiotic day; the final ward order is built from the pharmacist's decisions |
 | Remote Monitoring Agent | Home readings stream in; the app's trend rules fire where single-reading thresholds do not; Claude triages the patient's question; episode thresholds can be applied and re-run |
+| Diabetes Co-pilot | The app checks the six consensus CGM targets, the GMI–HbA1c gap and the hypoglycaemia rule (stop the sulfonylurea, glargine 16 → 13–14 U); each pattern Claude finds is highlighted on the glucose profile; the new regimen builds from accepted changes and the app warns if it no longer fixes the overnight lows |
+| Antenatal Risk Review | The app works out gestation from the EDD and lays out the pregnancy timeline, where the missed 28-week anti-D shows as a gap; it classifies BP and screens for pre-eclampsia; Claude ranks the risks and drafts orders by problem; entering the day-assessment result re-runs the screen live and can switch the plan to admission |
+| Right Specialist, Right Slot | The app screens every incoming request for red flags and finds duplicates by phone number; Claude routes the queue against the live roster; nurse calls are logged before an emergency counts as handled; the app blocks bookings into clinics on leave, full clinics or a clinic for a possible emergency |
 
 How they work:
 - **Offline first.** Without an API key each view uses checked sample data (`server/interactive/*.js`), so a demo never depends on the network. With a key, `POST /api/interactive/:id` asks Claude for the same shape using structured outputs (a strict JSON Schema per view).
-- **Rules in code, judgement from Claude.** NEWS2 scores, dose maths, eligibility checks, apixaban dose criteria, AJCC staging, ICU and pharmacy calculations, unit conversions, peri-operative holds, discharge dates, monitoring rules, the medicine rule set, room-rent deductions and clocks are calculated by the app (`public/js/clinical.js`, unit-tested in `test/clinical.test.js`). Claude reads the trend, weighs the context and drafts the words.
+- **Rules in code, judgement from Claude.** NEWS2 scores, dose maths, eligibility checks, apixaban dose criteria, AJCC staging, ICU and pharmacy calculations, unit conversions, peri-operative holds, discharge dates, monitoring rules, CGM targets, gestational age and the pre-eclampsia screen, front-office red flags and roster checks, the medicine rule set, room-rent deductions and clocks are calculated by the app (`public/js/clinical.js`, unit-tested in `test/clinical.test.js`). Claude reads the trend, weighs the context and drafts the words.
 - **Clinician in control.** Every accept, edit, reject, override and escalation goes into a "Clinician actions" log, which is filed with the output to the patient timeline.
 
 On each module page the clinician can edit the input, run Claude, then **Approve & file** the draft. Filed outputs appear on the patient timeline (stored in the browser only) and feed into the journey story.

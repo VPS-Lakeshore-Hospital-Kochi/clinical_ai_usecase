@@ -22,7 +22,7 @@ Check routine care against the record, not only today's problem. Produce in orde
 5. "## Warning signs for you (patient copy)": plain English, under 120 words.
 6. "## Follow-up schedule": a table of when | what | who.`,
   buildPrompt: (input) => `Antenatal visit:\n\n${input}`,
-  defaultInput: `Antenatal clinic, 24 Sep 2026. Fathima Rasheed, 29, G2P1L1, 30+2 weeks (EDD 24 Nov 2026 by dating scan).
+  defaultInput: `Antenatal clinic, 24 Sep 2026. Fathima Rasheed, 29, G2P1L1, 30+2 weeks (EDD 1 Dec 2026 by dating scan).
 BP: 142/92, repeat after 15 min 144/94 (seated, correct cuff). Previous: 118/74 at booking, 132/84 at 28 weeks.
 Symptoms: mild frontal headache for 2 days, relieved by paracetamol. No visual disturbance, epigastric pain or breathlessness. Mild ankle swelling. Fetal movements normal.
 Urine protein:creatinine ratio 0.28 mg/mg. Bloods today: Hb 9.6, ferritin 14, platelets 182, ALT 28, creatinine 0.6.

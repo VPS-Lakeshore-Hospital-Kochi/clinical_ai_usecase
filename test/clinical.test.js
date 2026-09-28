@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { news2, news2Response, checkOrder, apixabanCriteria, toMin, toHHMM, fmtDur, medicineCheck, colonStage, adjuvantGuide, anionGap, kdigoStage, dkaInsulinRate, preauthEstimate, adrenalRule, locateQuotes, hba1cIfccToNgsp, glucoseMmolToMg, creatinineUmolToMg, egfrCkdEpi2021, holdCheck, basalNightBefore, addDays, daysInclusive, idealBodyWeight, adjustedBodyWeight, cockcroftGault, qtRisk, thresholdAlerts, trendAlerts, stoolTrend, STANDARD_THRESHOLDS, EPISODE_THRESHOLDS } from "../public/js/clinical.js";
+import { news2, news2Response, checkOrder, apixabanCriteria, toMin, toHHMM, fmtDur, medicineCheck, colonStage, adjuvantGuide, anionGap, kdigoStage, dkaInsulinRate, preauthEstimate, adrenalRule, locateQuotes, hba1cIfccToNgsp, glucoseMmolToMg, creatinineUmolToMg, egfrCkdEpi2021, holdCheck, basalNightBefore, addDays, daysInclusive, idealBodyWeight, adjustedBodyWeight, cockcroftGault, qtRisk, thresholdAlerts, trendAlerts, stoolTrend, STANDARD_THRESHOLDS, EPISODE_THRESHOLDS, cgmCheck, gmiGap, hypoRegimenRule, gestation, dateAtGestation, bpClass, preEclampsiaCheck, gdmControl, antiDStatus, screenRequest, findDuplicates, slotCheck } from "../public/js/clinical.js";
+import { QUEUE, ROSTER } from "../public/js/routing-data.js";
 import fs from "node:fs";
 
 test("NEWS2 scores the night-shift observations as charted", () => {
@@ -153,4 +154,48 @@ test("remote monitoring: trend rules fire where single thresholds do not", () =>
   assert.ok(trend.some((t) => /HR up 18/.test(t)));
   assert.equal(stoolTrend(hm.stoolsPerDay).rising, true);
   assert.ok(hm.readings.flatMap((r) => thresholdAlerts(r, EPISODE_THRESHOLDS)).length > 0);
+});
+
+test("CGM consensus targets and the hypoglycaemia regimen rule", () => {
+  const c = cgmCheck({ ranges: { veryLow: 2, low: 5, inRange: 41, high: 34, veryHigh: 18 }, cv: 38 });
+  assert.equal(c.met, 0);
+  assert.equal(c.hypoFirst, true);
+  assert.deepEqual(c.rows.map((r) => r.value), [41, 7, 2, 52, 18, 38]);
+  assert.equal(cgmCheck({ ranges: { veryLow: 0, low: 2, inRange: 75, high: 18, veryHigh: 5 }, cv: 30 }).met, 5);
+  assert.deepEqual(gmiGap(8.0, 9.1), { gap: 1.1, discordant: true });
+  assert.equal(gmiGap(7.2, 7.5).discordant, false);
+  assert.deepEqual(hypoRegimenRule({ below70: 7, below54: 2, onSulfonylurea: true, basalUnits: 16 }), { triggered: true, stopSulfonylurea: true, basalRange: [13, 14] });
+  assert.equal(hypoRegimenRule({ below70: 2, below54: 0, onSulfonylurea: true, basalUnits: 16 }).triggered, false);
+});
+
+test("gestational age, BP classes, pre-eclampsia screen, GDM targets and anti-D", () => {
+  assert.equal(gestation("2026-12-01", "2026-09-24").label, "30+2");
+  assert.equal(dateAtGestation("2026-12-01", 28), "2026-09-08");
+  assert.equal(dateAtGestation("2026-12-01", 7, 6), "2026-04-20");
+  assert.equal(bpClass(144, 94), "hypertension");
+  assert.equal(bpClass(158, 112), "severe");
+  assert.equal(bpClass(132, 84), "normal");
+  const base = { sbp: 144, dbp: 94, pcr: 0.28, platelets: 182, alt: 28, creatinine: 0.6 };
+  assert.equal(preEclampsiaCheck(base).category, "Gestational hypertension");
+  assert.equal(preEclampsiaCheck({ ...base, pcr: 0.34 }).category, "Pre-eclampsia");
+  assert.equal(preEclampsiaCheck({ ...base, sbp: 162 }).category, "Pre-eclampsia with severe features");
+  assert.equal(preEclampsiaCheck({ ...base, platelets: 92 }).category, "Pre-eclampsia with severe features");
+  assert.equal(preEclampsiaCheck({ ...base, sbp: 128, dbp: 80 }).category, "Normal blood pressure");
+  assert.match(preEclampsiaCheck({ ...base, ratio: 24 }).ratioNote, /unlikely/);
+  assert.deepEqual(gdmControl({ fasting: [98, 105], oneHour: [150, 165] }), { fastingOk: false, postOk: false });
+  assert.equal(antiDStatus({ rhNegative: true, partner: "unknown", given: false, gaWeeks: 30 }).status, "Overdue");
+  assert.equal(antiDStatus({ rhNegative: true, partner: "negative", given: false, gaWeeks: 30 }).needed, false);
+});
+
+test("routing red-flag screen, duplicates and slot checks", () => {
+  const flags = Object.fromEntries(QUEUE.map((r) => [r.id, screenRequest(`${r.from}: ${r.text}`).map((f) => f.id)]));
+  assert.deepEqual(flags, { R1: ["rectal-bleeding"], R2: ["thunderclap"], R3: [], R4: ["new-diabetes"], R5: ["breast-lump"], R6: ["chest"], R7: [], R8: [], R9: ["pre-eclampsia"] });
+  assert.deepEqual(findDuplicates(QUEUE.filter((r) => r.phone)), [["R3", "R8"]]);
+  const slot = (id) => ROSTER.find((s) => s.id === id);
+  assert.equal(slotCheck(slot("GI1"), "≤1 week").ok, false);
+  assert.equal(slotCheck(slot("NEURO-AM"), "Emergency").ok, false);
+  assert.equal(slotCheck(slot("ED"), "Emergency").ok, true);
+  assert.equal(slotCheck(slot("BREAST-THU"), "≤1 week").ok, false);
+  assert.equal(slotCheck(slot("GI2-TODAY"), "≤1 week", 1).ok, false);
+  assert.equal(slotCheck(undefined, "Routine").ok, false);
 });
