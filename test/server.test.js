@@ -202,7 +202,7 @@ function conforms(schema, value, path = "$") {
   else if (schema.type) assert.equal(typeof value, schema.type, `${path} should be ${schema.type}`);
 }
 
-const FLAGSHIPS = ["triage", "scribe", "nursing", "paeds", "stroke", "decision", "radiology", "oncology", "icu", "preauth", "referral", "preop", "discharge", "medrec", "monitoring", "diabetes", "antenatal", "routing"];
+const FLAGSHIPS = ["triage", "scribe", "nursing", "paeds", "stroke", "decision", "radiology", "oncology", "icu", "preauth", "referral", "preop", "discharge", "medrec", "monitoring", "diabetes", "antenatal", "routing", "ortho", "cardiology", "nephrology"];
 
 test("flagship sample data matches each clinician view's schema", async () => {
   const { getModule } = await import("../server/modules/index.js");
@@ -280,6 +280,18 @@ test("diabetes and antenatal samples stay consistent with the app's rules", asyn
   assert.equal(dm.changes.find((c) => c.drug === "Glimepiride").kind, "Stop");
   const an = getModule("antenatal").interactive.demo;
   for (const p of ["Blood pressure", "Gestational diabetes", "Anaemia", "Rhesus", "Fetal wellbeing"]) assert.ok(an.orders.some((o) => o.problem === p), p);
+});
+
+test("ortho, cardiology and kidney samples agree with the app's calculations", async () => {
+  const { getModule } = await import("../server/modules/index.js");
+  const c = await import("../public/js/clinical.js");
+  const gate = c.tkaReadiness({ hba1c: 9.1, hb: 10.2, bmi: 31.2, nsaidStopped: true, giResult: "pending", dental: false, skin: false, mrsa: false });
+  assert.equal(getModule("ortho").interactive.demo.summary.verdict, gate.verdict);
+  assert.match(getModule("cardiology").interactive.demo.bottomLine, new RegExp(`RCRI ${c.rcri({ highRiskSurgery: true, insulin: true }).points}`));
+  const abw = c.adjustedBodyWeight(84, c.idealBodyWeight(168, "male"));
+  const crcl = c.cockcroftGault({ age: 58, weightKg: abw, creatinine: 1.02, sex: "male" });
+  assert.match(getModule("nephrology").interactive.demo.answers[0], new RegExp(`about ${crcl} mL/min`));
+  assert.equal(c.egfrCkdEpi2021(1.02, 58, "male"), 85);
 });
 
 test("clinician view returns sample data offline and validates input", async () => {

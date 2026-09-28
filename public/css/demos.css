@@ -570,3 +570,67 @@ tr.is-key td { background: var(--cream); }
 .rt__dupe p { margin: 0 0 6px; font-size: 14px; }
 .rt__replies { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px; }
 @media (max-width: 1000px) { .rt__top { grid-template-columns: 1fr; } }
+
+/* ---------- Ortho surgery planner ---------- */
+.or { display: grid; gap: 20px; }
+.or > *, .or__top > *, .or__out > * { min-width: 0; }
+.or__top { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 20px; align-items: start; }
+.or__verdict { font-size: 20px; line-height: 1.2; }
+.or__results { border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; display: grid; gap: 10px; }
+.or__results select, .or__results input { font: inherit; }
+.or__nums { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.or__out { display: grid; gap: 22px; }
+.or__consent { list-style: none; margin: 8px 0 0; padding: 0; display: grid; gap: 6px; font-size: 14.5px; }
+.or__consent strong { font-weight: 500; color: var(--navy); }
+.or__rehab { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; }
+.or__rehab li { border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px 14px; display: grid; gap: 4px; font-size: 14px; }
+.or__rehab strong { font-weight: 500; color: var(--navy); }
+@media (max-width: 1000px) { .or__top { grid-template-columns: 1fr; } }
+
+/* ---------- Cardiac pre-op ---------- */
+.cd { display: grid; gap: 20px; }
+.cd > *, .cd__top > *, .cd__out > * { min-width: 0; }
+.cd__top { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 20px; align-items: start; }
+.cd__rcri { list-style: none; margin: 0; padding: 0; }
+.cd__rcri li { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 14px; align-items: center; }
+.cd__rcri .check { margin: 0; }
+.cd__rcri strong { font-weight: 500; color: var(--ink-3); }
+.cd__inputs { border: 1px solid var(--line); border-radius: var(--radius); padding: 18px 20px; display: grid; gap: 10px; }
+.cd__inputs select, .cd__inputs input, .cd__eval select, .cd__trop input { font: inherit; }
+.cd__path { border-left: 4px solid var(--ok); background: var(--panel); border-radius: var(--radius-sm); padding: 10px 14px; }
+.cd__path[data-test="true"] { border-left-color: var(--warn); }
+.cd__path p { margin: 4px 0 0; font-size: 14px; }
+.cd__out { display: grid; gap: 22px; }
+.cd__bottom { margin: 0; font-size: 17px; font-weight: 300; line-height: 1.45; }
+.cd__eval p { margin: 0 0 8px; font-size: 14px; }
+.cd__eval strong { font-weight: 500; color: var(--navy); }
+.cd__tropgrid { display: grid; grid-template-columns: repeat(2, minmax(0, 160px)); gap: 10px; margin-bottom: 8px; }
+.cd__mins { display: flex; gap: 8px; align-items: baseline; margin: 4px 0; font-size: 14px; }
+.cd__mins[data-injury="true"] { color: var(--danger); }
+@media (max-width: 1000px) { .cd__top { grid-template-columns: 1fr; } }
+
+/* ---------- Kidney co-pilot ---------- */
+.nk { display: grid; gap: 20px; }
+.nk > *, .nk__top > *, .nk__out > * { min-width: 0; }
+.nk__top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; align-items: start; }
+.nk__top svg { width: 100%; height: auto; display: block; }
+.nk__inputs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 10px; align-items: end; }
+.nk__inputs .label { grid-column: 1 / -1; }
+.nk__inputs input { font: inherit; }
+.nk__grid { width: 100%; border-collapse: separate; border-spacing: 3px; font-size: 12.5px; }
+.nk__grid th { font-weight: 500; color: var(--ink-3); text-align: left; padding: 2px 4px; }
+.nk__grid td { height: 30px; border-radius: 6px; text-align: center; font-size: 12px; }
+.nk__grid td[data-risk="low"] { background: #e3efe4; }
+.nk__grid td[data-risk="moderate"] { background: #f5e6c8; }
+.nk__grid td[data-risk="high"] { background: #efcfc8; }
+.nk__grid td[data-risk="very high"] { background: #deaaa3; }
+.nk__grid td[data-here="true"] { outline: 2px solid var(--navy); color: var(--navy); font-weight: 500; }
+.nk__bands { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 10px; }
+.nk__band { display: grid; grid-template-columns: 12px minmax(0, 1fr); gap: 4px 8px; align-items: start; border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 12px 14px; font-size: 14px; }
+.nk__band .dot { margin-top: 6px; }
+.nk__band > span:last-child { grid-column: 2; }
+.nk__band strong { font-weight: 500; color: var(--navy); }
+.nk__out { display: grid; gap: 22px; }
+.nk__answers { margin: 4px 0 0; padding-left: 20px; display: grid; gap: 6px; font-size: 15px; }
+@media (max-width: 1000px) { .nk__top { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .nk__inputs { grid-template-columns: 1fr 1fr; } }

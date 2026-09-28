@@ -443,3 +443,103 @@ export function slotCheck(slot, urgency, used = 0) {
   if (slot.free != null && slot.free - used <= 0) return { ok: false, reason: "No free capacity" };
   return { ok: true, reason: slot.free == null ? "Open 24 h" : `${slot.free - used} free` };
 }
+
+/* ---------- Orthopaedics: elective TKA readiness ---------- */
+// Oxford Knee Score bands (0–48, higher is better).
+export function oxfordKneeBand(score) {
+  if (score <= 19) return "severe";
+  if (score <= 29) return "moderate to severe";
+  if (score <= 39) return "mild to moderate";
+  return "satisfactory";
+}
+
+// Readiness gate for elective arthroplasty. Unexplained iron-deficiency anaemia or weight loss
+// defers surgery until investigated; modifiable risks put it on "optimise first".
+export function tkaReadiness({ hba1c, hb, bmi, nsaidStopped, giResult, dental, skin, mrsa }) {
+  const items = [
+    giResult === "pending" ? { key: "gi", status: "defer", text: "Iron-deficiency anaemia with weight loss not yet investigated" }
+      : giResult === "cancer" ? { key: "gi", status: "defer", text: "GI work-up found cancer: treat that first" }
+      : { key: "gi", status: "ok", text: "GI work-up complete, no malignancy" },
+    { key: "hba1c", status: hba1c < 8 ? "ok" : "optimise", text: `HbA1c ${hba1c}% (target <8%)` },
+    { key: "hb", status: hb >= 13 ? "ok" : "optimise", text: `Hb ${hb} g/dL (target ≥13)` },
+    { key: "bmi", status: bmi >= 40 ? "optimise" : "ok", text: `BMI ${bmi}${bmi >= 40 ? " (≥40: weight optimisation first)" : ""}` },
+    { key: "nsaid", status: nsaidStopped ? "ok" : "optimise", text: nsaidStopped ? "NSAID stopped" : "NSAID still taken (renal risk)" },
+    { key: "dental", status: dental ? "ok" : "optimise", text: dental ? "Dental check done" : "Dental check outstanding" },
+    { key: "skin", status: skin ? "ok" : "optimise", text: skin ? "Skin inspected, intact" : "Skin inspection outstanding" },
+    { key: "mrsa", status: mrsa ? "ok" : "optimise", text: mrsa ? "MRSA screen done" : "MRSA screen outstanding" },
+  ];
+  const verdict = items.some((i) => i.status === "defer") ? "Defer pending workup" : items.some((i) => i.status === "optimise") ? "Proceed after optimisation" : "Proceed";
+  return { items, verdict, open: items.filter((i) => i.status !== "ok").length };
+}
+
+/* ---------- Cardiology: peri-operative risk (RCRI, 2024 AHA/ACC stepwise approach) ---------- */
+export const RCRI_ITEMS = [
+  { key: "highRiskSurgery", label: "High-risk surgery (intraperitoneal, intrathoracic, suprainguinal vascular)" },
+  { key: "ihd", label: "Ischaemic heart disease" },
+  { key: "hf", label: "Heart failure" },
+  { key: "cvd", label: "Cerebrovascular disease" },
+  { key: "insulin", label: "Diabetes on insulin" },
+  { key: "creatinine", label: "Creatinine >2 mg/dL" },
+];
+// MACE estimates by RCRI: original Lee 1999 cohort and the updated Duceppe 2017 (Canadian) estimates.
+const LEE = [0.4, 0.9, 6.6, 11], DUCEPPE = [3.9, 6.0, 10.1, 15];
+export function rcri(flags) {
+  const points = RCRI_ITEMS.filter((i) => flags[i.key]).length;
+  const k = Math.min(points, 3);
+  return { points, lee: LEE[k], duceppe: DUCEPPE[k], elevated: points >= 2 };
+}
+
+// Simplified stepwise evaluation. mets: "≥4" | "<4" | "unknown".
+export function periopPathway({ emergency = false, activeCondition = false, symptomatic, rcriPoints, mets, ntprobnp }) {
+  if (emergency) return { step: 1, testing: false, text: "Emergency surgery: proceed with peri-operative monitoring" };
+  if (activeCondition) return { step: 2, testing: true, text: "Active cardiac condition: evaluate and treat before elective surgery" };
+  if (symptomatic) return { step: 3, testing: true, text: "New or worsening symptoms: evaluate as you would outside surgery; testing is indicated on its own merits" };
+  if (rcriPoints < 2) return { step: 4, testing: false, text: "Low risk: proceed without further testing" };
+  if (mets === "≥4") return { step: 5, testing: false, text: "Elevated risk with good functional capacity: proceed without further testing" };
+  if (ntprobnp != null && ntprobnp < 300) return { step: 6, testing: false, text: "Elevated risk, poor or unknown capacity, NT-proBNP <300: lower risk; proceed with troponin surveillance; stress testing only if it would change management" };
+  return { step: 6, testing: true, text: "Elevated risk with poor or unknown capacity: consider stress testing if it will change management" };
+}
+
+// Myocardial injury after non-cardiac surgery: rise >5 ng/L from baseline or above the URL.
+export function minsCheck(baseline, value, url = 20) {
+  const rise = value - baseline;
+  return { rise, injury: rise > 5 || value > url };
+}
+
+/* ---------- Nephrology: KDIGO CKD grid and renal dosing ---------- */
+export function ckdGrade(egfr) {
+  return egfr >= 90 ? "G1" : egfr >= 60 ? "G2" : egfr >= 45 ? "G3a" : egfr >= 30 ? "G3b" : egfr >= 15 ? "G4" : "G5";
+}
+export const albuminuriaGrade = (uacr) => (uacr < 30 ? "A1" : uacr <= 300 ? "A2" : "A3");
+// KDIGO 2012 heat map: risk of progression by G (rows) and A (columns).
+const KDIGO_RISK = { G1: ["low", "moderate", "high"], G2: ["low", "moderate", "high"], G3a: ["moderate", "high", "very high"], G3b: ["high", "very high", "very high"], G4: ["very high", "very high", "very high"], G5: ["very high", "very high", "very high"] };
+export function kdigoRisk(egfr, uacr) {
+  const g = ckdGrade(egfr), a = albuminuriaGrade(uacr);
+  return { g, a, risk: KDIGO_RISK[g][Number(a[1]) - 1] };
+}
+export const KDIGO_GRID = KDIGO_RISK;
+
+// CKD needs abnormal markers for more than 3 months: confirmation date from the first abnormal result.
+export function ckdConfirmDate(firstIso) {
+  const d = new Date(firstIso);
+  d.setUTCMonth(d.getUTCMonth() + 3);
+  return d.toISOString().slice(0, 10);
+}
+
+// Renal dose bands (CrCl mL/min for chemotherapy, eGFR for metformin and contrast).
+export function capecitabineBand(crcl) {
+  if (crcl < 30) return { dose: "Contraindicated", pct: 0 };
+  if (crcl <= 50) return { dose: "Start at 75%", pct: 75 };
+  return { dose: "Full dose", pct: 100 };
+}
+export const oxaliplatinBand = (crcl) => (crcl < 30 ? "Reduce dose" : "Full dose");
+export function metforminBand(egfr) {
+  if (egfr < 30) return "Stop";
+  if (egfr < 45) return "Maximum 1000 mg a day";
+  return "Continue usual dose";
+}
+export function contrastBand(egfr) {
+  if (egfr < 30) return "High risk: nephrology advice, IV hydration, hold metformin";
+  if (egfr < 45) return "Consider IV hydration; check creatinine after";
+  return "No prophylactic hydration; metformin can continue";
+}

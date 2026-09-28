@@ -1,6 +1,6 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { news2, news2Response, checkOrder, apixabanCriteria, toMin, toHHMM, fmtDur, medicineCheck, colonStage, adjuvantGuide, anionGap, kdigoStage, dkaInsulinRate, preauthEstimate, adrenalRule, locateQuotes, hba1cIfccToNgsp, glucoseMmolToMg, creatinineUmolToMg, egfrCkdEpi2021, holdCheck, basalNightBefore, addDays, daysInclusive, idealBodyWeight, adjustedBodyWeight, cockcroftGault, qtRisk, thresholdAlerts, trendAlerts, stoolTrend, STANDARD_THRESHOLDS, EPISODE_THRESHOLDS, cgmCheck, gmiGap, hypoRegimenRule, gestation, dateAtGestation, bpClass, preEclampsiaCheck, gdmControl, antiDStatus, screenRequest, findDuplicates, slotCheck } from "../public/js/clinical.js";
+import { news2, news2Response, checkOrder, apixabanCriteria, toMin, toHHMM, fmtDur, medicineCheck, colonStage, adjuvantGuide, anionGap, kdigoStage, dkaInsulinRate, preauthEstimate, adrenalRule, locateQuotes, hba1cIfccToNgsp, glucoseMmolToMg, creatinineUmolToMg, egfrCkdEpi2021, holdCheck, basalNightBefore, addDays, daysInclusive, idealBodyWeight, adjustedBodyWeight, cockcroftGault, qtRisk, thresholdAlerts, trendAlerts, stoolTrend, STANDARD_THRESHOLDS, EPISODE_THRESHOLDS, cgmCheck, gmiGap, hypoRegimenRule, gestation, dateAtGestation, bpClass, preEclampsiaCheck, gdmControl, antiDStatus, screenRequest, findDuplicates, slotCheck, oxfordKneeBand, tkaReadiness, rcri, periopPathway, minsCheck, kdigoRisk, ckdConfirmDate, capecitabineBand, oxaliplatinBand, metforminBand, contrastBand } from "../public/js/clinical.js";
 import { QUEUE, ROSTER } from "../public/js/routing-data.js";
 import fs from "node:fs";
 
@@ -198,4 +198,42 @@ test("routing red-flag screen, duplicates and slot checks", () => {
   assert.equal(slotCheck(slot("BREAST-THU"), "≤1 week").ok, false);
   assert.equal(slotCheck(slot("GI2-TODAY"), "≤1 week", 1).ok, false);
   assert.equal(slotCheck(undefined, "Routine").ok, false);
+});
+
+test("TKA readiness gate and Oxford Knee Score bands", () => {
+  assert.equal(oxfordKneeBand(17), "severe");
+  assert.equal(oxfordKneeBand(34), "mild to moderate");
+  const base = { hba1c: 9.1, hb: 10.2, bmi: 31.2, nsaidStopped: true, giResult: "pending", dental: false, skin: false, mrsa: false };
+  assert.equal(tkaReadiness(base).verdict, "Defer pending workup");
+  assert.equal(tkaReadiness({ ...base, giResult: "cancer" }).verdict, "Defer pending workup");
+  assert.equal(tkaReadiness({ ...base, giResult: "clear" }).verdict, "Proceed after optimisation");
+  assert.equal(tkaReadiness({ ...base, giResult: "clear", hba1c: 7.6, hb: 13.2, dental: true, skin: true, mrsa: true }).verdict, "Proceed");
+  assert.equal(tkaReadiness({ ...base, giResult: "clear", hba1c: 8.0, hb: 13.2, dental: true, skin: true, mrsa: true }).open, 1);
+});
+
+test("RCRI, peri-operative pathway and MINS check", () => {
+  const f = { highRiskSurgery: true, insulin: true };
+  assert.deepEqual(rcri(f), { points: 2, lee: 6.6, duceppe: 10.1, elevated: true });
+  assert.equal(rcri({ ...f, ihd: true }).lee, 11);
+  assert.equal(rcri({}).points, 0);
+  assert.equal(periopPathway({ symptomatic: true, rcriPoints: 2, mets: "<4", ntprobnp: 180 }).testing, true);
+  assert.equal(periopPathway({ symptomatic: false, rcriPoints: 2, mets: "≥4" }).testing, false);
+  assert.match(periopPathway({ symptomatic: false, rcriPoints: 2, mets: "<4", ntprobnp: 180 }).text, /NT-proBNP <300/);
+  assert.equal(periopPathway({ symptomatic: false, rcriPoints: 2, mets: "<4", ntprobnp: 450 }).testing, true);
+  assert.deepEqual(minsCheck(6, 14), { rise: 8, injury: true });
+  assert.equal(minsCheck(6, 9).injury, false);
+});
+
+test("KDIGO grid, CKD confirmation date and renal dose bands", () => {
+  assert.deepEqual(kdigoRisk(85, 38), { g: "G2", a: "A2", risk: "moderate" });
+  assert.deepEqual(kdigoRisk(40, 350), { g: "G3b", a: "A3", risk: "very high" });
+  assert.equal(kdigoRisk(95, 12).risk, "low");
+  assert.equal(ckdConfirmDate("2026-07-06"), "2026-10-06");
+  assert.equal(capecitabineBand(81).pct, 100);
+  assert.equal(capecitabineBand(50).pct, 75);
+  assert.equal(capecitabineBand(29).dose, "Contraindicated");
+  assert.equal(oxaliplatinBand(29), "Reduce dose");
+  assert.equal(metforminBand(40), "Maximum 1000 mg a day");
+  assert.match(contrastBand(85), /No prophylactic/);
+  assert.match(contrastBand(25), /High risk/);
 });
