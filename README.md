@@ -67,7 +67,7 @@ The home page maps all 27 use cases from the roadmap, and all twenty-seven are n
 
 ## Interactive clinician demos
 
-Ten flagship prototypes, across ten departments, open in a **clinician view** that looks like the tool a clinician would use. The text workspace is one tab away ("Prompt & text output"). Every view has a step guide, presenter notes ("what to point out"), a **Reset demo** button and a **What Claude saw** drawer showing the exact input sent.
+Fifteen flagship prototypes, across fifteen departments, open in a **clinician view** that looks like the tool a clinician would use. The text workspace is one tab away ("Prompt & text output"). Every view has a step guide, presenter notes ("what to point out"), a **Reset demo** button and a **What Claude saw** drawer showing the exact input sent.
 
 | Demo | What the clinician does |
 |---|---|
@@ -81,10 +81,15 @@ Ten flagship prototypes, across ten departments, open in a **clinician view** th
 | Tumour Board Assistant | The board sets T, N and M and the app calculates the AJCC 8th edition stage and adjuvant duration; Claude prepares the pack; the board records decisions and assigns actions, with the DPYD result flagged for tracking |
 | ICU Round Co-pilot | The app runs the sepsis and DKA bundle tracker (insulin blocked until potassium ≥3.3), anion gap, KDIGO stage and the uridine triacetate window; Claude drafts the problem-based plan and drug review |
 | Pre-auth & TPA Packet Builder | The family's room choice drives a live room-rent deduction calculator; Claude checks policy clauses, drafts the medical-necessity letter and prepares answers to TPA queries |
+| Referral & Old-Records Digest | Outside documents in a viewer; every extracted fact links to its source text; the app converts units, calculates eGFR and marks unreadable OCR; record updates are accepted one by one |
+| Pre-op Readiness & WHO Checklist | The app checks medicine hold times and computes the go/no-go gate from open items; actions close items; the WHO checklist (Sign In, Time Out, Sign Out) unlocks only when nothing blocks |
+| Intelligent Discharge | The app builds the medication calendar, stop dates and dispense quantities from the discharge list; Claude reconciles medicines; follow-ups are booked from the pack |
+| Med Reconciliation & Antibiotic Stewardship | Home, ICU and draft ward orders side by side; the app calculates CrCl, the QT check and the antibiotic day; the final ward order is built from the pharmacist's decisions |
+| Remote Monitoring Agent | Home readings stream in; the app's trend rules fire where single-reading thresholds do not; Claude triages the patient's question; episode thresholds can be applied and re-run |
 
 How they work:
 - **Offline first.** Without an API key each view uses checked sample data (`server/interactive/*.js`), so a demo never depends on the network. With a key, `POST /api/interactive/:id` asks Claude for the same shape using structured outputs (a strict JSON Schema per view).
-- **Rules in code, judgement from Claude.** NEWS2 scores, dose maths, eligibility checks, apixaban dose criteria, AJCC staging, ICU calculations, the medicine rule set, room-rent deductions and clocks are calculated by the app (`public/js/clinical.js`, unit-tested in `test/clinical.test.js`). Claude reads the trend, weighs the context and drafts the words.
+- **Rules in code, judgement from Claude.** NEWS2 scores, dose maths, eligibility checks, apixaban dose criteria, AJCC staging, ICU and pharmacy calculations, unit conversions, peri-operative holds, discharge dates, monitoring rules, the medicine rule set, room-rent deductions and clocks are calculated by the app (`public/js/clinical.js`, unit-tested in `test/clinical.test.js`). Claude reads the trend, weighs the context and drafts the words.
 - **Clinician in control.** Every accept, edit, reject, override and escalation goes into a "Clinician actions" log, which is filed with the output to the patient timeline.
 
 On each module page the clinician can edit the input, run Claude, then **Approve & file** the draft. Filed outputs appear on the patient timeline (stored in the browser only) and feed into the journey story.

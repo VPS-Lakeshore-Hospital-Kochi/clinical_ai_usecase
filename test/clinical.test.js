@@ -1,6 +1,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { news2, news2Response, checkOrder, apixabanCriteria, toMin, toHHMM, fmtDur, medicineCheck, colonStage, adjuvantGuide, anionGap, kdigoStage, dkaInsulinRate, preauthEstimate, adrenalRule, locateQuotes } from "../public/js/clinical.js";
+import { news2, news2Response, checkOrder, apixabanCriteria, toMin, toHHMM, fmtDur, medicineCheck, colonStage, adjuvantGuide, anionGap, kdigoStage, dkaInsulinRate, preauthEstimate, adrenalRule, locateQuotes, hba1cIfccToNgsp, glucoseMmolToMg, creatinineUmolToMg, egfrCkdEpi2021, holdCheck, basalNightBefore, addDays, daysInclusive, idealBodyWeight, adjustedBodyWeight, cockcroftGault, qtRisk, thresholdAlerts, trendAlerts, stoolTrend, STANDARD_THRESHOLDS, EPISODE_THRESHOLDS } from "../public/js/clinical.js";
+import fs from "node:fs";
 
 test("NEWS2 scores the night-shift observations as charted", () => {
   const night = [
@@ -112,4 +113,44 @@ test("imaging helpers", () => {
   assert.match(adrenalRule(8).label, /Lipid-rich/);
   assert.match(adrenalRule(25).label, /Indeterminate/);
   assert.deepEqual(locateQuotes("abc left kidney xyz Right", [["left kidney"], ["Right", "missing"]]), [[4, 15, 0], [20, 25, 1]]);
+});
+
+test("unit conversions and eGFR match the records digest", () => {
+  assert.equal(hba1cIfccToNgsp(70), 8.6);
+  assert.equal(glucoseMmolToMg(9.3), 168);
+  assert.equal(creatinineUmolToMg(97), 1.1);
+  assert.equal(egfrCkdEpi2021(1.1, 58, "male"), 78);
+  assert.equal(egfrCkdEpi2021(1.23, 58, "male"), 68);
+});
+
+test("peri-operative holds and discharge dates", () => {
+  assert.deepEqual([holdCheck("sglt2", "14 Aug 08:00", "19 Aug 08:00").hours, holdCheck("sglt2", "14 Aug 08:00", "19 Aug 08:00").ok], [120, true]);
+  assert.equal(holdCheck("sglt2", "17 Aug 08:00", "19 Aug 08:00").ok, false);
+  assert.equal(holdCheck("arb", "18 Aug 07:00", "19 Aug 08:00").hours, 25);
+  assert.equal(basalNightBefore(12), 10);
+  assert.equal(addDays("19 Aug", 28), "16 Sep");
+  assert.equal(addDays("24 Aug", 14), "7 Sep");
+  assert.equal(daysInclusive("24 Aug", "16 Sep"), 24);
+});
+
+test("pharmacy calculations for the ICU-to-ward transfer", () => {
+  const ibw = idealBodyWeight(168, "male");
+  const abw = adjustedBodyWeight(84, ibw);
+  assert.equal(abw, 72.1);
+  assert.equal(cockcroftGault({ age: 58, weightKg: abw, creatinine: 1.6 }), 51);
+  const qt = qtRisk(478, "male", ["Ondansetron", "Domperidone", "Enoxaparin"]);
+  assert.equal(qt.flag, true);
+  assert.equal(qt.drugs.length, 2);
+  assert.equal(qtRisk(430, "male", ["Ondansetron"]).flag, false);
+});
+
+test("remote monitoring: trend rules fire where single thresholds do not", () => {
+  const hm = JSON.parse(fs.readFileSync(new URL("../data/patient.json", import.meta.url))).homeMonitoring;
+  const single = hm.readings.flatMap((r) => thresholdAlerts(r, STANDARD_THRESHOLDS));
+  assert.equal(single.length, 0);
+  const trend = hm.readings.flatMap((_, i) => trendAlerts(hm.readings, i));
+  assert.ok(trend.some((t) => /Weight down 1.0 kg/.test(t)));
+  assert.ok(trend.some((t) => /HR up 18/.test(t)));
+  assert.equal(stoolTrend(hm.stoolsPerDay).rising, true);
+  assert.ok(hm.readings.flatMap((r) => thresholdAlerts(r, EPISODE_THRESHOLDS)).length > 0);
 });

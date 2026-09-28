@@ -396,3 +396,81 @@ tr.is-key td { background: var(--cream); }
 @media (max-width: 900px) { .pa__calc, .rooms { grid-template-columns: 1fr; } }
 .ed > *, .ed__board > *, .ed__cols > *, .ed__support > *, .rad > *, .rad__report > *, .mdt > *, .mdt__stage > *, .mdt__selects > *, .mdt__pack > *, .pa > *, .pa__calc > *, .pa__packet > *, .rooms > *, .icu > *, .icu__plan > *, .handover > * { min-width: 0; }
 .field select { max-width: 100%; }
+
+/* ---------- Records digest ---------- */
+.dig { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 20px 24px; align-items: start; }
+.dig > * { min-width: 0; }
+.dig__viewer { overflow: hidden; }
+.dig__tabs { display: flex; flex-wrap: wrap; gap: 4px; padding: 12px 14px; border-bottom: 1px solid var(--line); }
+.dig__tabs button { font: inherit; font-size: 13px; border: 1px solid var(--line); background: #fff; color: var(--ink-2); padding: 5px 12px; border-radius: var(--pill); cursor: pointer; }
+.dig__tabs button[aria-selected="true"] { background: var(--navy); border-color: var(--navy); color: #fff; }
+.dig__doc { padding: 16px 20px 20px; }
+.dig__doc-title { display: grid; gap: 2px; margin-bottom: 10px; }
+.dig__doc-title strong { font-weight: 500; color: var(--navy); }
+.dig__text { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; line-height: 1.7; background: var(--cream); border-radius: var(--radius-sm); padding: 14px 16px; max-height: 420px; overflow: auto; }
+.dig__text mark { background: rgba(0, 30, 95, 0.14); color: inherit; border-bottom: 2px solid var(--kicker); border-radius: 2px; }
+.ocr { color: var(--danger); font-weight: 600; border-bottom: 1px dashed var(--danger); }
+.dig__side { display: grid; gap: 14px; }
+.dig__conv { padding: 16px 18px; border-radius: var(--radius); background: var(--panel); font-size: 14px; }
+.dig__conv li { padding: 5px 0; border-bottom: 1px solid var(--line); }
+.dig__conv strong { font-weight: 500; color: var(--navy); }
+.dig__digest, .dig__audit { grid-column: 1 / -1; }
+.dig__out { display: grid; gap: 22px; }
+.srcchip { font: inherit; font-size: 11.5px; min-width: 22px; border: 1px solid var(--kicker); background: #fff; color: var(--kicker); border-radius: var(--pill); padding: 0 7px; margin: 0 2px; cursor: pointer; }
+.srcchip:hover { background: var(--kicker); color: #fff; }
+.facts { list-style: none; margin: 0; padding: 0; }
+.facts li { display: grid; grid-template-columns: 12px minmax(0, 1fr) auto; gap: 8px; align-items: start; padding: 9px 0; border-bottom: 1px solid var(--line); font-size: 14px; }
+.facts li .dot { margin-top: 6px; }
+.facts strong { font-weight: 500; color: var(--navy); }
+@media (max-width: 1000px) { .dig { grid-template-columns: 1fr; } .dig__viewer { position: static; } }
+
+/* ---------- Pre-op readiness ---------- */
+.po { display: grid; gap: 20px; }
+.po > *, .po__gate > * { min-width: 0; }
+.po__gate { display: grid; gap: 22px; }
+.po__verdict h3 { font-size: 30px; }
+.po__verdict[data-block="0"] { background: var(--panel); }
+.po__verdict[data-block="0"] h3 { color: var(--navy); }
+.po__verdict[data-block="0"] .label, .po__verdict[data-block="0"] p { color: var(--ink-3); }
+.who__phases { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; margin-top: 10px; }
+.who__phase { border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; background: #fff; min-width: 0; }
+.who__phase[data-locked="true"] { background: var(--panel); opacity: .7; }
+.who__phase[data-complete="true"] { border-color: var(--navy); box-shadow: inset 0 3px 0 var(--navy); }
+.who__head { display: grid; gap: 2px; margin-bottom: 8px; }
+.who__head strong { font-weight: 500; color: var(--navy); font-size: 17px; }
+.who__head small { color: var(--ink-3); }
+.who__phase ul { list-style: none; margin: 0; padding: 0; }
+.who__phase li { padding: 7px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+@media (max-width: 1000px) { .who__phases { grid-template-columns: 1fr; } }
+
+/* ---------- Discharge ---------- */
+.dc { display: grid; gap: 20px; }
+.dc > *, .dc__top > *, .dc__pack > * { min-width: 0; }
+.dc__top { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 20px; align-items: start; }
+.dc__top .lk-table td { font-size: 13.5px; }
+.dc__top .lk-table input { accent-color: var(--navy); }
+.dc__pack { display: grid; gap: 22px; }
+.dc__patient { display: grid; gap: 12px; background: var(--cream); border-radius: var(--radius); padding: 22px; }
+.dc__patient textarea { background: #fff; min-height: 72px; }
+@media (max-width: 1000px) { .dc__top { grid-template-columns: 1fr; } }
+
+/* ---------- Med reconciliation ---------- */
+.mr { display: grid; gap: 20px; }
+.mr > *, .mr__out > * { min-width: 0; }
+.mr__out { display: grid; gap: 22px; }
+.mr__table td { font-size: 13.5px; }
+.mr__table tr.is-conflict td:nth-child(4) { color: var(--danger); font-weight: 500; }
+
+/* ---------- Remote monitoring ---------- */
+.rm { display: grid; gap: 20px; }
+.rm > *, .rm__top > *, .rm__out > * { min-width: 0; }
+.rm__top { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 20px; align-items: start; }
+.rm__feed { overflow: hidden; }
+.rm__feed-head { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; padding: 14px 18px; border-bottom: 1px solid var(--line); }
+.rm__feed .obs td[data-s="2"] { color: var(--danger); font-weight: 600; }
+.rm__counts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.rm__list { list-style: none; margin: 0; padding: 0; max-height: 300px; overflow: auto; }
+.rm__list li { display: grid; grid-template-columns: 12px 1fr; gap: 8px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+.rm__list li .dot { margin-top: 6px; }
+.rm__out { display: grid; gap: 22px; }
+@media (max-width: 1000px) { .rm__top { grid-template-columns: 1fr; } }

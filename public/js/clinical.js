@@ -229,3 +229,101 @@ export function preauthEstimate({ heads, roomRate, roomDays, sumInsured, bonus =
   const payable = rows.reduce((a, r) => a + r.payable, 0);
   return { rows, roomCap, icuCap, proportion, total, payable, patientShare: total - payable };
 }
+
+/* ---------- Unit conversions and eGFR ---------- */
+export const hba1cIfccToNgsp = (mmolMol) => Math.round((mmolMol / 10.929 + 2.15) * 10) / 10;
+export const glucoseMmolToMg = (mmol) => Math.round(mmol * 18.016);
+export const creatinineUmolToMg = (umol) => Math.round((umol / 88.4) * 100) / 100;
+// CKD-EPI 2021 (race-free) creatinine equation, mL/min/1.73 m².
+export function egfrCkdEpi2021(creatinineMgDl, age, sex) {
+  const f = sex === "female";
+  const k = f ? 0.7 : 0.9;
+  const a = f ? -0.241 : -0.302;
+  const r = creatinineMgDl / k;
+  return Math.round(142 * Math.min(r, 1) ** a * Math.max(r, 1) ** -1.2 * 0.9938 ** age * (f ? 1.012 : 1));
+}
+
+// Splits the outside-records bundle into lettered documents: [{ letter, title, text }].
+export function splitDocuments(bundle) {
+  const re = /DOCUMENT ([A-Z]): ([^\n]+)\n([\s\S]*?)(?=\n\nDOCUMENT [A-Z]:|\n\nHospital record|$)/g;
+  const docs = [];
+  for (const m of bundle.matchAll(re)) docs.push({ letter: m[1], title: m[2].trim(), text: m[3].trim() });
+  const rec = bundle.match(/Hospital record[^\n]*[\s\S]*$/);
+  if (rec) docs.push({ letter: "Record", title: "Hospital record (Lakeshore)", text: rec[0].trim() });
+  return docs;
+}
+
+/* ---------- Peri-operative medicine holds (demo rule set) ---------- */
+// Hours between two "D Mon HH:MM" style timestamps in the same year (e.g. "14 Aug 08:00").
+const MONTHS = { Jan: 0, Feb: 1, Mar: 2, Apr: 3, May: 4, Jun: 5, Jul: 6, Aug: 7, Sep: 8, Oct: 9, Nov: 10, Dec: 11 };
+export function hoursBetween(a, b) {
+  const t = (s) => { const [d, mo, hm] = s.split(" "); const [h, m] = hm.split(":").map(Number); return Date.UTC(2026, MONTHS[mo], Number(d), h, m); };
+  return Math.round((t(b) - t(a)) / 36e5);
+}
+export const HOLD_RULES = {
+  sglt2: { minHours: 72, label: "SGLT2 inhibitor: stop at least 3 days before surgery (DKA risk)" },
+  arb: { minHours: 24, label: "ACE inhibitor / ARB: omit for 24 h before surgery (hypotension)" },
+  metformin: { minHours: 0, label: "Metformin: omit on the day of surgery" },
+};
+export function holdCheck(cls, lastDose, surgery) {
+  const rule = HOLD_RULES[cls];
+  const h = hoursBetween(lastDose, surgery);
+  return { hours: h, ok: h >= rule.minHours, rule: rule.label };
+}
+export const basalNightBefore = (units) => Math.round(units * 0.8); // 80% of usual basal insulin
+
+/* ---------- Discharge date maths ---------- */
+const DAY = 864e5;
+const parseDay = (s) => { const [d, mo] = s.split(" "); return Date.UTC(2026, MONTHS[mo], Number(d)); };
+const fmtDay = (t) => { const x = new Date(t); return `${x.getUTCDate()} ${Object.keys(MONTHS)[x.getUTCMonth()]}`; };
+export const addDays = (day, n) => fmtDay(parseDay(day) + n * DAY);
+export const daysInclusive = (from, to) => Math.round((parseDay(to) - parseDay(from)) / DAY) + 1;
+
+/* ---------- Pharmacy calculations ---------- */
+// Devine ideal body weight and adjusted body weight (kg), height in cm.
+export const idealBodyWeight = (heightCm, sex) => Math.round(((sex === "female" ? 45.5 : 50) + 0.906 * (heightCm - 152.4)) * 10) / 10;
+export const adjustedBodyWeight = (weightKg, ibw) => Math.round((ibw + 0.4 * (weightKg - ibw)) * 10) / 10;
+export function cockcroftGault({ age, weightKg, creatinine, sex }) {
+  return Math.round(((140 - age) * weightKg * (sex === "female" ? 0.85 : 1)) / (72 * creatinine));
+}
+export const QT_DRUGS = ["ondansetron", "domperidone", "haloperidol", "levofloxacin", "moxifloxacin", "azithromycin", "clarithromycin", "citalopram", "amiodarone"];
+export function qtRisk(qtc, sex, drugs) {
+  const limit = sex === "female" ? 470 : 450;
+  const onList = drugs.filter((d) => QT_DRUGS.some((q) => d.toLowerCase().includes(q)));
+  return { prolonged: qtc > limit, limit, drugs: onList, flag: qtc > limit && onList.length >= 1, severe: qtc >= 500 };
+}
+
+/* ---------- Remote monitoring rules ---------- */
+export const STANDARD_THRESHOLDS = { hr: 110, sbp: 100, temp: 38.0, glucose: 300, stools: 6, weightLoss: 1.5 };
+export const EPISODE_THRESHOLDS = { hr: 100, sbp: 105, temp: 37.8, glucose: 250, stools: 3, weightLoss: 1.0 };
+
+// Single-reading threshold breaches.
+export function thresholdAlerts(r, th) {
+  const out = [];
+  if (r.hr >= th.hr) out.push(`HR ${r.hr} ≥ ${th.hr}`);
+  if (r.sbp < th.sbp) out.push(`SBP ${r.sbp} < ${th.sbp}`);
+  if (r.temp >= th.temp) out.push(`Temp ${r.temp} ≥ ${th.temp}`);
+  if (r.glucose > th.glucose) out.push(`Glucose ${r.glucose} > ${th.glucose}`);
+  if (r.glucose < 70) out.push(`Glucose ${r.glucose} < 70`);
+  return out;
+}
+
+// Trend rules against the first (discharge) reading and the previous 24 h.
+export function trendAlerts(readings, i) {
+  const first = readings[0], r = readings[i];
+  const out = [];
+  if (r.hr - first.hr >= 15) out.push(`HR up ${r.hr - first.hr} since discharge (${first.hr} → ${r.hr})`);
+  if (first.sbp - r.sbp >= 12) out.push(`SBP down ${first.sbp - r.sbp} since discharge (${first.sbp} → ${r.sbp})`);
+  if (Math.round((r.temp - first.temp) * 10) / 10 >= 0.8) out.push(`Temperature rising (${first.temp.toFixed(1)} → ${r.temp.toFixed(1)})`);
+  if (r.weightKg != null) {
+    const prev = readings.slice(0, i).reverse().find((x) => x.weightKg != null && hoursApart(x.time, r.time) <= 26);
+    if (prev && Math.round((prev.weightKg - r.weightKg) * 10) / 10 >= 1.0) out.push(`Weight down ${(prev.weightKg - r.weightKg).toFixed(1)} kg in ${hoursApart(prev.time, r.time)} h`);
+  }
+  return out;
+}
+const hoursApart = (a, b) => Math.round((new Date(b) - new Date(a)) / 36e5);
+
+export function stoolTrend(days) {
+  const rising = days.every((d, i) => i === 0 || d.count > days[i - 1].count);
+  return { rising, latest: days[days.length - 1].count };
+}

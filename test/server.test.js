@@ -202,7 +202,7 @@ function conforms(schema, value, path = "$") {
   else if (schema.type) assert.equal(typeof value, schema.type, `${path} should be ${schema.type}`);
 }
 
-const FLAGSHIPS = ["triage", "scribe", "nursing", "paeds", "stroke", "decision", "radiology", "oncology", "icu", "preauth"];
+const FLAGSHIPS = ["triage", "scribe", "nursing", "paeds", "stroke", "decision", "radiology", "oncology", "icu", "preauth", "referral", "preop", "discharge", "medrec", "monitoring"];
 
 test("flagship sample data matches each clinician view's schema", async () => {
   const { getModule } = await import("../server/modules/index.js");
@@ -235,6 +235,26 @@ test("radiology sample quotes are verbatim in the dictation", async () => {
   }
 });
 
+test("records digest sources quote their documents verbatim", async () => {
+  const { getModule } = await import("../server/modules/index.js");
+  const { splitDocuments } = await import("../public/js/clinical.js");
+  const mod = getModule("referral");
+  const docs = Object.fromEntries(splitDocuments(mod.defaultInput).map((x) => [x.letter, x.text]));
+  assert.deepEqual(Object.keys(docs), ["A", "B", "C", "D", "E", "F", "Record"]);
+  const d = mod.interactive.demo;
+  for (const item of [...d.redFlags, ...d.problems, ...d.medicines, ...d.allergies, ...d.updates]) {
+    for (const src of item.sources) if (src.quote) assert.ok(docs[src.doc].includes(src.quote), `not in ${src.doc}: ${src.quote}`);
+  }
+});
+
+test("pre-op actions resolve real checklist items", async () => {
+  const { getModule } = await import("../server/modules/index.js");
+  const d = getModule("preop").interactive.demo;
+  const items = new Set(d.checklist.map((c) => c.item));
+  for (const a of d.actions) assert.ok(items.has(a.resolves), `unknown item: ${a.resolves}`);
+  for (const c of d.checklist.filter((x) => x.status === "fail")) assert.ok(d.actions.some((a) => a.resolves === c.item), `no action for blocking item ${c.item}`);
+});
+
 test("clinician view returns sample data offline and validates input", async () => {
   const post = (id, body) => fetch(`${base}/api/interactive/${id}`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(body) });
   const res = await post("paeds", { payload: { orders: [] }, demo: true });
@@ -246,6 +266,7 @@ test("clinician view returns sample data offline and validates input", async () 
   const chest = await (await post("triage", { payload: { scenario: "chest-pain", conversation: [] }, demo: true })).json();
   assert.equal(chest.data.urgency, "Emergency now");
   assert.equal((await post("coding", { payload: {}, demo: true })).status, 404);
+  assert.equal((await post("rehab", { payload: {}, demo: true })).status, 404);
   assert.equal((await post("triage", { demo: true })).status, 400);
 });
 
