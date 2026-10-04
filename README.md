@@ -125,6 +125,15 @@ Optional environment variables:
 | `PORT` | `3000` | HTTP port |
 | `DEMO_MODE` | unset | `1` forces sample outputs even when a key is set |
 
+### Static build (no server)
+
+```bash
+npm run build:static                 # dist/: open with any static file host
+npm run build:static -- --artifact   # also dist-artifact/, laid out for a claude.ai artifact
+```
+
+The static build is the demo mode without the server. Every page, clinician view, sample output and patient record ships as files. `js/static-api.js` answers the pages' `/api/*` calls in the browser with the same response shapes, so "What Claude saw" still shows the exact input that would be sent. It cannot call Claude live.
+
 ## How it is built
 
 ```

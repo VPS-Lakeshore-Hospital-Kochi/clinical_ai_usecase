@@ -8,7 +8,8 @@
   "scripts": {
     "start": "node server/index.js",
     "demo": "DEMO_MODE=1 node server/index.js",
-    "test": "node --test test/*.test.js"
+    "test": "node --test test/*.test.js",
+    "build:static": "node scripts/build-static.mjs"
   },
   "engines": {
     "node": ">=20"
@@ -18,5 +19,8 @@
     "dompurify": "^3.4.16",
     "express": "^5.2.1",
     "marked": "^18.0.14"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2"
   }
 }
