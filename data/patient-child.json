@@ -1,0 +1,52 @@
+{
+  "_note": "SYNTHETIC PATIENT. Fictional person created for demonstration. Any resemblance to a real person is coincidental. Loosely FHIR R4-shaped for readability; not a validated FHIR bundle.",
+  "patient": {
+    "resourceType": "Patient",
+    "id": "syn-000416",
+    "mrn": "LH-SYN-000416",
+    "name": "Ayaan Rasheed",
+    "gender": "male",
+    "birthDate": "2022-06-18",
+    "age": 4,
+    "address": "Mattancherry, Kochi, Kerala",
+    "languages": [
+      "Malayalam",
+      "English"
+    ],
+    "occupation": "Pre-school",
+    "payer": "Covered under mother's family floater policy (synthetic)",
+    "lifestyle": "Fully immunised per the national schedule. Attends play school.",
+    "familyHistory": "Mother: gestational diabetes in current pregnancy.",
+    "allergies": []
+  },
+  "conditions": [
+    {
+      "code": "H66.9",
+      "display": "Acute otitis media, right ear",
+      "onset": "2026"
+    }
+  ],
+  "medicationsNote": "none regularly",
+  "medications": [],
+  "vitals": [
+    {
+      "date": "2026-09-26",
+      "bp": "96/60 mmHg",
+      "hr": "132/min",
+      "weightKg": 16,
+      "heightCm": 104,
+      "bmi": 14.8
+    }
+  ],
+  "labs": [],
+  "timeline": [
+    {
+      "date": "2026-09-26",
+      "stage": "before",
+      "specialty": "Paediatric Emergency",
+      "module": "paeds",
+      "title": "ED visit: fever and right ear pain",
+      "detail": "Acute otitis media with mild dehydration. Prescription checked before dispensing."
+    }
+  ]
+}

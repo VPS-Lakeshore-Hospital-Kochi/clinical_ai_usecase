@@ -1,0 +1,211 @@
+{
+  "_note": "SYNTHETIC PATIENT. Fictional person created for demonstration. Any resemblance to a real person is coincidental. Loosely FHIR R4-shaped for readability; not a validated FHIR bundle.",
+  "patient": {
+    "resourceType": "Patient",
+    "id": "syn-000415",
+    "mrn": "LH-SYN-000415",
+    "name": "Fathima Rasheed",
+    "gender": "female",
+    "birthDate": "1997-02-11",
+    "age": 29,
+    "bloodGroup": "O negative",
+    "address": "Mattancherry, Kochi, Kerala",
+    "languages": [
+      "Malayalam",
+      "English"
+    ],
+    "occupation": "School teacher",
+    "payer": "Private health insurance with maternity cover (synthetic)",
+    "lifestyle": "Non-smoker, no alcohol. Pre-pregnancy BMI 29. Walks 20 minutes most evenings.",
+    "familyHistory": "Mother: type 2 diabetes and pre-eclampsia in her second pregnancy.",
+    "allergies": []
+  },
+  "conditions": [
+    {
+      "code": "Z34.8",
+      "display": "Pregnancy, G2P1L1, 30+2 weeks (EDD 1 Dec 2026)",
+      "onset": "2026"
+    },
+    {
+      "code": "O24.4",
+      "display": "Gestational diabetes on insulin (diagnosed 26 weeks)",
+      "onset": "2026"
+    },
+    {
+      "code": "O99.0",
+      "display": "Anaemia in pregnancy",
+      "onset": "2026"
+    },
+    {
+      "code": "O36.0",
+      "display": "Rh-negative mother",
+      "onset": ""
+    }
+  ],
+  "medicationsNote": "current",
+  "medications": [
+    {
+      "name": "Insulin NPH (isophane)",
+      "dose": "8 units",
+      "frequency": "at bedtime"
+    },
+    {
+      "name": "Ferrous ascorbate + folic acid",
+      "dose": "1 tablet",
+      "frequency": "once daily (reports missing doses because of nausea)"
+    },
+    {
+      "name": "Calcium carbonate",
+      "dose": "500 mg",
+      "frequency": "twice daily"
+    }
+  ],
+  "vitals": [
+    {
+      "date": "2026-04-20",
+      "bp": "118/74 mmHg",
+      "hr": "80/min",
+      "weightKg": 72,
+      "heightCm": 157,
+      "bmi": 29.2
+    },
+    {
+      "date": "2026-09-10",
+      "bp": "132/84 mmHg",
+      "hr": "88/min",
+      "weightKg": 80,
+      "heightCm": 157,
+      "bmi": 32.5
+    },
+    {
+      "date": "2026-09-24",
+      "bp": "142/92 mmHg (repeat 144/94 after 15 min)",
+      "hr": "90/min",
+      "weightKg": 81.5,
+      "heightCm": 157,
+      "bmi": 33.1
+    }
+  ],
+  "labs": [
+    {
+      "date": "2026-04-20",
+      "test": "Blood group",
+      "value": "O",
+      "unit": "Rh negative",
+      "ref": "—"
+    },
+    {
+      "date": "2026-04-20",
+      "test": "Antibody screen",
+      "value": "Negative",
+      "unit": "",
+      "ref": "Negative"
+    },
+    {
+      "date": "2026-08-27",
+      "test": "75 g OGTT fasting",
+      "value": 98,
+      "unit": "mg/dL",
+      "ref": "<92",
+      "flag": "H"
+    },
+    {
+      "date": "2026-08-27",
+      "test": "75 g OGTT 1 hour",
+      "value": 190,
+      "unit": "mg/dL",
+      "ref": "<180",
+      "flag": "H"
+    },
+    {
+      "date": "2026-08-27",
+      "test": "75 g OGTT 2 hour",
+      "value": 168,
+      "unit": "mg/dL",
+      "ref": "<153",
+      "flag": "H"
+    },
+    {
+      "date": "2026-09-24",
+      "test": "Haemoglobin",
+      "value": 9.6,
+      "unit": "g/dL",
+      "ref": "≥11.0 in pregnancy",
+      "flag": "L"
+    },
+    {
+      "date": "2026-09-24",
+      "test": "Ferritin",
+      "value": 14,
+      "unit": "ng/mL",
+      "ref": "30-150",
+      "flag": "L"
+    },
+    {
+      "date": "2026-09-24",
+      "test": "Platelets",
+      "value": 182,
+      "unit": "x10^9/L",
+      "ref": "150-400"
+    },
+    {
+      "date": "2026-09-24",
+      "test": "ALT",
+      "value": 28,
+      "unit": "U/L",
+      "ref": "<35"
+    },
+    {
+      "date": "2026-09-24",
+      "test": "Creatinine",
+      "value": 0.6,
+      "unit": "mg/dL",
+      "ref": "0.4-0.8"
+    },
+    {
+      "date": "2026-09-24",
+      "test": "Urine protein:creatinine ratio",
+      "value": 0.28,
+      "unit": "mg/mg",
+      "ref": "<0.3"
+    }
+  ],
+  "timeline": [
+    {
+      "date": "2022-06-18",
+      "stage": "history",
+      "specialty": "Obstetrics",
+      "title": "First delivery: son Ayaan, spontaneous vaginal birth at 39 weeks",
+      "detail": "Uncomplicated. 3.3 kg."
+    },
+    {
+      "date": "2026-04-20",
+      "stage": "history",
+      "specialty": "Obstetrics",
+      "title": "Antenatal booking at 7 weeks",
+      "detail": "O Rh-negative, antibody screen negative. BP 118/74, BMI 29."
+    },
+    {
+      "date": "2026-08-27",
+      "stage": "diagnosis",
+      "specialty": "Obstetrics",
+      "title": "Gestational diabetes diagnosed (26 weeks)",
+      "detail": "75 g OGTT 98/190/168 mg/dL. Diet advice; NPH insulin started 10 Sep."
+    },
+    {
+      "date": "2026-09-24",
+      "stage": "specialty",
+      "specialty": "Obstetrics",
+      "module": "antenatal",
+      "title": "Antenatal review at 30+2 weeks",
+      "detail": "New raised BP, glucose above target, anaemia; 28-week anti-D not documented."
+    },
+    {
+      "date": "2026-09-26",
+      "stage": "before",
+      "specialty": "Paediatric Emergency",
+      "title": "Son Ayaan (4) seen in the ED with an ear infection",
+      "detail": "See Ayaan's record for the prescription safety check."
+    }
+  ]
+}

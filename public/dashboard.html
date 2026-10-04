@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Patient Timeline · VPS Lakeshore Clinical AI</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23001e5f%22/%3E%3Cpath d=%22M9 16h14M16 9v14%22 stroke=%22white%22 stroke-width=%224%22/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/lakeshore.css">
+</head>
+<body>
+  <main>
+    <nav id="stepper"></nav>
+    <section id="patient"></section>
+    <section class="dash" id="dash">
+      <div class="card panel">
+        <div class="panel__head"><h2>Journey timeline</h2><span class="status"><button class="btn btn--ghost" id="clear" style="padding:4px 10px;font-size:12px">Clear filed outputs</button></span></div>
+        <ol class="timeline" id="timeline"></ol>
+        <div class="timeline-legend">
+          <span><i></i>Clinical event</span>
+          <span><i class="ai"></i>AI-assisted step</span>
+          <span><i class="filed"></i>Approved &amp; filed in this demo</span>
+        </div>
+      </div>
+      <div class="card panel" id="story-panel">
+        <div class="panel__head">
+          <h2>Patient journey story</h2>
+          <span class="chip chip--alert">Draft · needs review</span>
+          <span class="status" id="status"></span>
+        </div>
+        <div class="panel__body output" id="output-wrap">
+          <div class="output__empty" id="output-empty">Claude reads the whole timeline, including any outputs you approved and filed, and writes one story across specialties: where AI changed the course, open loops and the next 90 days.</div>
+          <div class="md" id="output" hidden></div>
+        </div>
+        <div class="panel__foot">
+          <button class="btn btn--primary" id="run">Generate journey story</button>
+          <button class="btn btn--ghost" id="sample">Play sample output</button>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer"><div class="site-footer__inner"><span>Clinical AI Showcase prototype · All patient data is synthetic · Claude outputs are decision support only and must be reviewed by a qualified clinician</span><img src="brand/logo-lakeshore-white.png" alt="VPS Lakeshore"></div></footer>
+  <script type="module" src="js/dashboard.js"></script>
+</body>
+</html>

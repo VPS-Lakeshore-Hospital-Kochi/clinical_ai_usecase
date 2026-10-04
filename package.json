@@ -1,0 +1,22 @@
+{
+  "name": "lakeshore-clinical-ai-showcase",
+  "version": "0.1.0",
+  "description": "VPS Lakeshore clinical AI showcase: Claude prototypes across the patient journey (synthetic data only).",
+  "private": true,
+  "type": "module",
+  "main": "server/index.js",
+  "scripts": {
+    "start": "node server/index.js",
+    "demo": "DEMO_MODE=1 node server/index.js",
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.128.0",
+    "dompurify": "^3.4.16",
+    "express": "^5.2.1",
+    "marked": "^18.0.14"
+  }
+}

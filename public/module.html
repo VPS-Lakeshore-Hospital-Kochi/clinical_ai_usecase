@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Prototype · VPS Lakeshore Clinical AI</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%226%22 fill=%22%23001e5f%22/%3E%3Cpath d=%22M9 16h14M16 9v14%22 stroke=%22white%22 stroke-width=%224%22/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/lakeshore.css">
+  <link rel="stylesheet" href="css/demos.css">
+</head>
+<body>
+  <main>
+    <nav id="stepper"></nav>
+    <section id="patient"></section>
+    <section class="module-head">
+      <div class="module-head__main">
+        <div id="module-chips"></div>
+        <h1 id="module-title">Loading…</h1>
+        <p id="module-summary"></p>
+      </div>
+      <div class="claude-role"><strong>What Claude does</strong><span id="module-role"></span></div>
+    </section>
+    <div class="view-tabs" id="view-tabs" role="tablist" aria-label="Views" hidden>
+      <button role="tab" id="tab-clinician" data-view="clinician" aria-selected="true">Clinician view</button>
+      <button role="tab" id="tab-classic" data-view="classic" aria-selected="false">Prompt &amp; text output</button>
+    </div>
+    <section class="clinician-view" id="clinician-view" hidden>
+      <ol class="guide" id="guide" aria-label="How to run this demo"></ol>
+      <div class="view-tools">
+        <details class="notes" id="notes"><summary>Presenter notes: what to point out</summary><ul id="notes-list"></ul></details>
+        <button class="btn btn--ghost" id="reset-demo" type="button">↺ Reset demo</button>
+      </div>
+      <div id="view-root"></div>
+      <details class="sent" id="sent" hidden><summary>What Claude saw: the input sent with this request</summary><pre id="sent-text"></pre><p class="hint" id="sent-meta"></p></details>
+    </section>
+    <section class="workspace" id="classic-view">
+      <div class="card panel">
+        <div class="panel__head"><h2 id="input-label">Input</h2></div>
+        <div class="panel__body">
+          <div id="widgets"></div>
+          <p class="hint" id="input-hint"></p>
+          <textarea id="input" class="input" spellcheck="false" aria-labelledby="input-label"></textarea>
+        </div>
+        <div class="panel__foot">
+          <button class="btn btn--primary" id="run">Run with Claude</button>
+          <button class="btn btn--ghost" id="reset">Reset sample input</button>
+        </div>
+      </div>
+      <div class="card panel">
+        <div class="panel__head">
+          <h2 id="output-label">Output</h2>
+          <span class="chip chip--alert">Draft · needs review</span>
+          <span class="status" id="status"></span>
+        </div>
+        <div class="panel__body output" id="output-wrap">
+          <div class="output__empty" id="output-empty"><p>Press <strong>Run with Claude</strong> to generate a draft from the input on the left.</p></div>
+          <div class="md" id="output" hidden></div>
+        </div>
+        <div class="panel__foot">
+          <button class="btn btn--approve" id="approve" disabled>✓ Approve &amp; file to record</button>
+          <button class="btn btn--secondary" id="copy" disabled>Copy</button>
+          <button class="btn btn--ghost" id="sample">Play sample output</button>
+          <span class="filed-note" id="filed-note"></span>
+        </div>
+      </div>
+    </section>
+    <nav class="module-nav" id="module-nav"></nav>
+  </main>
+  <footer class="site-footer"><div class="site-footer__inner"><span>Clinical AI Showcase prototype · All patient data is synthetic · Claude outputs are decision support only and must be reviewed by a qualified clinician</span><img src="brand/logo-lakeshore-white.png" alt="VPS Lakeshore"></div></footer>
+  <script type="module" src="js/module.js"></script>
+</body>
+</html>
