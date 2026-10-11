@@ -11,7 +11,7 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(here, "..");
 const MAX_INPUT_CHARS = 60_000;
 
-export function createApp({ demoChunkDelayMs, demoDelayMs = 900 } = {}) {
+export function createApp({ demoChunkDelayMs, demoDelayMs = 2000 } = {}) {
   const app = express();
   app.use(express.json({ limit: "256kb" }));
 

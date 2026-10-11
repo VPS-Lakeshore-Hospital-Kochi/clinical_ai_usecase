@@ -1,4 +1,7 @@
 import { runModule, renderMarkdown, esc } from "./common.js";
+import { sparkSVG } from "./claude-motion.js";
+
+const busy = (text) => `${sparkSVG(16, "spark--busy")} ${text}`;
 
 // Wires Run / Sample buttons to a streamed module run and renders the output.
 export function attachRunner({ moduleId, getInput, runBtn, sampleBtn, output, empty, status, wrap, onStart, onComplete }) {
@@ -25,7 +28,8 @@ export function attachRunner({ moduleId, getInput, runBtn, sampleBtn, output, em
     runBtn.disabled = true;
     sampleBtn.disabled = true;
     onStart?.();
-    setStatus('<span class="spinner" aria-hidden="true"></span> Claude is working…');
+    setStatus(busy("Claude is working…"));
+    output.classList.add("is-streaming");
     const started = performance.now();
 
     try {
@@ -33,7 +37,7 @@ export function attachRunner({ moduleId, getInput, runBtn, sampleBtn, output, em
         demo,
         signal: controller.signal,
         onMeta: (m) => {
-          if (m.mode === "demo") setStatus('<span class="spinner" aria-hidden="true"></span> Replaying sample output…');
+          if (m.mode === "demo") setStatus(busy("Replaying sample output…"));
         },
         onText: (t) => {
           text += t;
@@ -55,6 +59,7 @@ export function attachRunner({ moduleId, getInput, runBtn, sampleBtn, output, em
       );
       setStatus("Stopped");
     } finally {
+      output.classList.remove("is-streaming");
       runBtn.disabled = false;
       sampleBtn.disabled = false;
       wrap?.scrollTo?.({ top: 0 });

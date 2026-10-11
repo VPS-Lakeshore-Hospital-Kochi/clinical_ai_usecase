@@ -1,10 +1,12 @@
 import { renderHeader, esc } from "./common.js";
 import { STAGES } from "./usecases.js";
+import { journeyRibbon } from "./claude-motion.js";
 
 // Flagship prototypes with a full interactive clinician view.
 const INTERACTIVE = new Set(["triage", "scribe", "nursing", "paeds", "stroke", "decision", "radiology", "oncology", "icu", "preauth", "referral", "preop", "discharge", "medrec", "monitoring", "diabetes", "antenatal", "routing", "ortho", "cardiology", "nephrology", "coding", "labs", "rehab", "transplant", "heartfailure", "journey"]);
 
 renderHeader("home");
+journeyRibbon(document.getElementById("ribbon"), STAGES);
 
 const liveCount = STAGES.flatMap((s) => s.items).filter((i) => i.href).length;
 const total = STAGES.flatMap((s) => s.items).length;

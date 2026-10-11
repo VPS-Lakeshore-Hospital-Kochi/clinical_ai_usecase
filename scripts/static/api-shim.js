@@ -4,7 +4,7 @@
 (() => {
   const DATA = window.__LK_STATIC;
   const realFetch = window.fetch.bind(window);
-  const INTERACTIVE_DELAY_MS = 900;
+  const INTERACTIVE_DELAY_MS = 2000; // long enough to see Claude read and draft
   const CHUNK_DELAY_MS = 12;
 
   let viewsPromise;
